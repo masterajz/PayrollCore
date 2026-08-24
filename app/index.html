@@ -2721,7 +2721,8 @@ document.getElementById('adv-tab-other').addEventListener('click', (e) => {
     window.currentTimesheetData[empId].forEach((day, index) => {
         let hourlyRate = (emp.rate || 0) / 8;
         let ndPay = (day.nd || 0) * hourlyRate * 0.10;
-        let otPay = (day.ot || 0) * hourlyRate * 1.25;
+        let otRateMultiplier = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
+let otPay = (day.ot || 0) * hourlyRate * otRateMultiplier;
         let latePay = (day.late || 0) * hourlyRate; 
 
         const tr = document.createElement('tr');
@@ -3314,7 +3315,8 @@ flatpickr(".time-picker-custom", {
                         let hourlyRate = (emp.rate || 0) / 8;
                         
                         let basicPay = hours * hourlyRate;
-                        let otPay = ot * hourlyRate * 1.25;
+                        let otRateMultiplier = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
+let otPay = ot * hourlyRate * otRateMultiplier;
                         let ndPay = ndHours * hourlyRate * 0.10;
                         let dailyRateVal = basicPay + otPay + ndPay;
 
