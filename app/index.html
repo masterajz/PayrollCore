@@ -27,8 +27,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 	<!-- Flatpickr CSS & JS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f8fafc !important; color: #334155 !important; }
@@ -60,6 +61,24 @@
     .toast-pop { animation: toastSlide 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
     .toast-dot-blink { animation: pulseBlink 1s infinite ease-in-out; }
     .toast-glow { animation: boxGlow 2s infinite ease-in-out; }
+	/* Custom 12-Hour Flatpickr Light Mode */
+.flatpickr-calendar {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1) !important;
+}
+.flatpickr-time input, .flatpickr-time .flatpickr-am-pm {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+.flatpickr-time .flatpickr-am-pm {
+    background: #e0e7ff !important;
+    color: #4f46e5 !important;
+    border-radius: 6px !important;
+}
+.numInputWrapper span.arrowUp:after { border-bottom-color: #64748b !important; }
+.numInputWrapper span.arrowDown:after { border-top-color: #64748b !important; }
     </style>
 </head>
 <body class="overflow-hidden bg-slate-50">
@@ -263,33 +282,32 @@
                         </div>
 
                         <!-- RIGHT SIDE: ACTION BUTTONS WITH GEAR ICON -->
-                        <div class="flex items-center space-x-2">
-                            <button id="toggle-portal-btn" class="flex items-center px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200 cursor-pointer mr-1" title="Show or Hide Payslips in Employee Portal">
+                        <div class="flex flex-wrap items-center justify-start sm:justify-end gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
+                            <button id="toggle-portal-btn" class="flex items-center px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200 cursor-pointer" title="Show or Hide Payslips in Employee Portal">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
                                 Portal: Hidden
                             </button>
-                            <button id="btn-print-breakdown" class="flex items-center bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm mr-2" title="Preview Master Payroll Breakdown">
+                            <button id="btn-print-breakdown" class="flex items-center bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm" title="Preview Master Payroll Breakdown">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                 View Breakdown
                             </button>
-                            <button id="bulk-archive-ts-btn" style="display: none;" class="items-center bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm cursor-pointer mr-2">
+                            <button id="bulk-archive-ts-btn" style="display: none;" class="items-center bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm cursor-pointer">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
                                 Archive Selected
                             </button>
                             
-                            <!-- GEAR ICON: PAYROLL SETTINGS -->
                             <button id="btn-payroll-settings" class="flex items-center bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-200 px-3 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
                             </button>
                             
-                            <button id="btn-generate-timesheet" class="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm ml-2">
+                            <button id="btn-generate-timesheet" class="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm">
                                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 Generate Timesheet
                             </button>
-                            <button id="btn-view-ts-archive" class="flex items-center text-slate-600 hover:text-slate-800 bg-slate-100 border border-slate-200 px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm ml-2">
-    <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-    Payroll History
-</button>
+                            <button id="btn-view-ts-archive" class="flex items-center text-slate-600 hover:text-slate-800 bg-slate-100 border border-slate-200 px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm">
+                                <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                Payroll History
+                            </button>
                         </div>
                     </div>
 
@@ -358,6 +376,7 @@
                                 <tr class="text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200 bg-slate-50">
                                     <th class="py-4 px-6 font-semibold">Name</th>
                                     <th class="py-4 px-6 font-semibold">Email Address</th>
+                                    <th class="py-4 px-6 font-semibold text-center">Status</th> <!-- BAGONG COLUMN -->
                                     <th class="py-4 px-6 font-semibold">Company</th>
                                     <th class="py-4 px-6 font-semibold">Active Plan</th>
                                     <th class="py-4 px-6 font-semibold text-right w-72">Action</th>
@@ -408,24 +427,56 @@
                         </div>
                     </div>
 
-                    <!-- DATABASE TAB -->
-                    <div id="ent-content-db" class="hidden">
-                        <div class="grid grid-cols-3 gap-6 mb-6">
-                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm text-center">
-                                <h4 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Total Users</h4>
-                                <p class="text-4xl font-bold text-indigo-600 mt-2" id="db-stat-users">0</p>
+<!-- DATABASE TAB -->
+                    <div id="ent-content-db" class="hidden flex-col gap-6">
+                        <!-- Stat Cards -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm text-center flex flex-col justify-center">
+                                <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Users</h4>
+                                <p class="text-3xl font-bold text-indigo-600 mt-2" id="db-stat-users">0</p>
                             </div>
-                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm text-center">
-                                <h4 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Total Employees</h4>
-                                <p class="text-4xl font-bold text-emerald-600 mt-2" id="db-stat-emps">0</p>
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm text-center flex flex-col justify-center">
+                                <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Employees</h4>
+                                <p class="text-3xl font-bold text-emerald-600 mt-2" id="db-stat-emps">0</p>
                             </div>
-                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm text-center">
-                                <h4 class="text-sm font-semibold text-slate-500 uppercase tracking-wider">Timesheet Records</h4>
-                                <p class="text-4xl font-bold text-amber-500 mt-2" id="db-stat-ts">0</p>
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm text-center flex flex-col justify-center">
+                                <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Timesheets</h4>
+                                <p class="text-3xl font-bold text-amber-500 mt-2" id="db-stat-ts">0</p>
+                            </div>
+                            <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm text-center flex flex-col justify-center relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-full h-1 bg-rose-500"></div>
+                                <h4 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Storage Est.</h4>
+                                <p class="text-3xl font-bold text-rose-500 mt-2" id="db-stat-storage">0 KB</p>
+                                <p class="text-[10px] text-slate-400 mt-1">Out of 1 GB (Free Tier)</p>
+                            </div>
+                        </div>
+
+                        <!-- System Logs Table -->
+                        <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col">
+                            <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                                <h3 class="text-sm font-bold text-slate-800">System & Error Logs</h3>
+                                <button onclick="window.refreshLogs()" class="text-xs text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer border border-indigo-200 bg-white px-3 py-1.5 rounded-md shadow-sm">
+                                    Refresh Logs
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto max-h-72 overflow-y-auto w-full">
+                                <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
+                                    <thead class="sticky top-0 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.05)] z-10">
+                                        <tr class="text-slate-500 uppercase tracking-wider border-b border-slate-200">
+                                            <th class="py-3 px-6 font-semibold">Timestamp</th>
+                                            <th class="py-3 px-6 font-semibold">Level</th>
+                                            <th class="py-3 px-6 font-semibold">Message</th>
+                                            <th class="py-3 px-6 font-semibold">Source / User</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="db-logs-tbody" class="text-slate-700 divide-y divide-slate-100">
+                                        <!-- Logs will be generated via JS -->
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                </div>
+					</div>
 
                 <!-- Footer - FIX: Ginawang pointer-events-none ang main container para di humarang sa taas, at pointer-events-auto ang buttons para clickable pa rin -->
                 <footer class="mt-auto pt-10 pb-2 w-full text-xs text-slate-400 shrink-0 relative z-20 pointer-events-none">
@@ -838,45 +889,47 @@
     <!-- DAILY TIMESHEET MODAL -->
     <div id="daily-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-[60] p-4">
         <div class="bg-white rounded-xl w-full max-w-6xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden mx-2 sm:mx-auto">
-            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
-                <div class="flex items-center space-x-4 flex-wrap gap-y-2 w-full pr-4">
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0 overflow-x-auto">
+                <div class="flex items-center space-x-4 w-full pr-4 min-w-max">
                     <h3 class="text-lg font-bold text-slate-800 whitespace-nowrap" id="daily-modal-title">Timesheet Breakdown</h3>
                     <button id="add-timesheet-line-btn" class="text-xs font-medium bg-indigo-50 text-indigo-600 hover:bg-indigo-100 px-3 py-1.5 rounded transition-colors border border-indigo-200 flex items-center cursor-pointer whitespace-nowrap">
                         <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         Add Timesheet
                     </button>
+                    
                     <div class="flex flex-col bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-md ml-auto transition-all">
-                        <div class="flex items-center space-x-3">
-                            <span class="text-xs font-bold text-rose-700 whitespace-nowrap">Other Deductions:</span>
+                        <div class="flex items-center space-x-3 whitespace-nowrap">
+                            <span class="text-xs font-bold text-rose-700">Other Deductions:</span>
                             <div class="flex items-center">
-                                <span class="text-xs text-rose-600 mr-1 whitespace-nowrap">CA ₱</span>
+                                <span class="text-xs text-rose-600 mr-1">CA ₱</span>
                                 <input type="number" id="emp-ts-ca" oninput="window.toggleDedNotes()" class="w-16 bg-white border border-rose-300 rounded px-1.5 py-0.5 text-xs text-slate-800 focus:outline-none focus:border-rose-500" value="0">
                             </div>
                             <div class="flex items-center">
-                                <span class="text-xs text-rose-600 mr-1 whitespace-nowrap">Loan ₱</span>
+                                <span class="text-xs text-rose-600 mr-1">Loan ₱</span>
                                 <input type="number" id="emp-ts-loan" oninput="window.toggleDedNotes()" class="w-16 bg-white border border-rose-300 rounded px-1.5 py-0.5 text-xs text-slate-800 focus:outline-none focus:border-rose-500" value="0">
                             </div>
                             <div class="flex items-center">
-                                <span class="text-xs text-rose-600 mr-1 whitespace-nowrap">Penalty ₱</span>
+                                <span class="text-xs text-rose-600 mr-1">Penalty ₱</span>
                                 <input type="number" id="emp-ts-penalty" oninput="window.toggleDedNotes()" class="w-16 bg-white border border-rose-300 rounded px-1.5 py-0.5 text-xs text-slate-800 focus:outline-none focus:border-rose-500" value="0">
                             </div>
                         </div>
                         <div id="ded-notes-container" style="display: none;" class="flex items-center space-x-2 mt-2 border-t border-rose-200 pt-2">
-                            <input type="text" id="emp-ts-ca-note" placeholder="CA Note (e.g. Pamasahe)" style="display: none;" class="w-full bg-white border border-rose-300 rounded px-2 py-1 text-[11px] text-slate-800 focus:outline-none focus:border-rose-500">
+                            <input type="text" id="emp-ts-ca-note" placeholder="CA Note..." style="display: none;" class="w-full bg-white border border-rose-300 rounded px-2 py-1 text-[11px] text-slate-800 focus:outline-none focus:border-rose-500">
                             <input type="text" id="emp-ts-loan-note" placeholder="Loan Note..." style="display: none;" class="w-full bg-white border border-rose-300 rounded px-2 py-1 text-[11px] text-slate-800 focus:outline-none focus:border-rose-500">
-                            <input type="text" id="emp-ts-penalty-note" placeholder="Penalty Note (e.g. Chicken)" style="display: none;" class="w-full bg-white border border-rose-300 rounded px-2 py-1 text-[11px] text-slate-800 focus:outline-none focus:border-rose-500">
+                            <input type="text" id="emp-ts-penalty-note" placeholder="Penalty Note..." style="display: none;" class="w-full bg-white border border-rose-300 rounded px-2 py-1 text-[11px] text-slate-800 focus:outline-none focus:border-rose-500">
                         </div>
                     </div>
-                    <div class="flex items-center space-x-2 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-md">
+                    
+                    <div class="flex items-center space-x-2 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-md whitespace-nowrap">
                         <input type="checkbox" id="emp-ts-gov" class="rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4">
-                        <label for="emp-ts-gov" class="text-xs font-bold text-indigo-700 cursor-pointer whitespace-nowrap">Deduct Gov't (SSS/PH/HDMF)</label>
+                        <label for="emp-ts-gov" class="text-xs font-bold text-indigo-700 cursor-pointer">Deduct Gov't (SSS/PH/HDMF)</label>
                     </div>
                 </div>
                 <button id="close-daily-btn" class="text-slate-400 hover:text-slate-600 cursor-pointer shrink-0 ml-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-            <div class="p-6 overflow-y-auto flex-1 bg-white">
+            <div class="p-2 sm:p-6 overflow-auto flex-1 bg-white">
                 <input type="hidden" id="daily-emp-id">
                 <table class="w-full text-left border-collapse min-w-[850px]">
                     <thead>
@@ -1166,7 +1219,7 @@
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Overtime Pay Rate</label>
                     <select id="set-ot-rate" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer">
                         <option value="1.25">125% (Standard OT)</option>
-                        <option value="1.0">None (100% Regular Pay)</option>
+                        <option value="1.0">100% (Regular OT)</option>
                     </select>
                 </div>
             </div>
@@ -1820,12 +1873,21 @@
                     
                     document.getElementById('db-stat-users').innerText = window.systemUsers.length;
                     
-                    if (window.currentUserRole === 'System Developer') {
-                        document.getElementById('db-stat-emps').innerText = empSnap.size; 
-                    } else {
-                        document.getElementById('db-stat-emps').innerText = window.employees.length;
+                    // STORAGE ESTIMATOR (Simulated bytes based on documents)
+                    let empCount = window.currentUserRole === 'System Developer' ? empSnap.size : window.employees.length;
+                    let tsCount = tsSnap.size;
+                    let userCount = window.systemUsers.length;
+                    
+                    // Roughly 2KB per employee, 5KB per timesheet, 1KB per user
+                    let estimatedBytes = (empCount * 2048) + (tsCount * 5120) + (userCount * 1024);
+                    let storageText = (estimatedBytes / 1024).toFixed(2) + " KB";
+                    if (estimatedBytes > 1048576) {
+                        storageText = (estimatedBytes / 1048576).toFixed(2) + " MB";
                     }
-                    document.getElementById('db-stat-ts').innerText = tsSnap.size;
+                    document.getElementById('db-stat-storage').innerText = storageText;
+
+                    // LOAD SYSTEM LOGS
+                    window.refreshLogs();
                 } catch(e) { console.error(e); }
                 window.hideLoading();
             }
@@ -1833,22 +1895,33 @@
             function renderEnterprisePlanTab() {
                 const tbody = document.getElementById('ent-plan-tbody');
                 tbody.innerHTML = '';
-                if(window.systemUsers.length === 0) return tbody.innerHTML = '<tr><td colspan="5" class="py-4 px-6 text-center text-slate-400">No users found.</td></tr>';
+                // Ginawang colspan="6" para sakop ang bagong column
+                if(window.systemUsers.length === 0) return tbody.innerHTML = '<tr><td colspan="6" class="py-4 px-6 text-center text-slate-400">No users found.</td></tr>';
                 
                 window.systemUsers.forEach(user => {
                     const compName = window.companyNamesMap[user.companyId] || user.companyId;
+                    
+                    // Logic para sa Online/Offline Status (Default: Offline kung walang data, pero Online kung siya ang current na naka-login)
+                    const isCurrentUser = (window.auth.currentUser && window.auth.currentUser.uid === user.uid);
+                    const isOnline = isCurrentUser || user.isOnline; // Pwede mong i-connect ang 'user.isOnline' sa Firebase Presence mo later
+
+                    const statusBadge = isOnline 
+                        ? `<div class="flex items-center justify-center w-full"><span class="h-2 w-2 rounded-full bg-emerald-500 mr-2 shadow-[0_0_5px_#10B981] animate-pulse"></span><span class="text-xs font-semibold text-emerald-600">Online</span></div>`
+                        : `<div class="flex items-center justify-center w-full"><span class="h-2 w-2 rounded-full bg-slate-300 mr-2"></span><span class="text-xs font-semibold text-slate-500">Offline</span></div>`;
+
                     const tr = document.createElement('tr');
                     tr.className = "hover:bg-slate-50";
                     tr.innerHTML = `
                         <td class="py-4 px-6 font-medium text-slate-800">${user.name || '-'}</td>
                         <td class="py-4 px-6 text-slate-600">${user.email}</td>
+                        <td class="py-4 px-6">${statusBadge}</td> <!-- BAGONG COLUMN DATA -->
                         <td class="py-4 px-6 text-slate-600 truncate max-w-[180px]" title="${compName}">${compName || '-'}</td>
                         <td class="py-4 px-6 font-semibold text-emerald-600">${user.activePlan || 'Trial (7 days)'}</td>
                         <td class="py-4 px-6">
                             <div class="flex justify-end items-center space-x-3 whitespace-nowrap">
-                                <button onclick="openSysUserEdit('${user.uid}', 'plan')" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold cursor-pointer">Edit</button>
+                                <button onclick="window.systemUsers=[{uid:'${user.uid}',...${JSON.stringify(user).replace(/"/g, '&quot;')} }]; window.openSysUserEdit('${user.uid}', 'plan')" class="text-indigo-600 hover:text-indigo-800 text-xs font-semibold cursor-pointer">Edit</button>
                                 <button onclick="showToast('Password reset email sent (Simulated)', 'success')" class="text-slate-500 hover:text-slate-700 text-xs font-semibold cursor-pointer">Reset PWD</button>
-                                <button onclick="deleteSysUser('${user.uid}')" class="text-rose-500 hover:text-rose-700 text-xs font-semibold cursor-pointer">Delete</button>
+                                <button onclick="window.deleteSysUser('${user.uid}')" class="text-rose-500 hover:text-rose-700 text-xs font-semibold cursor-pointer">Delete</button>
                             </div>
                         </td>
                     `;
@@ -2497,9 +2570,10 @@
             resetEntTabs(); e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer";
             document.getElementById('ent-content-users').style.display = 'block';
         });
-        document.getElementById('ent-tab-db').addEventListener('click', (e) => {
-            resetEntTabs(); e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer";
-            document.getElementById('ent-content-db').style.display = 'block';
+      document.getElementById('ent-tab-db').addEventListener('click', (e) => {
+            resetEntTabs(); 
+            e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer";
+            document.getElementById('ent-content-db').style.display = 'flex'; // Binago ang block sa flex
         });
         document.getElementById('ent-tab-access').addEventListener('click', (e) => {
             resetEntTabs(); e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer";
@@ -2599,9 +2673,8 @@ document.getElementById('adv-tab-other').addEventListener('click', (e) => {
                 const tr = document.createElement('tr');
                 tr.className = "border-b border-slate-200 hover:bg-slate-50";
                 tr.innerHTML = `
-                    <td class="py-2"><input type="date" class="t-date w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs font-medium" value="${day.dateStr}" onchange="window.calcDaily('${empId}', ${index}, this)"></td>
-                    <td class="px-2 py-2"><input type="text" class="t-in time-picker-custom w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer placeholder-slate-400" placeholder="--:--" value="${day.timeIn}" onchange="window.calcDaily('${empId}', ${index}, this)"></td>
-                    <td class="px-2 py-2"><input type="text" class="t-out time-picker-custom w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer placeholder-slate-400" placeholder="--:--" value="${day.timeOut}" onchange="window.calcDaily('${empId}', ${index}, this)"></td>
+                    <td class="px-2 py-2"><input type="text" class="t-in time-picker-custom w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer" placeholder="hh:mm AM/PM" value="${day.timeIn}" onchange="window.calcDaily('${empId}', ${index}, this)"></td>
+<td class="px-2 py-2"><input type="text" class="t-out time-picker-custom w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer" placeholder="hh:mm AM/PM" value="${day.timeOut}" onchange="window.calcDaily('${empId}', ${index}, this)"></td>
                     
                     <td class="px-2 py-2 text-center font-bold text-indigo-500 text-xs" title="Overtime (Auto-computed)">
                         <span class="t-ot">${(day.ot || 0).toFixed(2)}</span><br>
@@ -2630,14 +2703,17 @@ document.getElementById('adv-tab-other').addEventListener('click', (e) => {
                 `;
                 tbody.appendChild(tr);
             });
-// IDAGDAG ITO PAGKATAPOS NG LOOP: I-activate ang custom Time Picker
-            flatpickr(".time-picker-custom", {
-                enableTime: true,
-                noCalendar: true,
-                dateFormat: "H:i", // 24-hour format sa background para di mag-error computations mo
-                time_24hr: false,  // false para AM/PM ang makikita sa picker UI para mas madali gamitin
-                disableMobile: "true"
-            });
+			
+			// Activate 12-Hour AM/PM Time Picker
+flatpickr(".time-picker-custom", {
+    enableTime: true,
+    noCalendar: true,
+    dateFormat: "H:i",    // Kinukwenta pa rin bilang 24h sa background para 'di masira ang formula
+    altInput: true,       // Pinapakita sa user ang 12-hour format
+    altFormat: "h:i K",   // Output sa screen: "08:00 PM"
+    time_24hr: false      // Piliting maging 12-hour mode na may AM/PM
+});
+
         }; // <-- Ito yung dulo ng window.renderDailyTable
 
         window.calcDaily = function(empId, index, el) {
@@ -3431,7 +3507,7 @@ document.getElementById('adv-tab-other').addEventListener('click', (e) => {
             <td class="px-4 py-4 text-emerald-600 text-center font-bold text-base">₱${netPay.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
             
             <td class="px-3 py-4 text-center">
-                <div class="flex items-center justify-center space-x-1.5">
+                <div class="flex flex-wrap items-center justify-center gap-1.5">
                     <button type="button" onclick="window.openDailyModal('${emp.id}')" class="text-xs bg-white text-slate-600 hover:bg-slate-100 px-3 py-1.5 rounded transition-colors border border-slate-300 cursor-pointer shadow-sm">Edit</button>
                     <button type="button" onclick="window.deleteTimesheet('${emp.id}')" class="text-xs bg-white text-rose-600 hover:bg-rose-50 px-3 py-1.5 rounded transition-colors border border-rose-200 cursor-pointer shadow-sm">Delete</button>
                     <button type="button" onclick="window.previewTimesheet('${emp.id}')" class="text-xs bg-white text-emerald-600 hover:bg-emerald-50 px-3 py-1.5 rounded transition-colors border border-slate-300 cursor-pointer shadow-sm">Preview</button>
@@ -4152,6 +4228,39 @@ window.showToast = function(message, type = 'success') {
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 };
+window.refreshLogs = function() {
+            const tbody = document.getElementById('db-logs-tbody');
+            if (!tbody) return;
+            
+            // Mock Logs: You can connect this to a real Firestore "logs" collection later
+            const currentUserEmail = window.auth.currentUser ? window.auth.currentUser.email : 'System';
+            
+            const logs = [
+                { time: new Date().toISOString(), level: 'INFO', msg: 'User accessed Enterprise Settings', source: currentUserEmail },
+                { time: new Date(Date.now() - 1500000).toISOString(), level: 'WARNING', msg: 'Multiple incorrect PIN attempts detected in Employee Portal', source: 'Auth Security' },
+                { time: new Date(Date.now() - 3600000).toISOString(), level: 'INFO', msg: 'Master Payroll Breakdown generated', source: 'Payroll Engine' },
+                { time: new Date(Date.now() - 7200000).toISOString(), level: 'ERROR', msg: 'GAS Mailer timeout: Failed to send email to employee', source: 'API Endpoint' },
+                { time: new Date(Date.now() - 86400000).toISOString(), level: 'INFO', msg: 'Database synced successfully', source: 'Firestore Sync' }
+            ];
+
+            tbody.innerHTML = '';
+            logs.forEach(log => {
+                let badgeClass = "bg-slate-100 text-slate-600";
+                if (log.level === 'ERROR') badgeClass = "bg-rose-100 text-rose-700";
+                if (log.level === 'WARNING') badgeClass = "bg-amber-100 text-amber-700";
+                if (log.level === 'INFO') badgeClass = "bg-indigo-100 text-indigo-700";
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="py-3 px-6 text-slate-500">${new Date(log.time).toLocaleString()}</td>
+                        <td class="py-3 px-6"><span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${badgeClass}">${log.level}</span></td>
+                        <td class="py-3 px-6 font-medium text-slate-800">${log.msg}</td>
+                        <td class="py-3 px-6 text-slate-500">${log.source}</td>
+                    </tr>
+                `;
+            });
+            showToast("System logs refreshed.", "success");
+        };
     </script>
 </body>
 </html>
