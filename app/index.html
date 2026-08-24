@@ -3622,7 +3622,8 @@ let otPay = ot * hourlyRate * otRateMultiplier;
                 if (regHrs < 0) regHrs = 0;
 
                 let bPay = d.basicPay !== undefined ? d.basicPay : (regHrs * hourlyRate);
-                let oPay = ot * hourlyRate * 1.25;
+                let otRateMultiplier = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
+let oPay = ot * hourlyRate * otRateMultiplier;
                 let nPay = nd * hourlyRate * 0.10;
                 let lPay = late * hourlyRate;
 
