@@ -2656,53 +2656,74 @@ document.getElementById('adv-tab-other').addEventListener('click', (e) => {
     document.getElementById('adv-content-contrib').style.display = 'none';
 });
 
-        window.renderDailyTable = function(empId) {
-            const tbody = document.getElementById('daily-tbody');
-            if(!tbody) return;
-            tbody.innerHTML = '';
-            const emp = window.employees.find(e => e.id === empId) || {};
+       window.renderDailyTable = function(empId) {
+    const tbody = document.getElementById('daily-tbody');
+    if(!tbody) return;
+    tbody.innerHTML = '';
+    const emp = window.employees.find(e => e.id === empId) || {};
+    
+    if(!window.currentTimesheetData[empId]) return;
+
+    window.currentTimesheetData[empId].forEach((day, index) => {
+        let hourlyRate = (emp.rate || 0) / 8;
+        let ndPay = (day.nd || 0) * hourlyRate * 0.10;
+        let otPay = (day.ot || 0) * hourlyRate * 1.25;
+        let latePay = (day.late || 0) * hourlyRate; 
+
+        const tr = document.createElement('tr');
+        tr.className = "border-b border-slate-200 hover:bg-slate-50";
+        tr.innerHTML = `
+            <!-- 1. DATE COLUMN -->
+            <td class="px-2 py-2">
+                <input type="date" class="t-date w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs font-medium" value="${day.dateStr}" onchange="window.calcDaily('${empId}', ${index}, this)">
+            </td>
             
-            if(!window.currentTimesheetData[empId]) return;
+            <!-- 2. TIME IN COLUMN -->
+            <td class="px-2 py-2">
+                <input type="text" class="t-in time-picker-custom w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer placeholder-slate-400" placeholder="hh:mm AM/PM" value="${day.timeIn}" onchange="window.calcDaily('${empId}', ${index}, this)">
+            </td>
+            
+            <!-- 3. TIME OUT COLUMN -->
+            <td class="px-2 py-2">
+                <input type="text" class="t-out time-picker-custom w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer placeholder-slate-400" placeholder="hh:mm AM/PM" value="${day.timeOut}" onchange="window.calcDaily('${empId}', ${index}, this)">
+            </td>
+            
+            <!-- 4. OVERTIME COLUMN -->
+            <td class="px-2 py-2 text-center font-bold text-indigo-500 text-xs" title="Overtime (Auto-computed)">
+                <span class="t-ot">${(day.ot || 0).toFixed(2)}</span><br>
+                <div class="t-ot-container mt-0.5"><span class="text-[10px] text-indigo-400 font-normal">₱${otPay.toFixed(2)}</span></div>
+            </td>
 
-            window.currentTimesheetData[empId].forEach((day, index) => {
-                let hourlyRate = (emp.rate || 0) / 8;
-                let ndPay = (day.nd || 0) * hourlyRate * 0.10;
-                let otPay = (day.ot || 0) * hourlyRate * 1.25;
-                let latePay = (day.late || 0) * hourlyRate; 
-
-                const tr = document.createElement('tr');
-                tr.className = "border-b border-slate-200 hover:bg-slate-50";
-                tr.innerHTML = `
-                    <td class="px-2 py-2"><input type="text" class="t-in time-picker-custom w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer" placeholder="hh:mm AM/PM" value="${day.timeIn}" onchange="window.calcDaily('${empId}', ${index}, this)"></td>
-<td class="px-2 py-2"><input type="text" class="t-out time-picker-custom w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer" placeholder="hh:mm AM/PM" value="${day.timeOut}" onchange="window.calcDaily('${empId}', ${index}, this)"></td>
-                    
-                    <td class="px-2 py-2 text-center font-bold text-indigo-500 text-xs" title="Overtime (Auto-computed)">
-                        <span class="t-ot">${(day.ot || 0).toFixed(2)}</span><br>
-                        <div class="t-ot-container mt-0.5"><span class="text-[10px] text-indigo-400 font-normal">₱${otPay.toFixed(2)}</span></div>
-                    </td>
-
-                    <td class="px-2 py-2 text-center font-bold text-orange-500 text-xs t-late" title="Lates (Auto-computed)">
-                        ${(day.late || 0).toFixed(2)}<br><span class="text-[10px] text-orange-400 font-normal">₱${latePay.toFixed(2)}</span>
-                    </td>
-                    
-                    <td class="px-2 py-2 text-center font-bold text-indigo-500 text-xs t-nd" title="Night Diff (10PM - 6AM)">
-                        ${(day.nd || 0).toFixed(2)}<br><span class="text-[10px] text-indigo-400 font-normal">₱${ndPay.toFixed(2)}</span>
-                    </td>
-                    <td class="px-2 py-2 text-center font-bold text-slate-700 text-xs t-dur">${(day.duration || 0).toFixed(2)}</td>
-                    <td class="px-2 py-2 text-center font-bold text-emerald-600 text-xs t-rate">₱${(day.rate || 0).toFixed(2)}</td>
-                    <td class="px-2 py-2 text-center">
-                        <div class="flex justify-center items-center space-x-3">
-                            <button onclick="window.reorderTimesheetRow('${empId}')" class="text-indigo-500 hover:text-indigo-700 cursor-pointer" title="Sort & Apply">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
-                            </button>
-                            <button onclick="window.removeTimesheetLine('${empId}', ${index})" class="text-rose-500 hover:text-rose-700 cursor-pointer" title="Delete Row">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
+            <!-- 5. LATES COLUMN -->
+            <td class="px-2 py-2 text-center font-bold text-orange-500 text-xs t-late" title="Lates (Auto-computed)">
+                ${(day.late || 0).toFixed(2)}<br><span class="text-[10px] text-orange-400 font-normal">₱${latePay.toFixed(2)}</span>
+            </td>
+            
+            <!-- 6. NIGHT DIFF COLUMN -->
+            <td class="px-2 py-2 text-center font-bold text-indigo-500 text-xs t-nd" title="Night Diff (10PM - 6AM)">
+                ${(day.nd || 0).toFixed(2)}<br><span class="text-[10px] text-indigo-400 font-normal">₱${ndPay.toFixed(2)}</span>
+            </td>
+            
+            <!-- 7. DURATION COLUMN -->
+            <td class="px-2 py-2 text-center font-bold text-slate-700 text-xs t-dur">${(day.duration || 0).toFixed(2)}</td>
+            
+            <!-- 8. EARNINGS COLUMN -->
+            <td class="px-2 py-2 text-center font-bold text-emerald-600 text-xs t-rate">₱${(day.rate || 0).toFixed(2)}</td>
+            
+            <!-- 9. ACTION COLUMN -->
+            <td class="px-2 py-2 text-center">
+                <div class="flex flex-wrap justify-center items-center gap-1.5">
+                    <button onclick="window.reorderTimesheetRow('${empId}')" class="text-indigo-500 hover:text-indigo-700 cursor-pointer" title="Sort & Apply">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                    </button>
+                    <button onclick="window.removeTimesheetLine('${empId}', ${index})" class="text-rose-500 hover:text-rose-700 cursor-pointer" title="Delete Row">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
 			
 			// Activate 12-Hour AM/PM Time Picker
 flatpickr(".time-picker-custom", {
