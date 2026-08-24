@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayrollSync Dashboard</title>
+    <title>PayrollCore Dashboard</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -90,7 +90,7 @@
                     </svg>
                 </div>
             </div>
-            <h2 class="text-2xl font-bold text-center text-slate-800 mb-2" id="auth-title">Welcome to PayrollSync</h2>
+            <h2 class="text-2xl font-bold text-center text-slate-800 mb-2" id="auth-title">Welcome to PayrollCore</h2>
             <p class="text-sm text-center text-slate-500 mb-6" id="auth-subtitle">Sign in to your account</p>
 
             <form id="auth-form" class="space-y-4">
@@ -143,7 +143,7 @@
                     </svg>
                 </div>
                 <div class="flex flex-col justify-center mt-1">
-                    <span class="text-xl font-bold tracking-tight text-slate-900 leading-none">PayrollSync</span>
+                    <span class="text-xl font-bold tracking-tight text-slate-900 leading-none">PayrollCore</span>
                     <span id="sidebar-company-name" class="text-[10px] font-bold text-indigo-600 uppercase tracking-wider mt-1">Company Name</span>
                 </div>
             </div>
@@ -439,7 +439,7 @@
                             <button onclick="showFooterModal('about')" class="hover:text-slate-600 transition-colors cursor-pointer">About Us</button>
                         </div>
                         <div class="text-center md:text-right pointer-events-auto">
-                            &copy; 2026 Zjar PayrollSync &middot; RTX Creations. All rights reserved.
+                            &copy; 2026 Zjar PayrollCore &middot; RTX Creations. All rights reserved.
                         </div>
                     </div>
                 </footer>
@@ -724,7 +724,7 @@
                     <div class="border border-rose-300 rounded-xl p-4 flex flex-col justify-between bg-rose-50/30">
                         <div>
                             <span class="text-xs font-bold text-rose-600 uppercase">Enterprise</span>
-                            <h4 class="text-lg font-bold text-slate-800 mt-1">PayrollSync Blaze</h4>
+                            <h4 class="text-lg font-bold text-slate-800 mt-1">PayrollCore Blaze</h4>
                             <p class="text-2xl font-bold text-slate-900 mt-2">₱1,499 <span class="text-xs text-slate-500 font-normal">/ month</span></p>
                             <ul class="text-xs text-slate-600 space-y-2 mt-4">
                                 <li>✓ Unlimited Employees</li>
@@ -1552,7 +1552,7 @@
             window.companyPositions = [];
             window.systemUsers = [];
             window.companySettings = {
-                name: "Zjar PayrollSync", logo: "", address: "123 Business Road, Metro Manila, PH", phone: "+63 912 345 6789",
+                name: "Zjar PayrollCore", logo: "", address: "123 Business Road, Metro Manila, PH", phone: "+63 912 345 6789",
                 staffAccess: { employee: true, payroll: false, bonuses: false, settings: false },
                 portalEnabled: true
             };
@@ -2534,7 +2534,7 @@ if (authSwitchBtn) {
         const authNameGroup = document.getElementById('auth-name-group');
 
         if (isLoginMode) {
-            authTitle.innerText = "Welcome to PayrollSync";
+            authTitle.innerText = "Welcome to PayrollCore";
             authSubtitle.innerText = "Sign in to your account";
             authBtn.innerText = "Sign In";
             authSwitchText.innerText = "Don't have an account?";
@@ -2542,7 +2542,7 @@ if (authSwitchBtn) {
             authNameGroup.classList.add('hidden');
         } else {
             authTitle.innerText = "Create Account";
-            authSubtitle.innerText = "Sign up to start with PayrollSync";
+            authSubtitle.innerText = "Sign up to start with PayrollCore";
             authBtn.innerText = "Register Account";
             authSwitchText.innerText = "Already have an account?";
             authSwitchBtn.innerText = "Sign In";
@@ -2562,7 +2562,7 @@ const urlParams = new URLSearchParams(window.location.search);
 if (urlParams.get('mode') === 'register') {
     isLoginMode = false;
     document.getElementById('auth-title').innerText = "Create Account";
-    document.getElementById('auth-subtitle').innerText = "Sign up to start with PayrollSync";
+    document.getElementById('auth-subtitle').innerText = "Sign up to start with PayrollCore";
     document.getElementById('auth-btn').innerText = "Register Account";
     document.getElementById('auth-switch-text').innerText = "Already have an account?";
     document.getElementById('auth-switch-btn').innerText = "Sign In";
@@ -2911,7 +2911,7 @@ document.getElementById('adv-tab-other').addEventListener('click', (e) => {
                 </table>
 
                 <div style="margin-top: 30px; border-top: 1px dashed #cbd5e1; padding-top: 15px; text-align: center;">
-                    <p style="font-size: 10px; color: #94a3b8; margin: 0;">Sent securely via PayrollSync</p>
+                    <p style="font-size: 10px; color: #94a3b8; margin: 0;">Sent securely via PayrollCore</p>
                 </div>
             </div>`;
 
@@ -3620,7 +3620,7 @@ document.getElementById('adv-tab-other').addEventListener('click', (e) => {
             let contentMap = {
                 'terms': {
                     title: "Terms of Service",
-                    body: "Welcome to PayrollSync. By accessing our dashboard, you agree to these terms. All payroll computations and generated timesheets are the responsibility of the administrative user. We are not liable for inaccurate data entry."
+                    body: "Welcome to PayrollCore. By accessing our dashboard, you agree to these terms. All payroll computations and generated timesheets are the responsibility of the administrative user. We are not liable for inaccurate data entry."
                 },
                 'privacy': {
                     title: "Privacy & Security",
@@ -3636,11 +3636,11 @@ document.getElementById('adv-tab-other').addEventListener('click', (e) => {
                 },
                 'license': {
                     title: "Licensed Content",
-                    body: "PayrollSync is a proprietary software developed by RTX Creations. Tailwind CSS, Google Firebase, and related open-source icons remain the property of their respective creators."
+                    body: "PayrollCore is a proprietary software developed by RTX Creations. Tailwind CSS, Google Firebase, and related open-source icons remain the property of their respective creators."
                 },
                 'about': {
                     title: "About Us",
-                    body: "PayrollSync is a modern, lightweight payroll management system designed specifically for small to medium enterprises. Our goal is to eliminate paper-based tracking and automate monthly salary distributions."
+                    body: "PayrollCore is a modern, lightweight payroll management system designed specifically for small to medium enterprises. Our goal is to eliminate paper-based tracking and automate monthly salary distributions."
                 }
             };
 
@@ -3843,7 +3843,7 @@ window.copyPortalLink = function() {
                             </tr>
                         </tfoot>
                     </table>
-                    <p style="text-align: center; font-size: 10px; color: #94a3b8; margin-top: 30px;">Printed on: ${new Date().toLocaleString()} | Generated via PayrollSync</p>
+                    <p style="text-align: center; font-size: 10px; color: #94a3b8; margin-top: 30px;">Printed on: ${new Date().toLocaleString()} | Generated via PayrollCore</p>
                 </div>
             `;
 
