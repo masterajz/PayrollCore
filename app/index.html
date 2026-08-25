@@ -942,17 +942,19 @@
                 <input type="hidden" id="daily-emp-id">
                 <table class="w-full text-left border-collapse min-w-[850px]">
                     <thead>
-                        <tr class="text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200 bg-white">
-                            <th class="pb-3 font-semibold px-2 whitespace-nowrap min-w-[115px]">Date</th>
-                            <th class="pb-3 font-semibold px-2 whitespace-nowrap min-w-[105px]">Time In</th>
-                            <th class="pb-3 font-semibold px-2 whitespace-nowrap min-w-[105px]">Time Out</th>
-                            <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[90px]">OT (Hrs/₱)</th>
-                            <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[90px]">Lates (Hrs/₱)</th>
-                            <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[90px]">ND (Hrs/₱)</th>
-                            <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[80px]">Duration</th>
-                            <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[100px]">Earnings (₱)</th>
-                            <th class="pb-3 font-semibold px-2 text-center whitespace-nowrap min-w-[100px]">Action</th>
-                        </tr>
+                       <tr class="text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200 bg-white">
+    <th class="pb-3 font-semibold px-2 whitespace-nowrap min-w-[115px]">Date</th>
+    <!-- NEW DAY TYPE COLUMN -->
+    <th class="pb-3 font-semibold px-2 whitespace-nowrap min-w-[130px]">Day Type</th>
+    <th class="pb-3 font-semibold px-2 whitespace-nowrap min-w-[105px]">Time In</th>
+    <th class="pb-3 font-semibold px-2 whitespace-nowrap min-w-[105px]">Time Out</th>
+    <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[90px]">OT (Hrs/₱)</th>
+    <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[90px]">Lates (Hrs/₱)</th>
+    <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[90px]">ND (Hrs/₱)</th>
+    <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[80px]">Duration</th>
+    <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[100px]">Earnings (₱)</th>
+    <th class="pb-3 font-semibold px-2 text-center whitespace-nowrap min-w-[100px]">Action</th>
+</tr>
                     </thead>
                     <tbody id="daily-tbody" class="text-sm text-slate-700 bg-white">
                     </tbody>
@@ -2855,7 +2857,17 @@ let otPay = (day.ot || 0) * hourlyRate * otRateMultiplier;
         tr.innerHTML = `
             <!-- 1. DATE COLUMN -->
             <td class="px-2 py-2 min-w-[115px]">
-                <input type="text" class="t-date date-picker-custom w-full min-w-[105px] bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center font-medium cursor-pointer" value="${day.dateStr}" placeholder="MM/DD/YYYY" onchange="window.calcDaily('${empId}', ${index}, this)">
+                <input type="text" class="t-date date-picker-custom w-full min-w-[105px] bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center font-medium cursor-pointer" value="${day.dateStr}" placeholder="MM/DD/YYYY">
+            </td>
+			
+			<!-- 1.5 DAY TYPE / HOLIDAY COLUMN -->
+            <td class="px-2 py-2 min-w-[130px]">
+                <select class="t-daytype w-full bg-white border border-slate-300 text-slate-800 py-1 px-1.5 rounded text-xs font-semibold focus:border-indigo-500 cursor-pointer" onchange="window.calcDaily('${empId}', ${index}, this)">
+                    <option value="NORMAL" ${(!day.dayType || day.dayType === 'NORMAL') ? 'selected' : ''}>Normal Day</option>
+                    <option value="REG_HOL" ${day.dayType === 'REG_HOL' ? 'selected' : ''}>Reg. Holiday (200%)</option>
+                    <option value="SPEC_HOL" ${day.dayType === 'SPEC_HOL' ? 'selected' : ''}>Spec. Holiday (130%)</option>
+                    <option value="DBL_HOL" ${day.dayType === 'DBL_HOL' ? 'selected' : ''}>Double Holiday (300%)</option>
+                </select>
             </td>
             
             <!-- 2. TIME IN COLUMN -->
@@ -2932,93 +2944,114 @@ flatpickr(".time-picker-custom", {
         }; // <-- Ito yung dulo ng window.renderDailyTable
 
         window.calcDaily = function(empId, index, el) {
-            const tr = el.closest('tr');
-            const emp = window.employees.find(e => e.id === empId);
-            const dateStr = tr.querySelector('.t-date').value;
-            const timeIn = tr.querySelector('.t-in').value;
-            const timeOut = tr.querySelector('.t-out').value;
-            
-            let hours = 0; let ndHours = 0; let ot = 0; let lateHrs = 0;
-            let hourlyRate = (emp.rate || 0) / 8;
+    const tr = el.closest('tr');
+    const emp = window.employees.find(e => e.id === empId);
+    const dateStr = tr.querySelector('.t-date').value;
+    const dayType = tr.querySelector('.t-daytype')?.value || 'NORMAL'; // KINUHA ANG DAY TYPE / HOLIDAY
+    const timeIn = tr.querySelector('.t-in').value;
+    const timeOut = tr.querySelector('.t-out').value;
+    
+    let hours = 0; let ndHours = 0; let ot = 0; let lateHrs = 0;
+    let rawRate = emp ? emp.rate : 0;
+let cleanRate = typeof rawRate === 'string' ? parseFloat(rawRate.replace(/[^0-9.]/g, '')) : parseFloat(rawRate);
+let hourlyRate = (cleanRate && !isNaN(cleanRate)) ? cleanRate / 8 : 0;
 
-            if (timeIn && timeOut) {
-                let start = new Date("1970-01-01T" + timeIn + ":00");
-                let end = new Date("1970-01-01T" + timeOut + ":00");
-                if (end < start) end.setDate(end.getDate() + 1);
-                
-                if (emp.shiftStart) {
-                    let sStart = new Date("1970-01-01T" + emp.shiftStart + ":00");
-                    if (start > sStart) {
-                        lateHrs = (start - sStart) / (1000 * 60 * 60);
-                    }
-                }
-
-               // Tiyaking nababasa nang tama ang MM/DD/YYYY o YYYY-MM-DD
-                let actualDate;
-                if (dateStr.includes('/')) {
-                    let parts = dateStr.split('/');
-                    actualDate = new Date(parts[2], parts[0] - 1, parts[1]); // Month is 0-indexed
-                } else if (dateStr.includes('-')) {
-                    let parts = dateStr.split('-');
-                    actualDate = new Date(parts[0], parts[1] - 1, parts[2]);
-                } else {
-                    actualDate = new Date();
-                }
-
-                let dayOfWeek = actualDate.getDay(); // 0 = Sunday, 5 = Friday, 6 = Saturday
-                let isFridayWeekend = window.govRates && window.govRates.fridayIsWeekend;
-                
-                // Kapag naka-check ang setting, ituturing na Weekend Break din ang Biyernes (5)
-                let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6 || (isFridayWeekend && dayOfWeek === 5));
-                
-                // Kunin ang break galing sa Payroll Settings
-                let breakDeduction = isWeekend 
-                    ? (window.govRates && window.govRates.breakWeekend !== undefined ? parseFloat(window.govRates.breakWeekend) : 2)
-                    : (window.govRates && window.govRates.breakWeekday !== undefined ? parseFloat(window.govRates.breakWeekday) : 1);
-
-                let rawHours = (end - start) / (1000 * 60 * 60);
-                let netHours = rawHours > 4 ? rawHours - breakDeduction : rawHours;
-
-                if (netHours > 8) {
-                    ot = netHours - 8;
-                    hours = 8;
-                } else {
-                    hours = netHours;
-                    ot = 0;
-                }
-
-                let ndStart1 = new Date(start); ndStart1.setHours(22,0,0,0);
-                let ndEnd1 = new Date(start); ndEnd1.setDate(ndEnd1.getDate() + 1); ndEnd1.setHours(6,0,0,0);
-                let ndStart0 = new Date(start); ndStart0.setDate(ndStart0.getDate() - 1); ndStart0.setHours(22,0,0,0);
-                let ndEnd0 = new Date(start); ndEnd0.setHours(6,0,0,0);
-
-                let overlap0 = Math.max(0, Math.min(end, ndEnd0) - Math.max(start, ndStart0));
-                let overlap1 = Math.max(0, Math.min(end, ndEnd1) - Math.max(start, ndStart1));
-                
-                ndHours = (overlap0 + overlap1) / (1000 * 60 * 60);
-                if (ndHours > hours) ndHours = hours; 
+    if (timeIn && timeOut) {
+        let start = new Date("1970-01-01T" + timeIn + ":00");
+        let end = new Date("1970-01-01T" + timeOut + ":00");
+        if (end < start) end.setDate(end.getDate() + 1);
+        
+        if (emp.shiftStart) {
+            let sStart = new Date("1970-01-01T" + emp.shiftStart + ":00");
+            if (start > sStart) {
+                lateHrs = (start - sStart) / (1000 * 60 * 60);
             }
-            
-            let totalDur = hours + ot;
-            let basicPay = hours * hourlyRate;
-            // DYNAMIC OT RATE INJECTED HERE
-            let otPay = ot * hourlyRate * (window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25); 
-            let ndPay = ndHours * hourlyRate * 0.10; 
-            let latePay = lateHrs * hourlyRate;
-            let dailyRateVal = basicPay + otPay + ndPay;
-            
-            tr.querySelector('.t-ot').innerText = ot.toFixed(2);
-            tr.querySelector('.t-late').innerHTML = `${lateHrs.toFixed(2)}<br><span class="text-[10px] text-orange-400 font-normal">₱${latePay.toFixed(2)}</span>`;
-            tr.querySelector('.t-nd').innerHTML = `${ndHours.toFixed(2)}<br><span class="text-[10px] text-indigo-400 font-normal">₱${ndPay.toFixed(2)}</span>`;
-            tr.querySelector('.t-ot-container').innerHTML = `<span class="text-[10px] text-indigo-400 font-normal">₱${otPay.toFixed(2)}</span>`;
-            
-            tr.querySelector('.t-dur').innerText = totalDur.toFixed(2);
-            tr.querySelector('.t-rate').innerText = "₱" + dailyRateVal.toFixed(2);
-            
-            window.currentTimesheetData[empId][index] = { 
-                dateStr, timeIn, timeOut, ot, nd: ndHours, late: lateHrs, duration: totalDur, rate: dailyRateVal, basicPay: basicPay 
-            };
-        };
+        }
+
+        // Tiyaking nababasa nang tama ang MM/DD/YYYY o YYYY-MM-DD
+        let actualDate;
+        if (dateStr.includes('/')) {
+            let parts = dateStr.split('/');
+            actualDate = new Date(parts[2], parts[0] - 1, parts[1]); // Month is 0-indexed
+        } else if (dateStr.includes('-')) {
+            let parts = dateStr.split('-');
+            actualDate = new Date(parts[0], parts[1] - 1, parts[2]);
+        } else {
+            actualDate = new Date();
+        }
+
+        let dayOfWeek = actualDate.getDay(); // 0 = Sunday, 5 = Friday, 6 = Saturday
+        let isFridayWeekend = window.govRates && window.govRates.fridayIsWeekend;
+        
+        // Kapag naka-check ang setting, ituturing na Weekend Break din ang Biyernes (5)
+        let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6 || (isFridayWeekend && dayOfWeek === 5));
+        
+        // Kunin ang break galing sa Payroll Settings
+        let breakDeduction = isWeekend 
+            ? (window.govRates && window.govRates.breakWeekend !== undefined ? parseFloat(window.govRates.breakWeekend) : 2)
+            : (window.govRates && window.govRates.breakWeekday !== undefined ? parseFloat(window.govRates.breakWeekday) : 1);
+
+        let rawHours = (end - start) / (1000 * 60 * 60);
+        let netHours = rawHours > 4 ? rawHours - breakDeduction : rawHours;
+
+        if (netHours > 8) {
+            ot = netHours - 8;
+            hours = 8;
+        } else {
+            hours = netHours;
+            ot = 0;
+        }
+
+        let ndStart1 = new Date(start); ndStart1.setHours(22,0,0,0);
+        let ndEnd1 = new Date(start); ndEnd1.setDate(ndEnd1.getDate() + 1); ndEnd1.setHours(6,0,0,0);
+        let ndStart0 = new Date(start); ndStart0.setDate(ndStart0.getDate() - 1); ndStart0.setHours(22,0,0,0);
+        let ndEnd0 = new Date(start); ndEnd0.setHours(6,0,0,0);
+
+        let overlap0 = Math.max(0, Math.min(end, ndEnd0) - Math.max(start, ndStart0));
+        let overlap1 = Math.max(0, Math.min(end, ndEnd1) - Math.max(start, ndStart1));
+        
+        ndHours = (overlap0 + overlap1) / (1000 * 60 * 60);
+        if (ndHours > hours) ndHours = hours; 
+    }
+    
+    let totalDur = hours + ot;
+
+    // HOLIDAY MULTIPLIER LOGIC
+    let dayMultiplier = 1.0;
+    if (dayType === 'REG_HOL') dayMultiplier = 2.0;       // 200% Pay
+    else if (dayType === 'SPEC_HOL') dayMultiplier = 1.3;  // 130% Pay
+    else if (dayType === 'DBL_HOL') dayMultiplier = 3.0;   // 300% Pay
+
+    let basicPay = 0;
+    // UNWORKED REGULAR HOLIDAY RULE: 100% daily rate pa rin kahit walang oras/time-in
+    if (totalDur === 0 && (dayType === 'REG_HOL' || dayType === 'DBL_HOL')) {
+        basicPay = (emp.rate || 0); 
+    } else {
+        basicPay = hours * hourlyRate * dayMultiplier;
+    }
+
+    let otBaseRate = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
+    let otPay = ot * hourlyRate * otBaseRate * dayMultiplier; 
+    let ndPay = ndHours * hourlyRate * 0.10; 
+    let latePay = lateHrs * hourlyRate;
+
+    let dailyRateVal = basicPay + otPay + ndPay - latePay;
+if (isNaN(dailyRateVal) || dailyRateVal < 0) dailyRateVal = 0;
+
+    // UI UPDATES
+    tr.querySelector('.t-ot').innerText = ot.toFixed(2);
+    tr.querySelector('.t-late').innerHTML = `${lateHrs.toFixed(2)}<br><span class="text-[10px] text-orange-400 font-normal">₱${latePay.toFixed(2)}</span>`;
+    tr.querySelector('.t-nd').innerHTML = `${ndHours.toFixed(2)}<br><span class="text-[10px] text-indigo-400 font-normal">₱${ndPay.toFixed(2)}</span>`;
+    tr.querySelector('.t-ot-container').innerHTML = `<span class="text-[10px] text-indigo-400 font-normal">₱${otPay.toFixed(2)}</span>`;
+    
+    tr.querySelector('.t-dur').innerText = totalDur.toFixed(2);
+    tr.querySelector('.t-rate').innerText = "₱" + dailyRateVal.toFixed(2);
+    
+    // SAVE TO DATA OBJECT
+    window.currentTimesheetData[empId][index] = { 
+        dateStr, dayType, timeIn, timeOut, ot, nd: ndHours, late: lateHrs, duration: totalDur, rate: dailyRateVal, basicPay: basicPay 
+    };
+};
 
         window.deleteTimesheet = async function(empId) {
             const startInput = document.getElementById('period-start').value;
@@ -3521,75 +3554,94 @@ let otPay = ot * hourlyRate * otRateMultiplier;
         };
 
         document.getElementById('save-daily-btn').addEventListener('click', async () => {
-            try {
-                const empId = document.getElementById('daily-emp-id').value;
-                if (!empId) {
-                    alert("Error: Nawawala ang Employee ID. Paki-refresh ang page.");
-                    return;
-                }
+    try {
+        const empId = document.getElementById('daily-emp-id').value;
+        if (!empId) {
+            alert("Error: Nawawala ang Employee ID. Paki-refresh ang page.");
+            return;
+        }
 
-                if (window.currentTimesheetData[empId]) {
-                    window.currentTimesheetData[empId].sort((a, b) => a.dateStr.localeCompare(b.dateStr));
-                }
-                const data = window.currentTimesheetData[empId] || [];
-                
-                const caInput = document.getElementById('emp-ts-ca');
-                const loanInput = document.getElementById('emp-ts-loan');
-                const penaltyInput = document.getElementById('emp-ts-penalty');
-                const govInput = document.getElementById('emp-ts-gov');
-
-                const caVal = caInput ? (parseFloat(caInput.value) || 0) : 0;
-                const loanVal = loanInput ? (parseFloat(loanInput.value) || 0) : 0;
-                const penaltyVal = penaltyInput ? (parseFloat(penaltyInput.value) || 0) : 0;
-                const applyGovVal = govInput ? govInput.checked : false; 
-
-                const caNoteInput = document.getElementById('emp-ts-ca-note');
-                const loanNoteInput = document.getElementById('emp-ts-loan-note');
-                const penaltyNoteInput = document.getElementById('emp-ts-penalty-note');
-
-                const caNoteVal = caNoteInput ? caNoteInput.value.trim() : '';
-                const loanNoteVal = loanNoteInput ? loanNoteInput.value.trim() : '';
-                const penaltyNoteVal = penaltyNoteInput ? penaltyNoteInput.value.trim() : '';
-                
-                if(!window.currentTimesheetExtra) window.currentTimesheetExtra = {};
-                window.currentTimesheetExtra[empId] = { 
-                    cashAdvance: caVal, loan: loanVal, penalty: penaltyVal, applyGov: applyGovVal,
-                    caNote: caNoteVal, loanNote: loanNoteVal, penaltyNote: penaltyNoteVal
-                };
-                
-                document.getElementById('daily-modal').style.display = 'none';
-                
-                const startInput = document.getElementById('period-start').value;
-                const endInput = document.getElementById('period-end').value;
-                const docId = `ts_${empId}_${startInput}_to_${endInput}`;
-                
-                window.showLoading("Saving Timesheet...");
-                await window.db.collection("timesheets").doc(docId).set({
-                    empId: empId, 
-                    start: startInput, 
-                    end: endInput,
-                    cashAdvance: caVal, 
-                    loan: loanVal, 
-                    penalty: penaltyVal, 
-                    applyGovDeductions: applyGovVal,
-                    caNote: caNoteVal, 
-                    loanNote: loanNoteVal, 
-                    penaltyNote: penaltyNoteVal,
-                    isArchived: false,
-                    days: data
-                }, { merge: true });
-                
-                window.hideLoading();
-                
-                const genBtn = document.getElementById('btn-generate-timesheet');
-                if (genBtn) genBtn.click(); 
-
-            } catch (error) {
-                console.error("Save Error:", error);
-                window.hideLoading();
-                alert("May error sa pag-save: " + error.message);
-            }
+        // 1. DATA CLEANER: Sisiguraduhin na walang NaN o "₱" symbol sa rates/earnings
+        let rawData = window.currentTimesheetData[empId] || [];
+        let cleanedData = rawData.map(day => {
+            let r = typeof day.rate === 'string' ? parseFloat(day.rate.replace(/[^0-9.]/g, '')) : parseFloat(day.rate);
+            let b = typeof day.basicPay === 'string' ? parseFloat(day.basicPay.replace(/[^0-9.]/g, '')) : parseFloat(day.basicPay);
+            return {
+                ...day,
+                rate: isNaN(r) ? 0 : r,
+                basicPay: isNaN(b) ? 0 : b,
+                ot: isNaN(parseFloat(day.ot)) ? 0 : parseFloat(day.ot),
+                late: isNaN(parseFloat(day.late)) ? 0 : parseFloat(day.late),
+                nd: isNaN(parseFloat(day.nd)) ? 0 : parseFloat(day.nd),
+                duration: isNaN(parseFloat(day.duration)) ? 0 : parseFloat(day.duration)
+            };
         });
+
+        // Ibalik ang malinis na data
+        window.currentTimesheetData[empId] = cleanedData;
+
+        if (window.currentTimesheetData[empId]) {
+            window.currentTimesheetData[empId].sort((a, b) => a.dateStr.localeCompare(b.dateStr));
+        }
+        const data = window.currentTimesheetData[empId] || [];
+        
+        const caInput = document.getElementById('emp-ts-ca');
+        const loanInput = document.getElementById('emp-ts-loan');
+        const penaltyInput = document.getElementById('emp-ts-penalty');
+        const govInput = document.getElementById('emp-ts-gov');
+
+        const caVal = caInput ? (parseFloat(caInput.value) || 0) : 0;
+        const loanVal = loanInput ? (parseFloat(loanInput.value) || 0) : 0;
+        const penaltyVal = penaltyInput ? (parseFloat(penaltyInput.value) || 0) : 0;
+        const applyGovVal = govInput ? govInput.checked : false; 
+
+        const caNoteInput = document.getElementById('emp-ts-ca-note');
+        const loanNoteInput = document.getElementById('emp-ts-loan-note');
+        const penaltyNoteInput = document.getElementById('emp-ts-penalty-note');
+
+        const caNoteVal = caNoteInput ? caNoteInput.value.trim() : '';
+        const loanNoteVal = loanNoteInput ? loanNoteInput.value.trim() : '';
+        const penaltyNoteVal = penaltyNoteInput ? penaltyNoteInput.value.trim() : '';
+        
+        if(!window.currentTimesheetExtra) window.currentTimesheetExtra = {};
+        window.currentTimesheetExtra[empId] = { 
+            cashAdvance: caVal, loan: loanVal, penalty: penaltyVal, applyGov: applyGovVal,
+            caNote: caNoteVal, loanNote: loanNoteVal, penaltyNote: penaltyNoteVal
+        };
+        
+        document.getElementById('daily-modal').style.display = 'none';
+        
+        const startInput = document.getElementById('period-start').value;
+        const endInput = document.getElementById('period-end').value;
+        const docId = `ts_${empId}_${startInput}_to_${endInput}`;
+        
+        window.showLoading("Saving Timesheet...");
+        await window.db.collection("timesheets").doc(docId).set({
+            empId: empId, 
+            start: startInput, 
+            end: endInput,
+            cashAdvance: caVal, 
+            loan: loanVal, 
+            penalty: penaltyVal, 
+            applyGovDeductions: applyGovVal,
+            caNote: caNoteVal, 
+            loanNote: loanNoteVal, 
+            penaltyNote: penaltyNoteVal,
+            isArchived: false,
+            days: data
+        }, { merge: true });
+        
+        window.hideLoading();
+        
+        const genBtn = document.getElementById('btn-generate-timesheet');
+        if (genBtn) genBtn.click(); 
+
+    } catch (error) {
+        console.error("Save Error:", error);
+        window.hideLoading();
+        alert("May error sa pag-save: " + error.message);
+    }
+});
 
   document.getElementById('btn-generate-timesheet').addEventListener('click', async () => {
     const startInput = document.getElementById('period-start').value;
