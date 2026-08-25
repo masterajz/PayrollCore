@@ -2945,16 +2945,25 @@ flatpickr(".time-picker-custom", {
                     }
                 }
 
-               let actualDate = new Date(dateStr);
-                let dayOfWeek = actualDate.getDay();
+               // Tiyaking nababasa nang tama ang MM/DD/YYYY o YYYY-MM-DD
+                let actualDate;
+                if (dateStr.includes('/')) {
+                    let parts = dateStr.split('/');
+                    actualDate = new Date(parts[2], parts[0] - 1, parts[1]); // Month is 0-indexed
+                } else if (dateStr.includes('-')) {
+                    let parts = dateStr.split('-');
+                    actualDate = new Date(parts[0], parts[1] - 1, parts[2]);
+                } else {
+                    actualDate = new Date();
+                }
+
+                let dayOfWeek = actualDate.getDay(); // 0 = Sunday, 6 = Saturday
                 let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6); 
                 
-                let breakDeduction = 1; 
-                if(window.govRates) {
-                    breakDeduction = isWeekend ? 
-                        (window.govRates.breakWeekend !== undefined ? window.govRates.breakWeekend : 1) : 
-                        (window.govRates.breakWeekday !== undefined ? window.govRates.breakWeekday : 1);
-                }
+                // Kunin ang break galing sa Payroll Settings
+                let breakDeduction = isWeekend 
+                    ? (window.govRates && window.govRates.breakWeekend !== undefined ? parseFloat(window.govRates.breakWeekend) : 2)
+                    : (window.govRates && window.govRates.breakWeekday !== undefined ? parseFloat(window.govRates.breakWeekday) : 1);
 
                 let rawHours = (end - start) / (1000 * 60 * 60);
                 let netHours = rawHours > 4 ? rawHours - breakDeduction : rawHours;
