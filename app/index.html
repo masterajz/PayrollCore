@@ -41,10 +41,13 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         @media print {
-            @page { margin: 0; }
-            body { margin: 0; background: white !important; }
+            @page { size: landscape; margin: 8mm; }
+            body { margin: 0; background: white !important; -webkit-print-color-adjust: exact; }
             body > *:not(#print-section) { display: none !important; }
-            #print-section { display: block !important; position: absolute; left: 0; top: 0; width: 100%; background: white; padding: 40px; box-sizing: border-box; }
+            #print-section { display: block !important; position: absolute; left: 0; top: 0; width: 100%; background: white; padding: 0; box-sizing: border-box; }
+            #print-section div { overflow: visible !important; }
+            #print-section table { width: 100% !important; min-width: 0 !important; font-size: 10px !important; white-space: nowrap !important; }
+            #print-section th, #print-section td { padding: 6px 3px !important; }
         }
 		@keyframes toastSlide {
         0% { transform: translateY(-15px) scale(0.92); opacity: 0; }
@@ -202,48 +205,56 @@
 
         <!-- Main Workspace -->
         <main class="flex-1 flex flex-col h-screen relative bg-slate-50 min-w-0">
-            <header class="min-h-16 py-3 bg-white border-b border-slate-200 flex flex-col md:flex-row items-center justify-between px-4 sm:px-8 shadow-sm shrink-0 gap-3">
-                <div class="flex items-center space-x-3 w-full md:w-auto">
-                    <!-- HAMBURGER BUTTON (MOBILE ONLY) -->
-                    <button onclick="window.toggleSidebar()" type="button" class="p-2 text-slate-600 hover:text-indigo-600 md:hidden border border-slate-200 rounded-lg cursor-pointer bg-slate-50">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                    </button>
-                    <h1 id="page-title" class="text-xl sm:text-2xl font-bold text-slate-800">Employee Data</h1>
-                </div>
-                <div class="flex items-center space-x-2 sm:space-x-4 w-full md:w-auto justify-end flex-wrap gap-y-2">
-                    <div class="relative w-full sm:w-64">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                        </span>
-                        <input type="text" id="searchInput" placeholder="Search records..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 placeholder-slate-400">
-                    </div>
-                    <button id="add-employee-btn" class="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-3 sm:px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer shadow-sm whitespace-nowrap">
-                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Add Employee
-                    </button>
-                    <button id="btn-logout" title="Sign Out" class="p-2 text-slate-400 hover:text-rose-500 transition-colors border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                    </button>
-                </div>
-            </header>
+            <header class="min-h-16 py-3 bg-white border-b border-slate-200 flex flex-wrap md:flex-nowrap items-center justify-between px-4 sm:px-8 shadow-sm shrink-0 gap-3">
+    <!-- 1. TITLE & HAMBURGER (LINE 1 KALIWA) -->
+    <div class="flex items-center space-x-3 order-1">
+        <!-- HAMBURGER BUTTON (MOBILE ONLY) -->
+        <button onclick="window.toggleSidebar()" type="button" class="p-2 text-slate-600 hover:text-indigo-600 md:hidden border border-slate-200 rounded-lg cursor-pointer bg-slate-50">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+        <h1 id="page-title" class="text-xl sm:text-2xl font-bold text-slate-800">Employee Data</h1>
+    </div>
+
+    <!-- 2. LOGOUT BUTTON (LINE 1 KANAN SA MOBILE / FAR RIGHT SA DESKTOP) -->
+    <button id="btn-logout" title="Sign Out" class="order-2 md:order-3 ml-auto p-2 text-slate-400 hover:text-rose-500 transition-colors border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+    </button>
+
+    <!-- 3. SEARCH BAR (LINE 2 SA MOBILE / CENTER-RIGHT SA DESKTOP) -->
+    <div class="relative w-full md:w-64 order-3 md:order-2">
+        <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+            <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </span>
+        <input type="text" id="searchInput" placeholder="Search records..." class="w-full pl-10 pr-4 py-2 bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800 placeholder-slate-400">
+    </div>
+</header>
 
             <div class="flex-1 overflow-auto p-8 flex flex-col">
                 
                 <!-- EMPLOYEE DATA VIEW -->
                 <div id="view-employee" class="block w-full shrink-0 mb-8">
-                    <div class="flex justify-between items-center mb-4">
-                        <div class="flex space-x-1 bg-white p-1 rounded-lg border border-slate-200 shadow-sm">
-                            <button id="tab-active-emp" class="px-4 py-1.5 text-sm font-medium bg-indigo-50 text-indigo-700 rounded-md transition-all cursor-pointer">Active Employees</button>
-                            <button id="tab-archived-emp" class="px-4 py-1.5 text-sm font-medium text-slate-500 hover:text-slate-700 rounded-md transition-all cursor-pointer">Archived</button>
+                  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-3 w-full">
+                        <!-- TABS -->
+                        <div class="flex space-x-1 bg-white p-1 rounded-lg border border-slate-200 shadow-sm w-full sm:w-auto">
+                            <button id="tab-active-emp" class="flex-1 sm:flex-none px-4 py-1.5 text-sm font-medium bg-indigo-50 text-indigo-700 rounded-md transition-all cursor-pointer text-center">Active Employees</button>
+                            <button id="tab-archived-emp" class="flex-1 sm:flex-none px-4 py-1.5 text-sm font-medium text-slate-500 hover:text-slate-700 rounded-md transition-all cursor-pointer text-center">Archived</button>
                         </div>
-                        <button id="bulk-action-btn" style="display: none;" class="flex items-center bg-slate-700 hover:bg-slate-800 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm cursor-pointer">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-                            Archive Selected
-                        </button>
+                        
+                        <!-- BUTTONS -->
+                        <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                            <button id="add-employee-btn" class="w-full sm:w-auto flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer shadow-sm whitespace-nowrap">
+                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                Add Employee
+                            </button>
+                            <button id="bulk-action-btn" style="display: none;" class="w-full sm:w-auto flex justify-center items-center bg-slate-700 hover:bg-slate-800 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm cursor-pointer">
+                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                                Archive Selected
+                            </button>
+                        </div>
                     </div>
 
                     <div class="bg-white rounded-xl border border-slate-200 overflow-x-auto shadow-sm w-full">
-    <table class="w-full text-left border-collapse text-xs">
+                        <table class="w-full text-left border-collapse text-xs">
                             <thead>
                                 <tr class="bg-slate-50 text-slate-500 uppercase tracking-wider border-b border-slate-200">
                                     <th class="px-2 py-3 w-8 text-center"><input type="checkbox" id="select-all-emp" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></th>
@@ -253,9 +264,8 @@
                                     <th class="px-2 py-3 font-semibold">Position</th>
                                     <th class="px-2 py-3 font-semibold">Shift</th>
                                     <th class="px-2 py-3 font-semibold">Rate</th>
-									                                    <th class="px-2 py-3 font-semibold text-center text-rose-500">Gov't Ded.</th>
+                                    <th class="px-2 py-3 font-semibold text-center text-rose-500">Gov't Ded.</th>
                                     <th class="px-2 py-3 font-bold text-indigo-600 text-center">PIN</th>
-
                                     <th class="px-2 py-3 font-semibold text-center">Action</th>
                                 </tr>
                             </thead>
@@ -281,32 +291,36 @@
                             </div>
                         </div>
 
-                        <!-- RIGHT SIDE: ACTION BUTTONS WITH GEAR ICON -->
+                        <!-- RIGHT SIDE: ACTION BUTTONS WITH GEAR ICON (UPDATED RESPONSIVE LAYOUT) -->
                         <div class="flex flex-wrap items-center justify-start sm:justify-end gap-2 mt-4 sm:mt-0 w-full sm:w-auto">
-                            <button id="toggle-portal-btn" class="flex items-center px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200 cursor-pointer" title="Show or Hide Payslips in Employee Portal">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
+                            
+                            <button id="toggle-portal-btn" class="flex-1 sm:flex-none flex justify-center items-center px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-bold transition-colors shadow-sm bg-slate-100 text-slate-500 border border-slate-200 hover:bg-slate-200 cursor-pointer" title="Show or Hide Payslips in Employee Portal">
+                                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path></svg>
                                 Portal: Hidden
                             </button>
-                            <button id="btn-print-breakdown" class="flex items-center bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm" title="Preview Master Payroll Breakdown">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
-                                View Breakdown
-                            </button>
-                            <button id="bulk-archive-ts-btn" style="display: none;" class="items-center bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors shadow-sm cursor-pointer">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-                                Archive Selected
+                            
+                            <button id="btn-print-breakdown" class="flex-1 sm:flex-none flex justify-center items-center bg-indigo-50 border border-indigo-200 text-indigo-700 hover:bg-indigo-100 px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-sm" title="Preview Master Payroll Breakdown">
+                                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                Breakdown
                             </button>
                             
-                            <button id="btn-payroll-settings" class="flex items-center bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-200 px-3 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                            <button id="btn-view-ts-archive" class="flex-1 sm:flex-none flex justify-center items-center text-slate-600 hover:text-slate-800 bg-slate-100 border border-slate-200 px-2 py-1.5 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-sm">
+                                <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                History
                             </button>
-                            
-                            <button id="btn-generate-timesheet" class="flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm">
-                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+
+                            <button id="btn-payroll-settings" class="flex justify-center items-center bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-200 px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-sm">
+                                <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                            </button>
+
+                            <button id="btn-generate-timesheet" class="w-full sm:w-auto flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-bold transition-colors cursor-pointer shadow-sm mt-1 sm:mt-0">
+                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                 Generate Timesheet
                             </button>
-                            <button id="btn-view-ts-archive" class="flex items-center text-slate-600 hover:text-slate-800 bg-slate-100 border border-slate-200 px-4 py-2 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm">
-                                <svg class="w-4 h-4 mr-2 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                Payroll History
+
+                            <button id="bulk-archive-ts-btn" style="display: none;" class="w-full sm:w-auto justify-center items-center bg-slate-700 hover:bg-slate-800 text-white px-3 py-2 rounded-lg text-xs sm:text-sm font-bold transition-colors shadow-sm cursor-pointer mt-1 sm:mt-0">
+                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                                Archive Selected
                             </button>
                         </div>
                     </div>
@@ -328,7 +342,7 @@
                                     <th class="px-1 py-3 font-semibold text-center text-orange-500">Pen.</th>
                                     <th class="px-1 py-3 font-bold text-center text-rose-600">Ded.</th>
                                     <th class="px-1 py-3 font-semibold text-center text-emerald-600">Net Pay</th>
-                                    <th class="px-1 py-3 font-semibold text-center">Action</th>
+                                    <th class="px-1 py-3 font-semibold text-center w-64 min-w-[260px]">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="timesheet-tbody" class="divide-y divide-slate-100 text-slate-700">
@@ -897,33 +911,10 @@
                         Add Timesheet
                     </button>
 					
-					                    <div class="flex items-center space-x-2 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-md whitespace-nowrap">
-                        <input type="checkbox" id="emp-ts-gov" class="rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4">
-                        <label for="emp-ts-gov" class="text-xs font-bold text-indigo-700 cursor-pointer">Deduct Gov't (SSS/PH/HDMF)</label>
-                    </div>
-                    
-                    <div class="flex flex-col bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-md ml-auto transition-all">
-                        <div class="flex items-center space-x-3 whitespace-nowrap">
-                            <span class="text-xs font-bold text-rose-700">Other Deductions:</span>
-                            <div class="flex items-center">
-                                <span class="text-xs text-rose-600 mr-1">CA ₱</span>
-                                <input type="number" id="emp-ts-ca" oninput="window.toggleDedNotes()" class="w-16 bg-white border border-rose-300 rounded px-1.5 py-0.5 text-xs text-slate-800 focus:outline-none focus:border-rose-500" value="0">
-                            </div>
-                            <div class="flex items-center">
-                                <span class="text-xs text-rose-600 mr-1">Loan ₱</span>
-                                <input type="number" id="emp-ts-loan" oninput="window.toggleDedNotes()" class="w-16 bg-white border border-rose-300 rounded px-1.5 py-0.5 text-xs text-slate-800 focus:outline-none focus:border-rose-500" value="0">
-                            </div>
-                            <div class="flex items-center">
-                                <span class="text-xs text-rose-600 mr-1">Penalty ₱</span>
-                                <input type="number" id="emp-ts-penalty" oninput="window.toggleDedNotes()" class="w-16 bg-white border border-rose-300 rounded px-1.5 py-0.5 text-xs text-slate-800 focus:outline-none focus:border-rose-500" value="0">
-                            </div>
-                        </div>
-                        <div id="ded-notes-container" style="display: none;" class="flex items-center space-x-2 mt-2 border-t border-rose-200 pt-2">
-                            <input type="text" id="emp-ts-ca-note" placeholder="CA Note..." style="display: none;" class="w-full bg-white border border-rose-300 rounded px-2 py-1 text-[11px] text-slate-800 focus:outline-none focus:border-rose-500">
-                            <input type="text" id="emp-ts-loan-note" placeholder="Loan Note..." style="display: none;" class="w-full bg-white border border-rose-300 rounded px-2 py-1 text-[11px] text-slate-800 focus:outline-none focus:border-rose-500">
-                            <input type="text" id="emp-ts-penalty-note" placeholder="Penalty Note..." style="display: none;" class="w-full bg-white border border-rose-300 rounded px-2 py-1 text-[11px] text-slate-800 focus:outline-none focus:border-rose-500">
-                        </div>
-                    </div>
+					                    <button type="button" onclick="document.getElementById('other-ded-modal').style.display='flex'" class="ml-auto flex items-center bg-rose-50 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-md text-xs font-bold hover:bg-rose-100 transition-colors whitespace-nowrap">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        Other Deductions
+                    </button>
                     
 
                 </div>
@@ -936,16 +927,16 @@
                 <table class="w-full text-left border-collapse min-w-[850px]">
                     <thead>
                         <tr class="text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200 bg-white">
-                            <th class="pb-3 font-semibold px-2 whitespace-nowrap w-36">Date</th>
-                            <th class="pb-3 font-semibold px-2 whitespace-nowrap w-36">Time In</th>
-                            <th class="pb-3 font-semibold px-2 whitespace-nowrap w-36">Time Out</th>
-                            <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[90px]">OT (Hrs/₱)</th>
-                            <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[90px]">Lates (Hrs/₱)</th>
-                            <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[90px]">ND (Hrs/₱)</th>
-                            <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap w-24">Duration</th>
-                            <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap w-32">Earnings (₱)</th>
-                            <th class="pb-3 font-semibold px-2 text-center w-28 min-w-[100px]">Action</th>
-                        </tr>
+    <th class="pb-3 font-semibold px-2 whitespace-nowrap min-w-[115px]">Date</th>
+    <th class="pb-3 font-semibold px-2 whitespace-nowrap min-w-[105px]">Time In</th>
+    <th class="pb-3 font-semibold px-2 whitespace-nowrap min-w-[105px]">Time Out</th>
+    <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[90px]">OT (Hrs/₱)</th>
+    <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[90px]">Lates (Hrs/₱)</th>
+    <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[90px]">ND (Hrs/₱)</th>
+    <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[80px]">Duration</th>
+    <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[100px]">Earnings (₱)</th>
+    <th class="pb-3 font-semibold px-2 text-center whitespace-nowrap min-w-[100px]">Action</th>
+</tr>
                     </thead>
                     <tbody id="daily-tbody" class="text-sm text-slate-700 bg-white">
                     </tbody>
@@ -964,27 +955,24 @@
     <!-- ARCHIVED TIMESHEETS MODAL -->
     <div id="ts-archive-modal" style="display: none;" class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-[70] p-4">
         <div class="bg-white rounded-xl w-full max-w-7xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden mx-2 sm:mx-auto border border-slate-200">
-            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
-                <h3 class="text-lg font-bold text-slate-800">Archived Timesheets</h3>
+           <div class="px-4 py-4 border-b border-slate-200 flex flex-wrap sm:flex-nowrap justify-between items-start sm:items-center bg-slate-50 shrink-0 gap-3">
+                <h3 class="text-lg font-bold text-slate-800 flex-1">Payroll History</h3>
                 
-                <div class="flex items-center space-x-3 ml-auto mr-4">
-                    <div class="relative w-48">
+                <button onclick="document.getElementById('ts-archive-modal').style.display='none'" class="text-slate-400 hover:text-rose-500 cursor-pointer p-1">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+
+                <div class="flex flex-col sm:flex-row items-center w-full sm:w-auto gap-2 mt-2 sm:mt-0 order-last sm:order-none">
+                    <div class="relative w-full sm:w-48">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                             <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </span>
                         <input type="text" id="archive-search" placeholder="Search employee..." class="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800">
                     </div>
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xs font-semibold text-slate-500">Filter Date:</span>
-                        <input type="month" id="archive-month-filter" class="bg-white border border-slate-300 text-slate-800 py-1.5 px-2 rounded-md text-sm focus:outline-none focus:border-indigo-500 cursor-pointer">
-                    </div>
+                    <input type="date" id="archive-date-filter" class="w-full sm:w-auto bg-white border border-slate-300 text-slate-800 py-1.5 px-2 rounded-md text-sm focus:outline-none focus:border-indigo-500 cursor-pointer">
                 </div>
-
-                <button onclick="document.getElementById('ts-archive-modal').style.display='none'" class="text-slate-400 hover:text-slate-600 cursor-pointer">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
             </div>
-            <div class="p-6 overflow-y-auto flex-1 bg-white">
+            <<div class="p-4 sm:p-6 overflow-auto flex-1 bg-white">
                 <table class="w-full text-left border-collapse min-w-[1200px]">
                     <thead>
                         <tr class="text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200 bg-slate-50">
@@ -1244,13 +1232,85 @@
                         <option value="1.0">100% (Regular OT)</option>
                     </select>
                 </div>
+
+                <!-- DITO IDINAGDAG ANG GOV'T DEDUCTION TOGGLE -->
+                <div class="border-t border-slate-200 pt-4 mt-4">
+                    <label class="flex items-center space-x-2 cursor-pointer">
+                        <input type="checkbox" id="global-gov-deduct" class="rounded border-indigo-300 text-indigo-600 focus:ring-indigo-500 w-5 h-5 cursor-pointer">
+                        <span class="text-sm font-bold text-indigo-700">Apply Gov't Deductions (SSS/PH/HDMF)</span>
+                    </label>
+                    <p class="text-[10px] text-slate-500 ml-7 mt-1">Check this to automatically deduct government contributions for this payroll run.</p>
+                </div>
+                <!-- KATAPUSAN NG DINAGDAG -->
+
             </div>
+            
             <div class="px-6 py-4 border-t border-slate-200 flex justify-between items-center space-x-3 bg-slate-50">
                 <button id="btn-clear-dates" class="px-4 py-2 bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-100 rounded-lg text-sm font-bold shadow-sm cursor-pointer transition-colors">Clear</button>
                 <div class="flex space-x-3">
                     <button onclick="document.getElementById('payroll-settings-modal').style.display='none'" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-200 cursor-pointer">Cancel</button>
                     <button id="save-payroll-settings-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm font-medium text-white shadow-sm cursor-pointer">Save</button>
                 </div>
+            </div>
+        </div>
+    </div>
+	
+<!-- OTHER DEDUCTIONS MODAL -->
+    <div id="other-ded-modal" style="display: none;" class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-[110] p-4">
+        <div class="bg-white rounded-xl w-[500px] shadow-2xl flex flex-col border border-slate-200">
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-rose-50">
+                <h3 class="text-lg font-bold text-rose-700">Other Deductions</h3>
+                <button onclick="document.getElementById('other-ded-modal').style.display='none'" class="text-slate-400 hover:text-rose-600 cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-4 bg-white">
+                <!-- Cash Advance -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Cash Advance</label>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-1/3 relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 font-medium">₱</span>
+                            <input type="number" id="emp-ts-ca" oninput="window.toggleDedNotes()" class="w-full bg-white border border-slate-300 rounded px-3 py-2 pl-7 text-sm text-slate-800 focus:border-rose-500 focus:outline-none" value="0">
+                        </div>
+                        <div class="w-2/3" id="ca-note-wrapper" style="display: none;">
+                            <input type="text" id="emp-ts-ca-note" placeholder="Add Note (e.g. Cash Advance)..." class="w-full bg-slate-50 border border-slate-200 rounded px-3 py-2 text-sm text-slate-800 focus:border-rose-500 focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Loan -->
+                <div class="border-t border-slate-100 pt-3">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Loan Deduction</label>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-1/3 relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 font-medium">₱</span>
+                            <input type="number" id="emp-ts-loan" oninput="window.toggleDedNotes()" class="w-full bg-white border border-slate-300 rounded px-3 py-2 pl-7 text-sm text-slate-800 focus:border-rose-500 focus:outline-none" value="0">
+                        </div>
+                        <div class="w-2/3" id="loan-note-wrapper" style="display: none;">
+                            <input type="text" id="emp-ts-loan-note" placeholder="Add Note (e.g. SSS Loan)..." class="w-full bg-slate-50 border border-slate-200 rounded px-3 py-2 text-sm text-slate-800 focus:border-rose-500 focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Penalty -->
+                <div class="border-t border-slate-100 pt-3">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Penalty</label>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-1/3 relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-500 font-medium">₱</span>
+                            <input type="number" id="emp-ts-penalty" oninput="window.toggleDedNotes()" class="w-full bg-white border border-slate-300 rounded px-3 py-2 pl-7 text-sm text-slate-800 focus:border-rose-500 focus:outline-none" value="0">
+                        </div>
+                        <div class="w-2/3" id="penalty-note-wrapper" style="display: none;">
+                            <input type="text" id="emp-ts-penalty-note" placeholder="Add Note (e.g. Broken Glass)..." class="w-full bg-slate-50 border border-slate-200 rounded px-3 py-2 text-sm text-slate-800 focus:border-rose-500 focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="px-6 py-4 border-t border-slate-200 text-right bg-slate-50">
+                <button onclick="document.getElementById('other-ded-modal').style.display='none'" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-sm font-bold shadow-sm cursor-pointer">Save & Close</button>
             </div>
         </div>
     </div>
@@ -2074,11 +2134,11 @@
                         <td class="px-2 py-3 text-center border-b border-slate-100">
                             <input type="checkbox" class="emp-checkbox rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" data-id="${emp.id}" onchange="toggleBulkBtn()">
                         </td>
-                        <td class="px-2 py-3 font-semibold text-slate-900 border-b border-slate-100">${emp.name}</td>
+                        <td class="px-2 py-3 font-bold text-indigo-600 hover:text-indigo-800 cursor-pointer border-b border-slate-100 whitespace-nowrap" onclick="window.editEmployee('${emp.id}')" title="Click to edit employee">${emp.name}</td>
                         <td class="px-2 py-3 border-b border-slate-100">${getStatusBadge(emp.status)}</td>
                         <td class="px-2 py-3 text-slate-500 border-b border-slate-100">${emp.email || '-'}</td>
                         <td class="px-2 py-3 text-slate-600 border-b border-slate-100">${emp.position || '-'}</td>
-                        <td class="px-2 py-3 text-slate-600 border-b border-slate-100"><span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700">${emp.shift}</span></td>
+                       <td class="px-2 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap"><span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700">${emp.shift}</span></td>
                         <td class="px-2 py-3 font-bold text-slate-800 border-b border-slate-100">₱${(emp.rate || 0).toLocaleString()}</td>
 						                        <td class="px-2 py-3 text-center border-b border-slate-100">
                             <button onclick="window.openEmpGovModal('${emp.id}')" class="text-[10px] bg-rose-50 border border-rose-200 text-rose-600 px-2 py-1 rounded font-bold hover:bg-rose-100 transition-colors cursor-pointer whitespace-nowrap">Set Rates</button>
@@ -2733,23 +2793,23 @@ let otPay = (day.ot || 0) * hourlyRate * otRateMultiplier;
         tr.className = "border-b border-slate-200 hover:bg-slate-50";
         tr.innerHTML = `
             <!-- 1. DATE COLUMN -->
-            <td class="px-2 py-2">
-                <input type="date" class="t-date w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs font-medium" value="${day.dateStr}" onchange="window.calcDaily('${empId}', ${index}, this)">
+            <td class="px-2 py-2 min-w-[115px]">
+                <input type="text" class="t-date date-picker-custom w-full min-w-[105px] bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center font-medium cursor-pointer" value="${formatShortDate(day.dateStr)}" placeholder="MM/DD/YYYY" onchange="window.calcDaily('${empId}', ${index}, this)">
             </td>
             
-           <!-- 2. TIME IN COLUMN -->
-            <td class="px-2 py-2">
+            <!-- 2. TIME IN COLUMN -->
+            <td class="px-2 py-2 min-w-[105px]">
                 ${day.timeIn === 'REST' 
-                    ? `<input type="text" class="w-full bg-slate-100 border border-slate-200 text-slate-500 py-1 px-2 rounded text-xs text-center font-bold outline-none cursor-not-allowed" value="REST DAY" readonly>`
-                    : `<input type="text" class="t-in time-picker-custom w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer placeholder-slate-400" placeholder="hh:mm AM/PM" value="${day.timeIn}" onchange="window.calcDaily('${empId}', ${index}, this)">`
+                    ? `<input type="text" class="w-full min-w-[95px] bg-slate-100 border border-slate-200 text-slate-500 py-1 px-2 rounded text-xs text-center font-bold outline-none cursor-not-allowed" value="REST DAY" readonly>`
+                    : `<input type="text" class="t-in time-picker-custom w-full min-w-[95px] bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer placeholder-slate-400" placeholder="hh:mm AM/PM" value="${day.timeIn}" onchange="window.calcDaily('${empId}', ${index}, this)">`
                 }
             </td>
             
             <!-- 3. TIME OUT COLUMN -->
-            <td class="px-2 py-2">
+            <td class="px-2 py-2 min-w-[105px]">
                 ${day.timeIn === 'REST' 
-                    ? `<input type="text" class="w-full bg-slate-100 border border-slate-200 text-slate-500 py-1 px-2 rounded text-xs text-center font-bold outline-none cursor-not-allowed" value="REST DAY" readonly>`
-                    : `<input type="text" class="t-out time-picker-custom w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer placeholder-slate-400" placeholder="hh:mm AM/PM" value="${day.timeOut}" onchange="window.calcDaily('${empId}', ${index}, this)">`
+                    ? `<input type="text" class="w-full min-w-[95px] bg-slate-100 border border-slate-200 text-slate-500 py-1 px-2 rounded text-xs text-center font-bold outline-none cursor-not-allowed" value="REST DAY" readonly>`
+                    : `<input type="text" class="t-out time-picker-custom w-full min-w-[95px] bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer placeholder-slate-400" placeholder="hh:mm AM/PM" value="${day.timeOut}" onchange="window.calcDaily('${empId}', ${index}, this)">`
                 }
             </td>
             
@@ -2792,17 +2852,20 @@ let otPay = (day.ot || 0) * hourlyRate * otRateMultiplier;
         `;
         tbody.appendChild(tr);
     });
+	// Activate Flatpickr Date (Strict MM/DD/YYYY)
+        flatpickr(".date-picker-custom", {
+            dateFormat: "m/d/Y",
+            allowInput: true
+        });
 			
-			// Activate 12-Hour AM/PM Time Picker
+// Activate Flatpickr for Time In and Time Out
 flatpickr(".time-picker-custom", {
-    enableTime: true,
-    noCalendar: true,
-    dateFormat: "H:i",    // Kinukwenta pa rin bilang 24h sa background para 'di masira ang formula
-    altInput: true,       // Pinapakita sa user ang 12-hour format
-    altFormat: "h:i K",   // Output sa screen: "08:00 PM"
-    time_24hr: false      // Piliting maging 12-hour mode na may AM/PM
-});
-
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+            altInput: true,
+            altFormat: "h:i K"
+        });
         }; // <-- Ito yung dulo ng window.renderDailyTable
 
         window.calcDaily = function(empId, index, el) {
@@ -2922,10 +2985,10 @@ flatpickr(".time-picker-custom", {
             let data = window.currentTimesheetData[id];
             
             if(!GAS_WEB_APP_URL || GAS_WEB_APP_URL === "PASTE_YOUR_GAS_URL_HERE") {
-                return alert("Developer: Please set the GAS_WEB_APP_URL in the script to send emails via backend.");
+                return showToast("Developer: Please set the GAS_WEB_APP_URL.", "error");
             }
-            if(!emp || !emp.email) return alert("Error: Employee has no valid email address setup.");
-            if(!data || data.length === 0) return alert("Walang data ang timesheet. I-click muna ang 'Edit' at i-save ang oras.");
+            if(!emp || !emp.email) return showToast("Error: Employee has no valid email address.", "error");
+            if(!data || data.length === 0) return showToast("No timesheet data to send.", "error");
 
             const periodLabel = `${formatShortDate(startInput)} to ${formatShortDate(endInput)}`;
             
@@ -2968,20 +3031,20 @@ flatpickr(".time-picker-custom", {
             let grossPay = totalBasicPay + totalOtPay + totalNdPay;
             const extra = window.currentTimesheetExtra[id] || { cashAdvance: 0, loan: 0, penalty: 0, applyGov: false };
             
-            let sssDed = (grossPay > 0 && extra.applyGov) ? parseFloat(emp.sssDed || 0) : 0;
-            let phDed = (grossPay > 0 && extra.applyGov) ? parseFloat(emp.phicDed || 0) : 0;
-            let pagibigDed = (grossPay > 0 && extra.applyGov) ? parseFloat(emp.hdmfDed || 0) : 0;
+           let sssDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.sssDed || 0) : 0;
+            let phDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.phicDed || 0) : 0;
+            let pagibigDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.hdmfDed || 0) : 0;
             
-            let caDed = grossPay > 0 ? parseFloat(extra.cashAdvance || 0) : 0;
-            let loanDed = grossPay > 0 ? parseFloat(extra.loan || 0) : 0;
-            let penaltyDed = grossPay > 0 ? parseFloat(extra.penalty || 0) : 0;
+          let caDed = parseFloat(extra.cashAdvance || 0);
+            let loanDed = parseFloat(extra.loan || 0);
+            let penaltyDed = parseFloat(extra.penalty || 0);
 
             let totalDeductions = sssDed + phDed + pagibigDed + caDed + loanDed + penaltyDed + totalLatePay;
             let netPay = grossPay > 0 ? (grossPay - totalDeductions) : 0;
 
             let caLabel = extra.caNote ? `Cash Advance (${extra.caNote})` : 'Cash Advance';
             let loanLabel = extra.loanNote ? `Loan Deduction (${extra.loanNote})` : 'Loan Deduction';
-            let penaltyLabel = extra.penaltyNote ? `Penalty / Tardiness (${extra.penaltyNote})` : 'Penalty / Tardiness';
+            let penaltyLabel = extra.penaltyNote ? `Penalty (${extra.penaltyNote})` : 'Penalty';
             
             let subject = `Your Payroll Timesheet: ${periodLabel}`;
             
@@ -3092,9 +3155,9 @@ flatpickr(".time-picker-custom", {
                 const result = await response.json();
                 window.hideLoading();
                 if(result.success) {
-                    alert(`Success! Timesheet sent to ${emp.email}`);
+                    showToast(`Success! Timesheet sent to ${emp.email}`, "success");
                 } else {
-                    alert("Backend Error: " + result.error);
+                    showToast("Backend Error: " + result.error, "error");
                 }
             } catch (err) {
                 window.hideLoading();
@@ -3148,7 +3211,7 @@ flatpickr(".time-picker-custom", {
             tbody.innerHTML = '';
             
             const searchQuery = document.getElementById('archive-search').value.toLowerCase();
-            const filterMonth = document.getElementById('archive-month-filter').value; 
+            const filterDate = document.getElementById('archive-date-filter').value;
             
             try {
                 const snap = await window.db.collection('timesheets').where('isArchived', '==', true).get();
@@ -3164,7 +3227,7 @@ flatpickr(".time-picker-custom", {
                         const payout = localStorage.getItem('saved_payout') || data.end;
                         
                         if (searchQuery && !emp.name.toLowerCase().includes(searchQuery)) return;
-                        if (filterMonth && payout && !payout.startsWith(filterMonth)) return;
+                        if (filterDate && payout && payout !== filterDate) return;
                         
                         foundCount++;
                         
@@ -3221,13 +3284,40 @@ flatpickr(".time-picker-custom", {
 
         document.getElementById('btn-view-ts-archive').addEventListener('click', window.loadArchiveData);
         document.getElementById('archive-search').addEventListener('keyup', window.loadArchiveData);
-        document.getElementById('archive-month-filter').addEventListener('change', window.loadArchiveData);
+        document.getElementById('archive-date-filter').addEventListener('change', window.loadArchiveData);
 
-        window.restoreTimesheet = async function(docId) {
+       window.restoreTimesheet = async function(docId) {
             window.showLoading("Restoring...");
-            await window.db.collection("timesheets").doc(docId).update({ isArchived: false });
-            window.loadArchiveData(); 
-            document.getElementById('btn-generate-timesheet').click(); 
+            try {
+                // 1. Kunin muna yung data nung nirestore na timesheet
+                const docSnap = await window.db.collection("timesheets").doc(docId).get();
+                if (docSnap.exists) {
+                    const data = docSnap.data();
+                    
+                    // 2. I-update ang isArchived
+                    await window.db.collection("timesheets").doc(docId).update({ isArchived: false });
+                    
+                    // 3. I-set ang screen dates natin sa date nung timesheet para DI SYA I-AUTO ARCHIVE
+                    document.getElementById('period-start').value = data.start || '';
+                    document.getElementById('period-end').value = data.end || '';
+                    if(data.payout) document.getElementById('payout-date').value = data.payout;
+                    
+                    localStorage.setItem('saved_start', data.start || '');
+                    localStorage.setItem('saved_end', data.end || '');
+                    if(data.payout) localStorage.setItem('saved_payout', data.payout);
+
+                    // 4. Reload data at isara ang Archive Modal
+                    window.loadArchiveData(); 
+                    document.getElementById('ts-archive-modal').style.display = 'none';
+                    
+                    // 5. Ngayong tugma na ang dates, i-generate ulit
+                    document.getElementById('btn-generate-timesheet').click(); 
+                    showToast("Timesheet restored successfully!", "success");
+                }
+            } catch (error) {
+                console.error(error);
+                alert("Failed to restore timesheet.");
+            }
             window.hideLoading();
         };
 
@@ -3240,20 +3330,20 @@ flatpickr(".time-picker-custom", {
             }
         };
 
-        window.toggleDedNotes = function() {
+window.toggleDedNotes = function() {
             const ca = parseFloat(document.getElementById('emp-ts-ca').value) || 0;
             const loan = parseFloat(document.getElementById('emp-ts-loan').value) || 0;
             const penalty = parseFloat(document.getElementById('emp-ts-penalty').value) || 0;
             
-            const container = document.getElementById('ded-notes-container');
-            const caNote = document.getElementById('emp-ts-ca-note');
-            const loanNote = document.getElementById('emp-ts-loan-note');
-            const penaltyNote = document.getElementById('emp-ts-penalty-note');
+            // Hanapin ang Wrapper / Container ng bawat Note input
+            const caWrap = document.getElementById('ca-note-wrapper');
+            const loanWrap = document.getElementById('loan-note-wrapper');
+            const penaltyWrap = document.getElementById('penalty-note-wrapper');
 
-            if(container) container.style.display = (ca > 0 || loan > 0 || penalty > 0) ? 'flex' : 'none';
-            if(caNote) caNote.style.display = ca > 0 ? 'block' : 'none';
-            if(loanNote) loanNote.style.display = loan > 0 ? 'block' : 'none';
-            if(penaltyNote) penaltyNote.style.display = penalty > 0 ? 'block' : 'none';
+            // Ipakita ang Notes kapag higit sa 0 ang Amount
+            if(caWrap) caWrap.style.display = ca > 0 ? 'block' : 'none';
+            if(loanWrap) loanWrap.style.display = loan > 0 ? 'block' : 'none';
+            if(penaltyWrap) penaltyWrap.style.display = penalty > 0 ? 'block' : 'none';
         };
 
         window.openDailyModal = function(empId) {
@@ -3264,7 +3354,7 @@ flatpickr(".time-picker-custom", {
                 
                 if(!startInput || !endInput) return alert("Select Period Start and End dates first.");
 
-                document.getElementById('daily-modal-title').innerText = `Timesheet: ${emp.name}`;
+                document.getElementById('daily-modal-title').innerText = `${emp.name}`;
                 
                 if(!window.currentTimesheetExtra) window.currentTimesheetExtra = {};
                 const extra = window.currentTimesheetExtra[empId] || { cashAdvance: 0, loan: 0, penalty: 0, applyGov: false, caNote: '', loanNote: '', penaltyNote: '' };
@@ -3507,8 +3597,8 @@ let otPay = ot * hourlyRate * otRateMultiplier;
                 window.currentTimesheetData[emp.id].push({ 
                     dateStr: dateStr, 
                     timeIn: emp.shiftStart || '08:00', 
-                    timeOut: emp.shiftEnd || '17:00',
-                    ot: 0, nd: 0, late: 0, duration: 8, rate: (emp.rate || 0), basicPay: (emp.rate || 0) 
+                    timeOut: '',
+                    ot: 0, nd: 0, late: 0, duration: 0, rate: 0, basicPay: 0 
                 });
                 d.setDate(d.getDate() + 1);
                 loopCount++;
@@ -3547,9 +3637,9 @@ let otPay = ot * hourlyRate * otRateMultiplier;
         grossPay = totalBasicPay + totalOtPay + totalNdPay;
         totalHrs = totalBasicHrs + totalOtHrs;
 
-        let sssDed = extra.applyGov ? parseFloat(emp.sssDed || 0) : 0;
-        let phDed = extra.applyGov ? parseFloat(emp.phicDed || 0) : 0;
-        let pagibigDed = extra.applyGov ? parseFloat(emp.hdmfDed || 0) : 0;
+        let sssDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.sssDed || 0) : 0;
+        let phDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.phicDed || 0) : 0;
+        let pagibigDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.hdmfDed || 0) : 0;
         
         let caDed = parseFloat(extra.cashAdvance || 0);
         let loanDed = parseFloat(extra.loan || 0);
@@ -3597,7 +3687,7 @@ let otPay = ot * hourlyRate * otRateMultiplier;
             <td class="px-4 py-4 text-emerald-600 text-center font-bold text-base">₱${netPay.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
             
             <td class="px-3 py-4 text-center">
-                <div class="flex flex-wrap items-center justify-center gap-1.5">
+                <div class="flex flex-nowrap items-center justify-center space-x-1.5 whitespace-nowrap">
                     <button type="button" onclick="window.openDailyModal('${emp.id}')" class="text-xs bg-white text-slate-600 hover:bg-slate-100 px-3 py-1.5 rounded transition-colors border border-slate-300 cursor-pointer shadow-sm">Edit</button>
                     <button type="button" onclick="window.deleteTimesheet('${emp.id}')" class="text-xs bg-white text-rose-600 hover:bg-rose-50 px-3 py-1.5 rounded transition-colors border border-rose-200 cursor-pointer shadow-sm">Delete</button>
                     <button type="button" onclick="window.previewTimesheet('${emp.id}')" class="text-xs bg-white text-emerald-600 hover:bg-emerald-50 px-3 py-1.5 rounded transition-colors border border-slate-300 cursor-pointer shadow-sm">Preview</button>
@@ -3652,13 +3742,13 @@ let oPay = ot * hourlyRate * otRateMultiplier;
 
             const extra = window.currentTimesheetExtra[id] || { cashAdvance: 0, loan: 0, penalty: 0, applyGov: false };
             
-           let sssDed = (grossPay > 0 && extra.applyGov) ? parseFloat(emp.sssDed || 0) : 0;
-            let phDed = (grossPay > 0 && extra.applyGov) ? parseFloat(emp.phicDed || 0) : 0;
-            let pagibigDed = (grossPay > 0 && extra.applyGov) ? parseFloat(emp.hdmfDed || 0) : 0;
+           let sssDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.sssDed || 0) : 0;
+            let phDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.phicDed || 0) : 0;
+            let pagibigDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.hdmfDed || 0) : 0;
             
-            let caDed = grossPay > 0 ? parseFloat(extra.cashAdvance || 0) : 0;
-            let loanDed = grossPay > 0 ? parseFloat(extra.loan || 0) : 0;
-            let penaltyDed = grossPay > 0 ? parseFloat(extra.penalty || 0) : 0;
+            let caDed = parseFloat(extra.cashAdvance || 0);
+            let loanDed = parseFloat(extra.loan || 0);
+            let penaltyDed = parseFloat(extra.penalty || 0);
 
             let totalDeductions = sssDed + phDed + pagibigDed + caDed + loanDed + penaltyDed + totalLatePay;
             let netPay = grossPay > 0 ? (grossPay - totalDeductions) : 0;
@@ -3688,7 +3778,7 @@ let oPay = ot * hourlyRate * otRateMultiplier;
 
             let caLabel = extra.caNote ? `Cash Advance <span style="font-weight: normal;">(${extra.caNote})</span>` : 'Cash Advance';
             let loanLabel = extra.loanNote ? `Loan Deduction <span style="font-weight: normal;">(${extra.loanNote})</span>` : 'Loan Deduction';
-            let penaltyLabel = extra.penaltyNote ? `Penalty <span style="font-weight: normal;">(${extra.penaltyNote})</span>` : 'Penalty / Tardiness';
+            let penaltyLabel = extra.penaltyNote ? `Penalty <span style="font-weight: normal;">(${extra.penaltyNote})</span>` : 'Penalty / Charged';
 
             let deductionsHtml = '';
             if (sssDed > 0) deductionsHtml += `<tr style="border-bottom: 1px solid #f1f5f9; color: #dc2626;"><td style="padding: 8px;" colspan="2">SSS Contribution</td><td style="padding: 8px; text-align: right;">- ₱${sssDed.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td></tr>`;
@@ -3888,23 +3978,25 @@ window.copyPortalLink = function() {
                             <strong>Payout Date:</strong> ${payoutStr ? formatShortDate(payoutStr) : 'Not Set'}
                         </p>
                     </div>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 11px;">
-                        <thead>
-                            <tr style="background-color: #f1f5f9; border-bottom: 2px solid #cbd5e1; text-transform: uppercase;">
-                                <th style="padding: 8px; text-align: left;">Employee Name</th>
-                                <th style="padding: 8px; text-align: center;">Total Hrs</th>
-                                <th style="padding: 8px; text-align: right;">Gross Pay</th>
-                                <th style="padding: 8px; text-align: right; color: #ea580c;">Lates</th>
-                                <th style="padding: 8px; text-align: right; color: #dc2626;">SSS</th>
-                                <th style="padding: 8px; text-align: right; color: #dc2626;">PHIC</th>
-                                <th style="padding: 8px; text-align: right; color: #dc2626;">HDMF</th>
-                                <th style="padding: 8px; text-align: right; color: #ea580c;">CA</th>
-                                <th style="padding: 8px; text-align: right; color: #ea580c;">Loan</th>
-                                <th style="padding: 8px; text-align: right; color: #ea580c;">Pen.</th>
-                                <th style="padding: 8px; text-align: right; color: #dc2626;">Total Ded.</th>
-                                <th style="padding: 8px; text-align: right; color: #047857;">Net Pay</th>
-                            </tr>
-                        </thead>
+                    <!-- SCROLLABLE WRAPPER PARA SA MOBILE -->
+                    <div style="overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; margin-bottom: 10px;">
+                        <table style="width: 100%; min-width: 850px; border-collapse: collapse; font-size: 11px; white-space: nowrap;">
+                            <thead>
+                                <tr style="background-color: #f1f5f9; border-bottom: 2px solid #cbd5e1; text-transform: uppercase;">
+                                    <th style="padding: 8px 6px; text-align: left;">Employee Name</th>
+                                    <th style="padding: 8px 6px; text-align: center;">Total Hrs</th>
+                                    <th style="padding: 8px 6px; text-align: right;">Gross Pay</th>
+                                    <th style="padding: 8px 6px; text-align: right; color: #ea580c;">Lates</th>
+                                    <th style="padding: 8px 6px; text-align: right; color: #dc2626;">SSS</th>
+                                    <th style="padding: 8px 6px; text-align: right; color: #dc2626;">PHIC</th>
+                                    <th style="padding: 8px 6px; text-align: right; color: #dc2626;">HDMF</th>
+                                    <th style="padding: 8px 6px; text-align: right; color: #ea580c;">CA</th>
+                                    <th style="padding: 8px 6px; text-align: right; color: #ea580c;">Loan</th>
+                                    <th style="padding: 8px 6px; text-align: right; color: #ea580c;">Pen.</th>
+                                    <th style="padding: 8px 6px; text-align: right; color: #dc2626;">Total Ded.</th>
+                                    <th style="padding: 8px 6px; text-align: right; color: #047857;">Net Pay</th>
+                                </tr>
+                            </thead>
                         <tbody>
             `;
 
@@ -3949,13 +4041,13 @@ window.copyPortalLink = function() {
                 let grossPay = totalBasicPay + totalOtPay + totalNdPay;
                 const extra = window.currentTimesheetExtra[emp.id] || { cashAdvance: 0, loan: 0, penalty: 0, applyGov: false };
                 
-                let sssDed = (grossPay > 0 && extra.applyGov) ? parseFloat(emp.sssDed || 0) : 0;
-                let phDed = (grossPay > 0 && extra.applyGov) ? parseFloat(emp.phicDed || 0) : 0;
-                let pagibigDed = (grossPay > 0 && extra.applyGov) ? parseFloat(emp.hdmfDed || 0) : 0;
+                let sssDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.sssDed || 0) : 0;
+                let phDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.phicDed || 0) : 0;
+                let pagibigDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.hdmfDed || 0) : 0;
                 
-                let caDed = grossPay > 0 ? parseFloat(extra.cashAdvance || 0) : 0;
-                let loanDed = grossPay > 0 ? parseFloat(extra.loan || 0) : 0;
-                let penaltyDed = grossPay > 0 ? parseFloat(extra.penalty || 0) : 0;
+                let caDed = parseFloat(extra.cashAdvance || 0);
+                let loanDed = parseFloat(extra.loan || 0);
+                let penaltyDed = parseFloat(extra.penalty || 0);
 
                 let totalDeductions = sssDed + phDed + pagibigDed + caDed + loanDed + penaltyDed + totalLatePay;
                 let netPay = grossPay > 0 ? (grossPay - totalDeductions) : 0;
@@ -4010,9 +4102,10 @@ window.copyPortalLink = function() {
                             </tr>
                         </tfoot>
                     </table>
-                    <p style="text-align: center; font-size: 10px; color: #94a3b8; margin-top: 30px;">Printed on: ${new Date().toLocaleString()} | Generated via PayrollCore</p>
-                </div>
-            `;
+                </div> <!-- ISINARA ANG SCROLLABLE WRAPPER -->
+                <p style="text-align: center; font-size: 10px; color: #94a3b8; margin-top: 20px;">Printed on: ${new Date().toLocaleString()} | Generated via PayrollCore</p>
+            </div>
+        `;
 
             document.getElementById('print-section').innerHTML = reportHtml;
             
@@ -4162,6 +4255,7 @@ window.copyPortalLink = function() {
 		// BUKSAN ANG PAYROLL SETTINGS
         document.getElementById('btn-payroll-settings').addEventListener('click', () => {
             document.getElementById('set-break-weekday').value = window.govRates && window.govRates.breakWeekday !== undefined ? window.govRates.breakWeekday : 1;
+			document.getElementById('global-gov-deduct').checked = window.govRates && window.govRates.applyGov ? true : false;
             document.getElementById('set-break-weekend').value = window.govRates && window.govRates.breakWeekend !== undefined ? window.govRates.breakWeekend : 1;
             document.getElementById('set-ot-rate').value = window.govRates && window.govRates.otRate !== undefined ? window.govRates.otRate : "1.25";
             document.getElementById('payroll-settings-modal').style.display = 'flex';
@@ -4174,14 +4268,17 @@ window.copyPortalLink = function() {
             const otRate = document.getElementById('set-ot-rate').value;
 
             window.showLoading("Saving...");
-            if(!window.govRates) window.govRates = {};
-            window.govRates.breakWeekday = breakWeekday;
-            window.govRates.breakWeekend = breakWeekend;
-            window.govRates.otRate = otRate;
-            
-            if(window.db) {
-                await window.db.collection("settings").doc("deductions_" + window.currentCompanyId).set(window.govRates, { merge: true });
-            }
+                if(!window.govRates) window.govRates = {};
+                window.govRates.breakWeekday = breakWeekday;
+                window.govRates.breakWeekend = breakWeekend;
+                window.govRates.otRate = otRate;
+                
+                // DITO IDINAGDAG YUNG PAG-SAVE NG TOGGLE
+                window.govRates.applyGov = document.getElementById('global-gov-deduct').checked;
+                
+                if(window.db) {
+                    await window.db.collection("settings").doc("deductions_" + window.currentCompanyId).set(window.govRates, { merge: true });
+                }
             
             document.getElementById('payroll-settings-modal').style.display = 'none';
             window.hideLoading();
@@ -4357,9 +4454,10 @@ window.refreshLogs = function() {
     const emp = window.employees.find(e => e.id === empId) || {};
     
     if (day.timeIn === 'REST') {
-        // Balik sa normal na shift schedule kapag in-undo
+        // Balik sa normal na shift schedule kapag in-undo, pero walang Time Out at Earnings pa
         day.timeIn = emp.shiftStart || '08:00';
-        day.timeOut = emp.shiftEnd || '17:00';
+        day.timeOut = '';
+        day.ot = 0; day.nd = 0; day.late = 0; day.duration = 0; day.rate = 0; day.basicPay = 0;
     } else {
         // Gawing REST DAY at gawing zero ang mga computations
         day.timeIn = 'REST';
