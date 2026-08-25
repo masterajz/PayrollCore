@@ -242,8 +242,8 @@
                         </button>
                     </div>
 
-                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm w-full">
-                        <table class="w-full text-left border-collapse text-xs">
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-x-auto shadow-sm w-full">
+    <table class="w-full text-left border-collapse text-xs">
                             <thead>
                                 <tr class="bg-slate-50 text-slate-500 uppercase tracking-wider border-b border-slate-200">
                                     <th class="px-2 py-3 w-8 text-center"><input type="checkbox" id="select-all-emp" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></th>
@@ -944,7 +944,7 @@
                             <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap min-w-[90px]">ND (Hrs/₱)</th>
                             <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap w-24">Duration</th>
                             <th class="pb-3 font-semibold px-3 text-center whitespace-nowrap w-32">Earnings (₱)</th>
-                            <th class="pb-3 font-semibold px-2 text-center w-16"></th>
+                            <th class="pb-3 font-semibold px-2 text-center w-28 min-w-[100px]">Action</th>
                         </tr>
                     </thead>
                     <tbody id="daily-tbody" class="text-sm text-slate-700 bg-white">
@@ -2085,7 +2085,11 @@
                         </td>
                         <td class="px-2 py-3 font-mono font-bold text-indigo-600 text-center tracking-widest border-b border-slate-100">${emp.pin || '----'}</td>
 
-                        <td class="px-2 py-3 text-center border-b border-slate-100">${actionBtn}</td>
+                        <td class="px-2 py-3 text-center border-b border-slate-100">
+    <div class="flex items-center justify-center space-x-2 whitespace-nowrap">
+        ${actionBtn}
+    </div>
+</td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -2733,14 +2737,20 @@ let otPay = (day.ot || 0) * hourlyRate * otRateMultiplier;
                 <input type="date" class="t-date w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs font-medium" value="${day.dateStr}" onchange="window.calcDaily('${empId}', ${index}, this)">
             </td>
             
-            <!-- 2. TIME IN COLUMN -->
+           <!-- 2. TIME IN COLUMN -->
             <td class="px-2 py-2">
-                <input type="text" class="t-in time-picker-custom w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer placeholder-slate-400" placeholder="hh:mm AM/PM" value="${day.timeIn}" onchange="window.calcDaily('${empId}', ${index}, this)">
+                ${day.timeIn === 'REST' 
+                    ? `<input type="text" class="w-full bg-slate-100 border border-slate-200 text-slate-500 py-1 px-2 rounded text-xs text-center font-bold outline-none cursor-not-allowed" value="REST DAY" readonly>`
+                    : `<input type="text" class="t-in time-picker-custom w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer placeholder-slate-400" placeholder="hh:mm AM/PM" value="${day.timeIn}" onchange="window.calcDaily('${empId}', ${index}, this)">`
+                }
             </td>
             
             <!-- 3. TIME OUT COLUMN -->
             <td class="px-2 py-2">
-                <input type="text" class="t-out time-picker-custom w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer placeholder-slate-400" placeholder="hh:mm AM/PM" value="${day.timeOut}" onchange="window.calcDaily('${empId}', ${index}, this)">
+                ${day.timeIn === 'REST' 
+                    ? `<input type="text" class="w-full bg-slate-100 border border-slate-200 text-slate-500 py-1 px-2 rounded text-xs text-center font-bold outline-none cursor-not-allowed" value="REST DAY" readonly>`
+                    : `<input type="text" class="t-out time-picker-custom w-full bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer placeholder-slate-400" placeholder="hh:mm AM/PM" value="${day.timeOut}" onchange="window.calcDaily('${empId}', ${index}, this)">`
+                }
             </td>
             
             <!-- 4. OVERTIME COLUMN -->
@@ -2765,13 +2775,16 @@ let otPay = (day.ot || 0) * hourlyRate * otRateMultiplier;
             <!-- 8. EARNINGS COLUMN -->
             <td class="px-2 py-2 text-center font-bold text-emerald-600 text-xs t-rate">₱${(day.rate || 0).toFixed(2)}</td>
             
-            <!-- 9. ACTION COLUMN -->
+        <!-- 9. ACTION COLUMN -->
             <td class="px-2 py-2 text-center">
-                <div class="flex flex-wrap justify-center items-center gap-1.5">
-                    <button onclick="window.reorderTimesheetRow('${empId}')" class="text-indigo-500 hover:text-indigo-700 cursor-pointer" title="Sort & Apply">
+                <div class="flex flex-row justify-center items-center gap-3">
+                    <button onclick="window.reorderTimesheetRow('${empId}')" class="text-indigo-500 hover:text-indigo-700 cursor-pointer p-1" title="Sort & Apply">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
                     </button>
-                    <button onclick="window.removeTimesheetLine('${empId}', ${index})" class="text-rose-500 hover:text-rose-700 cursor-pointer" title="Delete Row">
+                    <button onclick="window.toggleRestDay('${empId}', ${index})" class="text-amber-500 hover:text-amber-700 cursor-pointer p-1" title="Set/Undo Rest Day">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </button>
+                    <button onclick="window.removeTimesheetLine('${empId}', ${index})" class="text-rose-500 hover:text-rose-700 cursor-pointer p-1" title="Delete Row">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                     </button>
                 </div>
@@ -4339,6 +4352,41 @@ window.refreshLogs = function() {
             });
             showToast("System logs refreshed.", "success");
         };
+		window.toggleRestDay = function(empId, index) {
+    const day = window.currentTimesheetData[empId][index];
+    const emp = window.employees.find(e => e.id === empId) || {};
+    
+    if (day.timeIn === 'REST') {
+        // Balik sa normal na shift schedule kapag in-undo
+        day.timeIn = emp.shiftStart || '08:00';
+        day.timeOut = emp.shiftEnd || '17:00';
+    } else {
+        // Gawing REST DAY at gawing zero ang mga computations
+        day.timeIn = 'REST';
+        day.timeOut = 'REST';
+        day.ot = 0;
+        day.nd = 0;
+        day.late = 0;
+        day.duration = 0;
+        day.rate = 0;
+        day.basicPay = 0;
+    }
+    
+    // I-render ulit ang table
+    window.renderDailyTable(empId);
+    
+    // Auto-calculate kapag binalik sa normal time
+    if (day.timeIn !== 'REST') {
+        setTimeout(() => {
+            const tbody = document.getElementById('daily-tbody');
+            if(tbody && tbody.children[index]) {
+                const tInInput = tbody.children[index].querySelector('.t-in');
+                if(tInInput) window.calcDaily(empId, index, tInInput);
+            }
+        }, 50);
+    }
+};
+
     </script>
 </body>
 </html>
