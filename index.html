@@ -79,7 +79,6 @@
                         Say goodbye to manual Excel sheets. PayrollCore automatically calculates timesheets, night differentials, and standard deductions in just a few clicks.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <!-- LINK TO REGISTER MODE -->
                         <a href="/app?mode=register" class="flex justify-center items-center bg-brand-600 hover:bg-brand-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl shadow-brand-500/30 transition-all hover:-translate-y-1">
                             Start for Free
                             <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -200,7 +199,8 @@
                     </div>
                     <h3 class="text-xl font-bold text-brand-700">PayrollCore Pro</h3>
                     <div class="mt-4 mb-6">
-                        <span class="text-5xl font-extrabold text-slate-900">₱499</span>
+                        <!-- INJECTED: ID para sa dynamic na presyo (landing-price-pro) -->
+                        <span id="landing-price-pro" class="text-5xl font-extrabold text-slate-900">₱499</span>
                         <span class="text-slate-500">/ month</span>
                     </div>
                     <p class="text-slate-600 text-sm mb-6">For growing SMEs that need full payroll automation.</p>
@@ -215,9 +215,10 @@
 
                 <!-- Enterprise Plan -->
                 <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
-                    <h3 class="text-xl font-bold text-rose-600">PayrollCore Enterprise</h3>
+                    <h3 class="text-xl font-bold text-rose-600">PayrollCore Blaze</h3>
                     <div class="mt-4 mb-6">
-                        <span class="text-4xl font-extrabold text-slate-900">₱1,499</span>
+                        <!-- INJECTED: ID para sa dynamic na presyo (landing-price-blaze) -->
+                        <span id="landing-price-blaze" class="text-4xl font-extrabold text-slate-900">₱1,499</span>
                         <span class="text-slate-500">/ month</span>
                     </div>
                     <p class="text-slate-500 text-sm mb-6">Enterprise-grade features for unlimited scaling.</p>
@@ -259,5 +260,29 @@
         </div>
     </footer>
 
+    <!-- FIREBASE INIT & PRICING FETCH SCRIPT -->
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAc5bBd9Su_78JySz0xJ-gl0uurRSGoJ0U",
+            authDomain: "paysync-7ea63.firebaseapp.com",
+            projectId: "paysync-7ea63"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Fetch Prices for Landing Page on Load
+        db.collection('settings').doc('global_pricing').get().then(snap => {
+            if (snap.exists) {
+                const data = snap.data();
+                const proEl = document.getElementById('landing-price-pro');
+                const blazeEl = document.getElementById('landing-price-blaze');
+                
+                if(proEl && data.pro !== undefined) proEl.innerText = '₱' + data.pro.toLocaleString();
+                if(blazeEl && data.blaze !== undefined) blazeEl.innerText = '₱' + data.blaze.toLocaleString();
+            }
+        }).catch(err => console.log("Pricing fetch error:", err));
+    </script>
 </body>
 </html>
