@@ -56,22 +56,26 @@
         </div>
     </div>
 
-    <!-- DASHBOARD SCREEN -->
-    <div id="dashboard-screen" class="hidden w-full max-w-3xl flex-col">
-        <header class="flex flex-col sm:flex-row justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-6 shrink-0 gap-4 mt-2 sm:mt-6">
-            <div class="text-center sm:text-left">
-                <h1 class="text-xl sm:text-2xl font-bold text-slate-800">My Payslips</h1>
-                <p class="text-slate-500 text-xs sm:text-sm mt-1" id="welcome-name">Welcome back!</p>
-            </div>
-            <button onclick="logout()" class="px-6 py-2 bg-rose-50 text-rose-600 font-bold rounded-lg hover:bg-rose-100 transition-colors w-full sm:w-auto">Sign Out</button>
-        </header>
-
-        <!-- MGA PAYSLIP CARDS (KUNG ENABLED ANG PORTAL) -->
-        <div id="payslips-container" class="space-y-8 pb-10 flex flex-col items-center w-full">
-            <!-- Loaded dynamically -->
+<!-- DASHBOARD SCREEN -->
+<div id="dashboard-screen" class="hidden w-full max-w-4xl flex-col">
+    <header class="flex flex-col sm:flex-row justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-6 shrink-0 gap-4 mt-2 sm:mt-6">
+        <div class="text-center sm:text-left">
+            <h1 class="text-xl sm:text-2xl font-bold text-slate-800" id="emp-portal-title">Employee Secured Portal</h1>
+            <p class="text-slate-500 text-xs sm:text-sm mt-1" id="welcome-name">Welcome back!</p>
         </div>
+        <button onclick="logout()" class="px-6 py-2 bg-rose-50 text-rose-600 font-bold rounded-lg hover:bg-rose-100 transition-colors w-full sm:w-auto">Sign Out</button>
+    </header>
 
-        <!-- PENDING SCREEN (KAPAG NAKA-DISABLE ANG PORTAL SA ADMIN) -->
+    <!-- NAVIGATION TABS -->
+    <div class="flex space-x-2 mb-6 bg-white p-1.5 rounded-xl border border-slate-200 shadow-sm w-full sm:w-auto self-start">
+        <button id="tab-btn-payslips" onclick="switchPortalTab('payslips')" class="px-5 py-2 text-xs sm:text-sm font-bold bg-indigo-50 text-indigo-600 rounded-lg transition-all">My Payslips</button>
+        <button id="tab-btn-requests" onclick="switchPortalTab('requests')" class="px-5 py-2 text-xs sm:text-sm font-bold text-slate-500 hover:text-slate-800 rounded-lg transition-all">Employee Requests</button>
+    </div>
+
+    <!-- VIEW 1: PAYSLIPS -->
+    <div id="portal-view-payslips" class="w-full">
+        <div id="payslips-container" class="space-y-8 pb-10 flex flex-col items-center w-full"></div>
+        
         <div id="pending-screen" class="hidden flex-col items-center justify-center bg-white p-8 sm:p-12 rounded-2xl shadow-sm border border-slate-200 text-center w-full mt-6">
             <div class="w-24 h-24 bg-indigo-50 text-indigo-500 rounded-full flex items-center justify-center mb-6 mx-auto">
                 <svg class="w-12 h-12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -79,8 +83,117 @@
             <h2 class="text-2xl font-bold text-slate-800 mb-3">Payslips Not Yet Available</h2>
             <p class="text-slate-500 max-w-md mx-auto">Your payroll is currently being processed and reviewed. Please wait for your HR or Administrator to publish the latest payslips.</p>
         </div>
-
     </div>
+
+   <!-- VIEW 2: LEAVE & OT REQUESTS -->
+<div id="portal-view-requests" class="hidden w-full space-y-6 pb-10">
+    
+    <!-- NEW COMPACT SELECTOR FORM -->
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 w-full max-w-xl mx-auto">
+        <h3 class="text-base font-bold text-slate-800 mb-4 flex items-center">
+            <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            File a New Request
+        </h3>
+        
+        <!-- SELECTOR DROPDOWN -->
+        <div class="mb-5">
+            <label class="block text-xs font-semibold text-slate-600 mb-1">What would you like to request?</label>
+            <select id="req-master-selector" onchange="window.toggleRequestForm()" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-sm font-bold text-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                <!-- Options injected via JS -->
+            </select>
+        </div>
+
+        <!-- FORM 1: ABSENCE -->
+        <form id="absence-request-form" class="space-y-3 hidden">
+            <div>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-1">Leave Type</label>
+                <select id="req-leave-type" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                    <option value="Vacation Leave">Vacation Leave (VL)</option>
+                    <option value="Sick Leave">Sick Leave (SL)</option>
+                    <option value="Emergency Leave">Emergency Leave (EL)</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">Start Date</label>
+                    <input type="date" id="req-leave-start" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">End Date</label>
+                    <input type="date" id="req-leave-end" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                </div>
+            </div>
+            <div>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-1">Reason / Details</label>
+                <textarea id="req-leave-reason" rows="2" required placeholder="State your reason..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+            </div>
+            <button type="submit" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-xs transition-colors shadow-sm cursor-pointer mt-1">Submit Absence Request</button>
+        </form>
+
+        <!-- FORM 2: CHANGE SCHEDULE -->
+        <form id="schedule-request-form" class="space-y-3 hidden">
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">Current Shift</label>
+                    <input type="text" id="req-sched-old" required placeholder="e.g. 8AM - 5PM" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">Requested Shift</label>
+                    <input type="text" id="req-sched-new" required placeholder="e.g. 9AM - 6PM" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+            <div>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-1">Effective Date / Reason</label>
+                <textarea id="req-sched-reason" rows="2" required placeholder="State effective date and reason..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+            </div>
+            <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition-colors shadow-sm cursor-pointer mt-1">Submit Schedule Change</button>
+        </form>
+
+        <!-- FORM 3: OVERTIME -->
+        <form id="ot-request-form" class="space-y-3 hidden">
+            <div class="grid grid-cols-2 gap-2">
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">OT Date</label>
+                    <input type="date" id="req-ot-date" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer">
+                </div>
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">Estimated Hours</label>
+                    <input type="number" step="0.5" id="req-ot-hours" min="0.5" required placeholder="e.g. 2.5" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+            <div>
+                <label class="block text-[11px] font-semibold text-slate-500 mb-1">Reason / Task</label>
+                <textarea id="req-ot-reason" rows="2" required placeholder="Work deliverable / project..." class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+            </div>
+            <button type="submit" class="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-lg text-xs transition-colors shadow-sm cursor-pointer mt-1">Submit Overtime</button>
+        </form>
+        
+        <div id="no-forms-msg" class="hidden text-center text-sm text-slate-500 py-4 font-bold border-t border-slate-100 mt-4">
+            No request forms are currently enabled by your administrator.
+        </div>
+    </div>
+
+    <!-- MY FILED REQUESTS HISTORY TABLE -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 overflow-hidden">
+        <h3 class="text-sm font-bold text-slate-800 mb-4">My Submitted Requests</h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
+                <thead>
+    <tr class="bg-slate-50 text-slate-500 uppercase tracking-wider border-b border-slate-200">
+        <th class="py-3 px-4 font-semibold">Type</th>
+        <th class="py-3 px-4 font-semibold">Details / Date</th>
+        <th class="py-3 px-4 font-semibold">Reason</th>
+        <th class="py-3 px-4 font-semibold text-center">Status</th>
+        <th class="py-3 px-4 font-semibold text-center w-10"></th> <!-- ITO YUNG PARA SA DELETE -->
+    </tr>
+</thead>
+                <tbody id="requests-tbody" class="divide-y divide-slate-100 text-slate-700">
+                    <tr><td colspan="4" class="py-6 text-center text-slate-400">Loading requests...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
     <!-- MODERN FORGOT PIN MODAL -->
     <div id="forgot-pin-modal" style="display: none;" class="fixed inset-0 bg-slate-900/60 items-center justify-center z-[100] p-4">
@@ -163,71 +276,89 @@
             }
         });
 
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const pin = document.getElementById('emp-pin').value.trim();
-            const urlParams = new URLSearchParams(window.location.search);
-            const companyIdFromUrl = urlParams.get('c');
+   document.getElementById('login-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const pin = document.getElementById('emp-pin').value.trim();
+    const urlParams = new URLSearchParams(window.location.search);
+    const companyIdFromUrl = urlParams.get('c');
 
-            if (!companyIdFromUrl) return alert("Invalid Portal Link!");
+    if (!companyIdFromUrl) return alert("Invalid Portal Link!");
 
-            showLoad("Authenticating...");
+    showLoad("Authenticating...");
 
-            try {
-                const snap = await db.collection('employees')
-                    .where('companyId', '==', companyIdFromUrl)
-                    .where('pin', '==', pin)
-                    .get();
-                
-                if(snap.empty) {
-                    hideLoad();
-                    return alert("Invalid PIN. Please check and try again.");
-                }
-                
-                const empDoc = snap.docs[0];
-                const empData = empDoc.data();
+    try {
+        const snap = await db.collection('employees')
+            .where('companyId', '==', companyIdFromUrl)
+            .where('pin', '==', pin)
+            .get();
+        
+        if(snap.empty) {
+            hideLoad();
+            return alert("Invalid PIN. Please check and try again.");
+        }
+        
+        const empDoc = snap.docs[0];
+        const empData = empDoc.data();
 
-                document.getElementById('welcome-name').innerText = `Welcome back, ${empData.name}!`;
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('dashboard-screen').style.display = 'flex';
-                
-                showLoad("Loading your payslips...");
-                
-                let companySettings = { name: empData.companyName || "Company Name Not Set", address: "", logo: "", portalEnabled: true };
-                let govRates = { sss: 0, philhealth: 0, pagibig: 0 };
-                
-                try {
-                    const compSnap = await db.collection('settings').doc('company_' + companyIdFromUrl).get();
-                    if (compSnap.exists) {
-                        const data = compSnap.data();
-                        if (data.name) companySettings.name = data.name;
-                        if (data.address) companySettings.address = data.address;
-                        if (data.logo) companySettings.logo = data.logo;
-                        if (data.portalEnabled !== undefined) companySettings.portalEnabled = data.portalEnabled;
-                    }
-                    const dedSnap = await db.collection('settings').doc('deductions_' + companyIdFromUrl).get();
-                    if (dedSnap.exists) govRates = dedSnap.data();
-                } catch(e) { console.error("Error loading settings:", e); }
+        window.currentEmpData = { id: empDoc.id, ...empData };
+        window.currentCompanyId = companyIdFromUrl;
 
-                // KAPAG NAKA DISABLE SA ADMIN YUNG PORTAL, IPAPAKITA ANG PENDING SCREEN
-                let isPortalEnabled = companySettings.portalEnabled !== false;
-
-                if (!isPortalEnabled) {
-                    document.getElementById('payslips-container').style.display = 'none';
-                    document.getElementById('pending-screen').style.display = 'flex';
-                    hideLoad();
-                    return;
-                } else {
-                    document.getElementById('payslips-container').style.display = 'flex';
-                    document.getElementById('pending-screen').style.display = 'none';
-                    loadPayslips(empDoc.id, empData, companySettings, govRates);
-                }
-                
-            } catch(err) {
-                alert("Database Error: " + err.message);
-                hideLoad();
+        document.getElementById('welcome-name').innerText = `Welcome back, ${empData.name}!`;
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('dashboard-screen').style.display = 'flex';
+        
+        showLoad("Loading your payslips...");
+        
+        let companySettings = { 
+            name: empData.companyName || "Company Name Not Set", 
+            address: "", 
+            logo: "", 
+            portalEnabled: true,
+            reqSettings: { absence: true, schedule: true, overtime: true }
+        };
+        let govRates = { sss: 0, philhealth: 0, pagibig: 0 };
+        
+        try {
+            const compSnap = await db.collection('settings').doc('company_' + companyIdFromUrl).get();
+            if (compSnap.exists) {
+                const compData = compSnap.data();
+                if (compData.name) companySettings.name = compData.name;
+                if (compData.address) companySettings.address = compData.address;
+                if (compData.logo) companySettings.logo = compData.logo;
+                if (compData.portalEnabled !== undefined) companySettings.portalEnabled = compData.portalEnabled;
+                if (compData.reqSettings) companySettings.reqSettings = compData.reqSettings;
             }
-        });
+            const dedSnap = await db.collection('settings').doc('deductions_' + companyIdFromUrl).get();
+            if (dedSnap.exists) govRates = dedSnap.data();
+        } catch(e) { console.error("Error loading settings:", e); }
+
+        // =========================================================================
+        // DITO NAKALAGAY YUNG CODE MO (AUTO SHOW/HIDE NG TABS BASE SA ADMIN TOGGLES)
+        // =========================================================================
+        const rs = companySettings.reqSettings || { absence: true, schedule: true, overtime: true };
+        if (typeof window.setupRequestSelector === 'function') {
+            window.setupRequestSelector(rs);
+        }
+        // =========================================================================
+
+        let isPortalEnabled = companySettings.portalEnabled !== false;
+
+        if (!isPortalEnabled) {
+            document.getElementById('payslips-container').style.display = 'none';
+            document.getElementById('pending-screen').style.display = 'flex';
+            hideLoad();
+            return;
+        } else {
+            document.getElementById('payslips-container').style.display = 'flex';
+            document.getElementById('pending-screen').style.display = 'none';
+            loadPayslips(empDoc.id, empData, companySettings, govRates);
+        }
+        
+    } catch(err) {
+        alert("Database Error: " + err.message);
+        hideLoad();
+    }
+});
 
      async function loadPayslips(empId, empData, companySettings, govRates) {
     const container = document.getElementById('payslips-container');
@@ -449,6 +580,258 @@
         });
 
         function logout() { location.reload(); }
+		window.currentEmpData = null;
+window.currentCompanyId = null;
+
+// TAB SWITCHER FUNCTION
+window.switchPortalTab = function(tab) {
+    const btnPayslips = document.getElementById('tab-btn-payslips');
+    const btnRequests = document.getElementById('tab-btn-requests');
+    const viewPayslips = document.getElementById('portal-view-payslips');
+    const viewRequests = document.getElementById('portal-view-requests');
+
+    if (tab === 'payslips') {
+        btnPayslips.className = "px-5 py-2 text-xs sm:text-sm font-bold bg-indigo-50 text-indigo-600 rounded-lg transition-all";
+        btnRequests.className = "px-5 py-2 text-xs sm:text-sm font-bold text-slate-500 hover:text-slate-800 rounded-lg transition-all";
+        viewPayslips.classList.remove('hidden');
+        viewRequests.classList.add('hidden');
+    } else {
+        btnRequests.className = "px-5 py-2 text-xs sm:text-sm font-bold bg-indigo-50 text-indigo-600 rounded-lg transition-all";
+        btnPayslips.className = "px-5 py-2 text-xs sm:text-sm font-bold text-slate-500 hover:text-slate-800 rounded-lg transition-all";
+        viewRequests.classList.remove('hidden');
+        viewPayslips.classList.add('hidden');
+        window.loadMyRequests();
+    }
+};
+
+// ==========================================
+// FORM SELECTOR & TAB AUTO-HIDE LOGIC
+// ==========================================
+window.setupRequestSelector = function(reqSettings) {
+    const selector = document.getElementById('req-master-selector');
+    const reqTabBtn = document.getElementById('tab-btn-requests');
+    if (!selector) return;
+
+    selector.innerHTML = ''; // Clear old options
+    
+    // 1. I-check kung aling forms ang naka-enable sa Admin
+    if (reqSettings.absence) selector.add(new Option("Absence / Leave Request", "absence"));
+    if (reqSettings.schedule) selector.add(new Option("Change Schedule Request", "schedule"));
+    if (reqSettings.overtime) selector.add(new Option("Overtime Request", "overtime"));
+
+    const hasAnyActiveForm = selector.options.length > 0;
+
+    // 2. KAPAG NAKA-UNCHECK LAHAT SA ADMIN:
+    if (!hasAnyActiveForm) {
+        // Itago ang mismong "Employee Requests" Tab Button sa itaas
+        if (reqTabBtn) reqTabBtn.style.display = 'none';
+        
+        // Kusa ding itago ang buong requests view container
+        document.getElementById('portal-view-requests')?.classList.add('hidden');
+        
+        // I-force ang display pabalik sa "My Payslips" tab
+        if (typeof window.switchPortalTab === 'function') {
+            window.switchPortalTab('payslips');
+        }
+    } else {
+        // 3. KAPAG MAY KAHIT ISANG NAKA-CHECK:
+        if (reqTabBtn) reqTabBtn.style.display = 'inline-block';
+        window.toggleRequestForm(); // Ipakita ang napiling form sa dropdown
+    }
+};
+
+window.toggleRequestForm = function() {
+    const val = document.getElementById('req-master-selector').value;
+    document.getElementById('absence-request-form').style.display = (val === 'absence') ? 'block' : 'none';
+    document.getElementById('schedule-request-form').style.display = (val === 'schedule') ? 'block' : 'none';
+    document.getElementById('ot-request-form').style.display = (val === 'overtime') ? 'block' : 'none';
+};
+
+// ==========================================
+// LOAD FILED REQUESTS HISTORY
+// ==========================================
+// ==========================================
+// LOAD FILED REQUESTS HISTORY 
+// ==========================================
+window.loadMyRequests = async function() {
+    const tbody = document.getElementById('requests-tbody');
+    if (!tbody) return;
+    if (!window.currentEmpData || !window.currentCompanyId) {
+        tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-slate-400">Please log in first.</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-slate-400">Loading requests...</td></tr>';
+
+    try {
+        const snap = await firebase.firestore().collection('requests')
+            .where('companyId', '==', window.currentCompanyId)
+            .where('empId', '==', window.currentEmpData.id)
+            .get();
+
+        if (snap.empty) {
+            tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-slate-400">No submitted requests yet.</td></tr>';
+            return;
+        }
+
+        let records = [];
+        snap.forEach(doc => {
+            if (doc.exists) {
+                records.push({ id: doc.id, ...doc.data() });
+            }
+        });
+
+        records.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+        tbody.innerHTML = '';
+        records.forEach(r => {
+            const reqType = r.requestType || 'Request';
+            const status = r.status || 'Pending';
+            
+            let badgeClass = "bg-slate-100 text-slate-600 border-slate-200"; // Pending
+            if (status === 'Approved') badgeClass = "bg-emerald-100 text-emerald-700 border-emerald-200";
+            if (status === 'Rejected') badgeClass = "bg-rose-100 text-rose-700 border-rose-200";
+
+            let detailsText = '-';
+            if (reqType === 'Leave' || reqType === 'Absence') {
+                const lType = r.leaveType || 'Leave';
+                const start = r.startDate || '-';
+                const end = r.endDate || '-';
+                detailsText = `${lType} (${start} to ${end})`;
+            } else if (reqType === 'Overtime') {
+                const hrs = r.otHours || 0;
+                const date = r.otDate || '-';
+                detailsText = `${hrs} hrs on ${date}`;
+            } else if (reqType === 'Change Schedule') {
+                const newS = r.newShift || '-';
+                detailsText = `To: ${newS}`;
+            }
+
+            let rejectNote = '';
+            if (status === 'Rejected' && r.rejectReason) {
+                rejectNote = `<div class="text-[10px] text-rose-500 mt-1.5 font-medium leading-tight">Reason: ${r.rejectReason}</div>`;
+            }
+
+            const reasonText = r.reason || '-';
+
+            // DELETE BUTTON (PALAGING LALABAS KAHIT PENDING O REJECTED)
+            let deleteBtn = `
+                <button onclick="window.deleteEmployeeRequest('${r.id}')" class="p-1.5 text-slate-400 hover:text-rose-600 bg-slate-50 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer" title="Delete Request">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+            `;
+
+            tbody.innerHTML += `
+                <tr class="hover:bg-slate-50 border-b border-slate-100">
+                    <td class="py-3 px-4 font-bold text-slate-800">${reqType}</td>
+                    <td class="py-3 px-4 font-medium text-slate-700">${detailsText}</td>
+                    <td class="py-3 px-4 text-slate-500 max-w-[200px] truncate" title="${reasonText}">${reasonText}</td>
+                    <td class="py-3 px-4 text-center align-middle">
+                        <div class="flex flex-col items-center justify-center">
+                            <span class="inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase border ${badgeClass}">${status}</span>
+                            ${rejectNote}
+                        </div>
+                    </td>
+                    <td class="py-3 px-4 text-center align-middle">
+                        ${deleteBtn}
+                    </td>
+                </tr>
+            `;
+        });
+    } catch(err) {
+        console.error("Load Requests Error:", err);
+        tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-rose-500 font-semibold">Failed to load requests: ${err.message}</td></tr>`;
+    }
+};
+
+// ==========================================
+// DELETE REQUEST FUNCTION FOR EMPLOYEE
+// ==========================================
+window.deleteEmployeeRequest = async function(reqId) {
+    if (!confirm("Are you sure you want to delete this request from your history?")) return;
+    
+    showLoad("Deleting...");
+    try {
+        await firebase.firestore().collection('requests').doc(reqId).delete();
+        hideLoad();
+        alert("Request deleted successfully!");
+        window.loadMyRequests();
+    } catch (err) {
+        hideLoad();
+        alert("Failed to delete request: " + err.message);
+    }
+};
+
+// ==========================================
+// FORM SUBMISSION HANDLERS (BULLETPROOF FIX)
+// ==========================================
+
+document.getElementById('absence-request-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    showLoad("Submitting Absence Request...");
+    try {
+        await firebase.firestore().collection('requests').add({
+            companyId: window.currentCompanyId,
+            empId: window.currentEmpData.id,
+            empName: window.currentEmpData.name,
+            requestType: 'Absence',
+            leaveType: document.getElementById('req-leave-type').value,
+            startDate: document.getElementById('req-leave-start').value,
+            endDate: document.getElementById('req-leave-end').value,
+            reason: document.getElementById('req-leave-reason').value.trim(),
+            status: 'Pending',
+            createdAt: new Date().toISOString()
+        });
+        hideLoad();
+        alert("Absence request submitted successfully!");
+        document.getElementById('absence-request-form').reset();
+        window.loadMyRequests();
+    } catch(err) { hideLoad(); alert("Error: " + err.message); }
+});
+
+document.getElementById('schedule-request-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    showLoad("Submitting Schedule Request...");
+    try {
+        await firebase.firestore().collection('requests').add({
+            companyId: window.currentCompanyId,
+            empId: window.currentEmpData.id,
+            empName: window.currentEmpData.name,
+            requestType: 'Change Schedule',
+            oldShift: document.getElementById('req-sched-old').value.trim(),
+            newShift: document.getElementById('req-sched-new').value.trim(),
+            reason: document.getElementById('req-sched-reason').value.trim(),
+            status: 'Pending',
+            createdAt: new Date().toISOString()
+        });
+        hideLoad();
+        alert("Change Schedule request submitted successfully!");
+        document.getElementById('schedule-request-form').reset();
+        window.loadMyRequests();
+    } catch(err) { hideLoad(); alert("Error: " + err.message); }
+});
+
+document.getElementById('ot-request-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    showLoad("Submitting OT Request...");
+    try {
+        await firebase.firestore().collection('requests').add({
+            companyId: window.currentCompanyId,
+            empId: window.currentEmpData.id,
+            empName: window.currentEmpData.name,
+            requestType: 'Overtime',
+            otDate: document.getElementById('req-ot-date').value,
+            otHours: parseFloat(document.getElementById('req-ot-hours').value) || 0,
+            reason: document.getElementById('req-ot-reason').value.trim(),
+            status: 'Pending',
+            createdAt: new Date().toISOString()
+        });
+        hideLoad();
+        alert("Overtime request submitted successfully!");
+        document.getElementById('ot-request-form').reset();
+        window.loadMyRequests();
+    } catch(err) { hideLoad(); alert("Error: " + err.message); }
+});
     </script>
 </body>
 </html>
