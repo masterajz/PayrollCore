@@ -335,9 +335,10 @@
             History
         </button>
 
-        <button id="btn-payroll-settings" class="flex justify-center items-center bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-200 px-3 py-2 rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-sm">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
-        </button>
+        <button id="btn-payroll-settings" class="flex justify-center items-center bg-slate-100 border border-slate-200 text-slate-600 hover:bg-slate-200 px-3 py-2 rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-sm whitespace-nowrap">
+    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+    Payroll Settings
+</button>
     </div>
 
     <!-- PRIMARY GENERATE BUTTON -->
@@ -532,17 +533,30 @@
 </div>
                 <!-- ENTERPRISE VIEW (FULL PAGE) -->
                 <div id="view-enterprise" class="hidden w-full shrink-0 flex-col mb-8">
-                    <div class="flex space-x-4 border-b border-slate-200 mb-6">
-                        <button id="ent-tab-plan" class="px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer">Plan Management</button>
-                        <button id="ent-tab-users" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold cursor-pointer">System Users</button>
-                        <button id="ent-tab-db" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold cursor-pointer">Database Status</button>
-                        <button id="ent-tab-access" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold cursor-pointer">Tab Access</button>
-						<button id="ent-tab-pricing" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold cursor-pointer">Pricing</button>
-						
-                    </div>
-					
-					
+                   <!-- ENTERPRISE TABS (Gagawing Swipeable sa Mobile) -->
+<!-- ENTERPRISE SETTINGS TABS (MOBILE DROPDOWN + DESKTOP TABS) -->
+<div class="mb-6 w-full shrink-0">
+    <!-- Mobile View: Dropdown Menu -->
+    <div class="sm:hidden">
+        <label for="ent-mobile-select" class="sr-only">Select Tab</label>
+        <select id="ent-mobile-select" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm cursor-pointer" onchange="window.switchEntMobileTab(this.value)">
+            <option value="ent-tab-plan">Plan Management</option>
+            <option value="ent-tab-users">System Users</option>
+            <option value="ent-tab-db">Database Status</option>
+            <option value="ent-tab-access">Tab Access</option>
+            <option value="ent-tab-pricing">Pricing</option>
+        </select>
+    </div>
 
+    <!-- Desktop & Tablet View: Horizontal Tabs -->
+    <div class="hidden sm:flex overflow-x-auto border-b border-slate-200 space-x-2 sm:space-x-4 w-full">
+        <button id="ent-tab-plan" class="px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer whitespace-nowrap shrink-0">Plan Management</button>
+        <button id="ent-tab-users" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold cursor-pointer whitespace-nowrap shrink-0">System Users</button>
+        <button id="ent-tab-db" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold cursor-pointer whitespace-nowrap shrink-0">Database Status</button>
+        <button id="ent-tab-access" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold cursor-pointer whitespace-nowrap shrink-0">Tab Access</button>
+        <button id="ent-tab-pricing" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold cursor-pointer whitespace-nowrap shrink-0">Pricing</button>
+    </div>
+</div>
                     <!-- PLAN TAB -->
                     <div id="ent-content-plan" class="bg-white rounded-xl border border-slate-200 overflow-x-auto shadow-sm">
                         <table class="w-full text-left border-collapse whitespace-nowrap">
@@ -852,127 +866,140 @@
     </div>
 
     <!-- SETTINGS MODAL -->
-    <div id="settings-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-[60] p-4">
-        <div class="bg-white rounded-xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] mx-2 sm:mx-auto">
-            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
-                <h3 class="text-lg font-bold text-slate-800">Company Settings</h3>
-                <button id="close-settings-btn" class="text-slate-400 hover:text-slate-600 cursor-pointer">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+<div id="settings-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-[60] p-4">
+    <div class="bg-white rounded-xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] mx-2 sm:mx-auto">
+        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
+            <h3 class="text-lg font-bold text-slate-800">Company Settings</h3>
+            <button id="close-settings-btn" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        
+        <!-- INJECTED: RESPONSIVE NAV (DROPDOWN SA MOBILE / TABS SA DESKTOP) -->
+        <div class="px-6 pt-3 sm:pt-2 border-b border-slate-200 bg-white shrink-0 w-full">
+            <!-- MOBILE SELECTOR -->
+            <div class="sm:hidden pb-3">
+                <select id="mobile-set-selector" class="w-full bg-slate-50 border border-slate-300 text-indigo-700 font-bold text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 cursor-pointer outline-none">
+                    <option value="general">General</option>
+                    <option value="access">Access Role</option>
+                    <option value="users">Manage Users</option>
+                    <option value="links">Links</option>
+                    <option value="plan">Plan Details</option>
+                </select>
             </div>
-            
-            <div class="flex space-x-4 border-b border-slate-200 px-6 pt-2 bg-white shrink-0 overflow-x-auto">
+            <!-- DESKTOP TABS -->
+            <div class="hidden sm:flex space-x-4">
                 <button id="set-tab-general" class="px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold text-sm cursor-pointer whitespace-nowrap">General</button>
                 <button id="set-tab-access" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold text-sm cursor-pointer whitespace-nowrap">Access Role</button>
                 <button id="set-tab-users" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold text-sm cursor-pointer whitespace-nowrap">Manage Users</button>
-
                 <button id="set-tab-links" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold text-sm cursor-pointer whitespace-nowrap">Links</button>
-				                <button id="set-tab-plan" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold text-sm cursor-pointer whitespace-nowrap">Plan Details</button>
+                <button id="set-tab-plan" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold text-sm cursor-pointer whitespace-nowrap">Plan Details</button>
             </div>
+        </div>
 
-            <div class="p-6 space-y-4 bg-white overflow-y-auto flex-1" id="set-content-general">
+        <div class="p-6 space-y-4 bg-white overflow-y-auto flex-1" id="set-content-general">
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Company Name</label>
+                <input type="text" id="set-name" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Company Logo (Max 1MB)</label>
+                <!-- PREVIEW AT REMOVE BUTTON -->
+                <div id="current-logo-container" class="hidden items-center space-x-3 mb-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
+                    <img id="set-logo-preview" src="" class="h-10 object-contain rounded border border-slate-200 bg-white p-1">
+                    <button type="button" onclick="window.removeCompanyLogo()" class="text-xs bg-rose-50 text-rose-600 hover:bg-rose-100 px-2 py-1 rounded font-bold border border-rose-200 cursor-pointer">Remove Logo</button>
+                </div>
+                <input type="file" id="set-logo-file" accept="image/*" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                <p id="upload-status" class="text-xs text-indigo-600 mt-1 font-medium hidden">Uploading to Google Drive...</p>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Address</label>
+                <input type="text" id="set-address" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-slate-600 mb-1">Phone #</label>
+                <input type="text" id="set-phone" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Company Name</label>
-                    <input type="text" id="set-name" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Time Display Format</label>
+                    <select id="set-time-format" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer">
+                        <option value="12h">12-Hour (AM/PM)</option>
+                        <option value="24h">24-Hour (Military)</option>
+                    </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Company Logo (Max 1MB)</label>
-                    <!-- PREVIEW AT REMOVE BUTTON -->
-                    <div id="current-logo-container" class="hidden items-center space-x-3 mb-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
-                        <img id="set-logo-preview" src="" class="h-10 object-contain rounded border border-slate-200 bg-white p-1">
-                        <button type="button" onclick="window.removeCompanyLogo()" class="text-xs bg-rose-50 text-rose-600 hover:bg-rose-100 px-2 py-1 rounded font-bold border border-rose-200 cursor-pointer">Remove Logo</button>
-                    </div>
-                    <input type="file" id="set-logo-file" accept="image/*" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
-                    <p id="upload-status" class="text-xs text-indigo-600 mt-1 font-medium hidden">Uploading to Google Drive...</p>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Address</label>
-                    <input type="text" id="set-address" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Phone #</label>
-                    <input type="text" id="set-phone" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Time Display Format</label>
-                        <select id="set-time-format" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer">
-                            <option value="12h">12-Hour (AM/PM)</option>
-                            <option value="24h">24-Hour (Military)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">System Theme</label>
-                        <select id="set-theme" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer">
-                            <option value="indigo">Default Indigo</option>
-                            <option value="blue">Ocean Blue</option>
-                            <option value="sky">Sky Blue</option>
-                            <option value="cyan">Cyan</option>
-                            <option value="teal">Teal</option>
-                            <option value="emerald">Emerald</option>
-                            <option value="green">Forest Green</option>
-                            <option value="lime">Lime</option>
-                            <option value="yellow">Yellow</option>
-                            <option value="amber">Amber</option>
-                            <option value="orange">Orange</option>
-                            <option value="rose">Rose</option>
-                            <option value="pink">Pink</option>
-                            <option value="fuchsia">Fuchsia</option>
-                            <option value="purple">Purple</option>
-                            <option value="violet">Violet</option>
-                            <option value="slate">Slate</option>
-                            <option value="gray">Classic Gray</option>
-                            <option value="zinc">Zinc</option>
-                            <option value="neutral">Neutral</option>
-                        </select>
-                    </div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">System Theme</label>
+                    <select id="set-theme" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer">
+                        <option value="indigo">Default Indigo</option>
+                        <option value="blue">Ocean Blue</option>
+                        <option value="sky">Sky Blue</option>
+                        <option value="cyan">Cyan</option>
+                        <option value="teal">Teal</option>
+                        <option value="emerald">Emerald</option>
+                        <option value="green">Forest Green</option>
+                        <option value="lime">Lime</option>
+                        <option value="yellow">Yellow</option>
+                        <option value="amber">Amber</option>
+                        <option value="orange">Orange</option>
+                        <option value="rose">Rose</option>
+                        <option value="pink">Pink</option>
+                        <option value="fuchsia">Fuchsia</option>
+                        <option value="purple">Purple</option>
+                        <option value="violet">Violet</option>
+                        <option value="slate">Slate</option>
+                        <option value="gray">Classic Gray</option>
+                        <option value="zinc">Zinc</option>
+                        <option value="neutral">Neutral</option>
+                    </select>
                 </div>
             </div>
+        </div>
 
-            <div class="p-6 space-y-4 bg-white overflow-y-auto flex-1 hidden" id="set-content-access">
-                <p class="text-xs text-slate-500 mb-4">Select which modules users with the <strong>"Staff"</strong> role can access:</p>
-                <div class="space-y-3">
-                    <label class="flex items-center space-x-2">
-                        <input type="checkbox" id="access-employee" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4">
-                        <span class="text-sm font-medium text-slate-700">Employee Data</span>
-                    </label>
-                    <label class="flex items-center space-x-2">
-                        <input type="checkbox" id="access-payroll" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4">
-                        <span class="text-sm font-medium text-slate-700">Payroll Timesheet</span>
-                    </label>
-                    <label class="flex items-center space-x-2">
-                        <input type="checkbox" id="access-bonuses" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4">
-                        <span class="text-sm font-medium text-slate-700">Bonuses (13th Month)</span>
-                    </label>
-                    <label class="flex items-center space-x-2">
-                        <input type="checkbox" id="access-settings" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4">
-                        <span class="text-sm font-medium text-slate-700">Company Settings</span>
-                    </label>
-                </div>
+        <div class="p-6 space-y-4 bg-white overflow-y-auto flex-1 hidden" id="set-content-access">
+            <p class="text-xs text-slate-500 mb-4">Select which modules users with the <strong>"Staff"</strong> role can access:</p>
+            <div class="space-y-3">
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" id="access-employee" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4">
+                    <span class="text-sm font-medium text-slate-700">Employee Data</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" id="access-payroll" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4">
+                    <span class="text-sm font-medium text-slate-700">Payroll Timesheet</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" id="access-bonuses" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4">
+                    <span class="text-sm font-medium text-slate-700">Bonuses (13th Month)</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" id="access-settings" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4">
+                    <span class="text-sm font-medium text-slate-700">Company Settings</span>
+                </label>
             </div>
-            
-            <div class="p-6 space-y-4 bg-white overflow-y-auto flex-1 hidden" id="set-content-users" style="display: none;">
-                <p class="text-xs text-slate-500 mb-2">Manage all registered users under this company workspace.</p>
-                <div class="bg-white rounded-xl border border-slate-200 overflow-x-auto shadow-sm">
-                    <table class="w-full text-left border-collapse whitespace-nowrap">
-                        <thead>
-                            <tr class="text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200 bg-slate-50">
-                                <th class="py-3 px-4 font-semibold">Name</th>
-                                <th class="py-3 px-4 font-semibold">Email</th>
-                                <th class="py-3 px-4 font-semibold">Company</th>
-                                <th class="py-3 px-4 font-semibold">System Role</th>
-                                <th class="py-3 px-4 font-semibold text-right w-64">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="company-users-tbody" class="text-sm text-slate-700 divide-y divide-slate-100">
-                        </tbody>
-                    </table>
-                </div>
+        </div>
+        
+        <div class="p-6 space-y-4 bg-white overflow-y-auto flex-1 hidden" id="set-content-users" style="display: none;">
+            <p class="text-xs text-slate-500 mb-2">Manage all registered users under this company workspace.</p>
+            <div class="bg-white rounded-xl border border-slate-200 overflow-x-auto shadow-sm">
+                <table class="w-full text-left border-collapse whitespace-nowrap">
+                    <thead>
+                        <tr class="text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200 bg-slate-50">
+                            <th class="py-3 px-4 font-semibold">Name</th>
+                            <th class="py-3 px-4 font-semibold">Email</th>
+                            <th class="py-3 px-4 font-semibold">Company</th>
+                            <th class="py-3 px-4 font-semibold">System Role</th>
+                            <th class="py-3 px-4 font-semibold text-right w-64">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="company-users-tbody" class="text-sm text-slate-700 divide-y divide-slate-100">
+                    </tbody>
+                </table>
             </div>
+        </div>
             
             <!-- PLAN DETAILS TAB (SA LOOB NG COMPANY SETTINGS MODAL) -->
 <div class="p-6 space-y-4 bg-white overflow-y-auto flex-1 hidden" id="set-content-plan" style="display: none;">
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- Trial Plan -->
         <div class="border border-slate-200 rounded-xl p-4 flex flex-col justify-between bg-slate-50">
             <div>
@@ -1235,29 +1262,59 @@
     <!-- ARCHIVED TIMESHEETS MODAL -->
 <div id="ts-archive-modal" style="display: none;" class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-[70] p-4">
     <div class="bg-white rounded-xl w-full max-w-7xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden mx-2 sm:mx-auto border border-slate-200">
-        <div class="px-4 py-4 border-b border-slate-200 flex flex-wrap sm:flex-nowrap justify-between items-center bg-slate-50 shrink-0 gap-3">
-            <h3 class="text-lg font-bold text-slate-800">Payroll History</h3>
-            
-            <div class="flex items-center gap-2 w-full sm:w-auto ml-auto">
-                <div class="relative w-full sm:w-48">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    </span>
-                    <input type="text" id="archive-search" placeholder="Search employee..." class="w-full pl-9 pr-3 py-1.5 bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm text-slate-800">
-                </div>
-                <input type="date" id="archive-date-filter" class="w-full sm:w-auto bg-white border border-slate-300 text-slate-800 py-1.5 px-2 rounded-md text-sm focus:outline-none focus:border-indigo-500 cursor-pointer">
-                
-                <!-- INILIPAT SA PINAKA-KANAN -->
-                <button onclick="document.getElementById('ts-archive-modal').style.display='none'" class="text-slate-400 hover:text-rose-500 cursor-pointer p-1 ml-2">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
+        
+     <!-- HEADER WITH PAYOUT DATE FILTER -->
+<div class="px-4 py-4 border-b border-slate-200 flex flex-wrap sm:flex-nowrap justify-between items-center bg-slate-50 shrink-0 gap-3">
+    <div class="flex items-center gap-3">
+        <button id="archive-back-btn" class="hidden text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer" onclick="window.showArchiveGroups()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        </button>
+        <h3 class="text-lg font-bold text-slate-800" id="archive-modal-title">Payroll History</h3>
+    </div>
+    
+    <div class="flex items-center gap-3 w-full sm:w-auto ml-auto">
+        <!-- EXACT PAYROLL / PAYOUT DATE FILTER -->
+        <div id="archive-group-filter-container" class="flex items-center gap-2">
+            <label for="archive-group-filter" class="text-xs font-bold text-slate-600 whitespace-nowrap">Payroll Date:</label>
+            <input type="date" id="archive-group-filter" class="bg-white border border-slate-300 text-slate-800 py-1.5 px-3 rounded-md text-sm focus:outline-none focus:border-indigo-500 cursor-pointer" onchange="window.showArchiveGroups()">
+            <button type="button" onclick="document.getElementById('archive-group-filter').value=''; window.showArchiveGroups();" class="text-xs text-slate-500 hover:text-slate-800 underline">Clear</button>
         </div>
-            <div class="p-4 sm:p-6 overflow-auto flex-1 bg-white">
+
+        <!-- DETAILS VIEW SEARCH -->
+        <div class="relative w-full sm:w-48 hidden" id="archive-search-container">
+            <input type="text" id="archive-search" placeholder="Search employee..." class="w-full px-3 py-1.5 bg-white border border-slate-300 rounded-md text-sm text-slate-800">
+        </div>
+        
+        <button onclick="document.getElementById('ts-archive-modal').style.display='none'" class="text-slate-400 hover:text-rose-500 cursor-pointer p-1">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+    </div>
+</div>
+        
+        <!-- MODAL BODY -->
+        <div class="p-4 sm:p-6 overflow-auto flex-1 bg-white relative">
+            
+            <!-- VIEW 1: GROUPED BY PERIOD -->
+            <div id="archive-group-view" class="w-full">
+                <table class="w-full text-left border-collapse min-w-[600px]">
+                    <thead>
+                        <tr class="text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200 bg-slate-50">
+                            <th class="py-3 px-4 font-semibold">Payroll Period</th>
+                            <th class="py-3 px-4 font-semibold">Payout Date</th>
+                            <th class="py-3 px-4 font-semibold text-center">Employees</th>
+                            <th class="py-3 px-4 font-semibold text-center w-32">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ts-archive-group-tbody" class="text-sm text-slate-700 divide-y divide-slate-100">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- VIEW 2: DETAILS LIST (Nakatago sa simula) -->
+            <div id="archive-detail-view" class="w-full hidden">
                 <table class="w-full text-left border-collapse min-w-[1200px]">
                     <thead>
                         <tr class="text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200 bg-slate-50">
-                            <th class="py-3 px-3 font-semibold">Payout Date</th>
                             <th class="py-3 px-3 font-semibold">Employee Name</th>
                             <th class="py-3 px-2 font-semibold text-center">Hrs</th>
                             <th class="py-3 px-3 font-semibold text-center text-slate-800">Gross Pay</th>
@@ -1273,12 +1330,14 @@
                             <th class="py-3 px-3 font-semibold text-center w-52">Action</th>
                         </tr>
                     </thead>
-                    <tbody id="ts-archive-tbody" class="text-sm text-slate-700 divide-y divide-slate-100">
+                    <tbody id="ts-archive-detail-tbody" class="text-sm text-slate-700 divide-y divide-slate-100">
                     </tbody>
                 </table>
             </div>
+
         </div>
     </div>
+</div>
 	
 	<!-- CUSTOM REJECT REASON MODAL -->
 <div id="reject-reason-modal" style="display: none;" class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-[130] p-4">
@@ -2116,39 +2175,7 @@ window.refreshAuditLogs = function() {
             document.getElementById('set-content-plan').style.display = 'block';
         });
 
-        function resetEntTabs() {
-            const tabs = ['ent-tab-plan', 'ent-tab-users', 'ent-tab-db', 'ent-tab-access'];
-            const contents = ['ent-content-plan', 'ent-content-users', 'ent-content-db', 'ent-content-access'];
-            tabs.forEach(t => {
-                let el = document.getElementById(t);
-                if(el) el.className = "px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold cursor-pointer";
-            });
-            contents.forEach(c => {
-                let el = document.getElementById(c);
-                if(el) el.style.display = 'none';
-            });
-        }
-
-        document.getElementById('ent-tab-plan').addEventListener('click', (e) => {
-            resetEntTabs(); 
-            e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer";
-            document.getElementById('ent-content-plan').style.display = 'block';
-        });
-        document.getElementById('ent-tab-users').addEventListener('click', (e) => {
-            resetEntTabs(); 
-            e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer";
-            document.getElementById('ent-content-users').style.display = 'block';
-        });
-        document.getElementById('ent-tab-db').addEventListener('click', (e) => {
-            resetEntTabs(); 
-            e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer";
-            document.getElementById('ent-content-db').style.display = 'block';
-        });
-        document.getElementById('ent-tab-access').addEventListener('click', (e) => {
-            resetEntTabs(); 
-            e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer";
-            document.getElementById('ent-content-access').style.display = 'block';
-        });
+     
 
         document.getElementById('close-modal-btn').addEventListener('click', () => document.getElementById('employee-modal').style.display = 'none');
         document.getElementById('cancel-modal-btn').addEventListener('click', () => document.getElementById('employee-modal').style.display = 'none');
@@ -3317,30 +3344,7 @@ document.getElementById('emp-allow-med').value = emp.medAllow || 0;
             });
         };
 
-        function resetEntTabs() {
-            const tabs = ['ent-tab-plan', 'ent-tab-users', 'ent-tab-db', 'ent-tab-access'];
-            const contents = ['ent-content-plan', 'ent-content-users', 'ent-content-db', 'ent-content-access'];
-            tabs.forEach(t => document.getElementById(t).className = "px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold cursor-pointer");
-            contents.forEach(c => document.getElementById(c).style.display = 'none');
-        }
-
-        document.getElementById('ent-tab-plan').addEventListener('click', (e) => {
-            resetEntTabs(); e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer";
-            document.getElementById('ent-content-plan').style.display = 'block';
-        });
-        document.getElementById('ent-tab-users').addEventListener('click', (e) => {
-            resetEntTabs(); e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer";
-            document.getElementById('ent-content-users').style.display = 'block';
-        });
-      document.getElementById('ent-tab-db').addEventListener('click', (e) => {
-            resetEntTabs(); 
-            e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer";
-            document.getElementById('ent-content-db').style.display = 'flex'; // Binago ang block sa flex
-        });
-        document.getElementById('ent-tab-access').addEventListener('click', (e) => {
-            resetEntTabs(); e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer";
-            document.getElementById('ent-content-access').style.display = 'block';
-        });
+        
 
 // ==========================================
 // TAB ACCESS: SAVE & LOAD LOGIC
@@ -4185,14 +4189,13 @@ window.sendTimesheet = async function(id) {
             window.toggleTsBulkBtn();
         });
 
-        window.toggleTsBulkBtn = function() {
-            const checkedCount = document.querySelectorAll('.ts-checkbox:checked').length;
-            const btn = document.getElementById('bulk-archive-ts-btn');
-            if (btn) {
-                btn.style.display = checkedCount > 0 ? 'flex' : 'none'; 
-            }
-        };
-
+window.toggleTsBulkBtn = function() {
+    const checkedCount = document.querySelectorAll('.ts-checkbox:checked').length;
+    const btn = document.getElementById('bulk-archive-ts-btn');
+    if (btn) {
+        btn.style.display = checkedCount > 0 ? 'flex' : 'none'; 
+    }
+};
         document.getElementById('bulk-archive-ts-btn').addEventListener('click', async () => {
             if(confirm("Archive selected timesheets? They will be removed from this view.")) {
                 window.showLoading("Archiving...");
@@ -4219,86 +4222,181 @@ window.sendTimesheet = async function(id) {
             }
         });
 
-        window.loadArchiveData = async function() {
-            window.showLoading("Loading Archive...");
-            const tbody = document.getElementById('ts-archive-tbody');
-            tbody.innerHTML = '';
-            
-            const searchQuery = document.getElementById('archive-search').value.toLowerCase();
-            const filterDate = document.getElementById('archive-date-filter').value;
-            
-            try {
-                const snap = await window.db.collection('timesheets').where('isArchived', '==', true).get();
-                const activeEmpIds = window.employees.map(e => e.id);
-                
-                let foundCount = 0;
-                const rates = window.govRates || { sss: 0, philhealth: 0, pagibig: 0 };
+       window.cachedArchiveData = [];
+window.currentArchiveViewFilter = null;
 
-                snap.forEach(doc => {
-                    const data = doc.data();
-                    if(activeEmpIds.includes(data.empId)) {
-                        const emp = window.employees.find(e => e.id === data.empId);
-                        const payout = localStorage.getItem('saved_payout') || data.end;
-                        
-                        if (searchQuery && !emp.name.toLowerCase().includes(searchQuery)) return;
-                        if (filterDate && payout && payout !== filterDate) return;
-                        
-                        foundCount++;
-                        
-                        let totalHrs = (data.days || []).reduce((s, d) => s + d.duration, 0);
-                        let grossPay = (data.days || []).reduce((s, d) => s + d.rate, 0);
-                        let totalLateHrs = (data.days || []).reduce((s, d) => s + (d.late || 0), 0);
-                        let totalLatePay = totalLateHrs * ((emp.rate || 0) / 8);
-                        
-                        let applyGov = data.applyGovDeductions || false; 
-                        let sssDed = applyGov ? parseFloat(emp.sssDed || 0) : 0;
-                        let phDed = applyGov ? parseFloat(emp.phicDed || 0) : 0;
-                        let pagibigDed = applyGov ? parseFloat(emp.hdmfDed || 0) : 0;
-                        let caDed = parseFloat(data.cashAdvance || 0);
-                        let loanDed = parseFloat(data.loan || 0);
-                        let penaltyDed = parseFloat(data.penalty || 0);
-                        
-                        let totalDeductions = sssDed + phDed + pagibigDed + caDed + loanDed + penaltyDed + totalLatePay;
-                        let netPay = grossPay - totalDeductions;
+// 1. Fetch data from DB once and group them
+window.loadArchiveData = async function() {
+    window.showLoading("Loading Archive...");
+    
+    try {
+        const snap = await window.db.collection('timesheets').where('isArchived', '==', true).get();
+        const activeEmpIds = window.employees.map(e => e.id);
+        
+        let records = [];
+        snap.forEach(doc => {
+            const data = doc.data();
+            if(activeEmpIds.includes(data.empId)) {
+                records.push({ id: doc.id, ...data });
+            }
+        });
+        
+        window.cachedArchiveData = records;
+        window.showArchiveGroups();
+        
+    } catch(e) { console.error(e); alert("Failed to load archive."); }
+    window.hideLoading();
+};
 
-                        const tr = document.createElement('tr');
-                        tr.className = "hover:bg-slate-50";
-                        tr.innerHTML = `
-                            <td class="py-3 px-3 font-medium text-slate-800">${formatShortDate(payout)}</td>
-                            <td class="py-3 px-3 font-bold text-slate-800">${emp.name}</td>
-                            <td class="py-3 px-2 text-center font-bold text-slate-600">${totalHrs.toFixed(2)}</td>
-                            <td class="py-3 px-3 text-center font-bold text-slate-800">₱${grossPay.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                            <td class="py-3 px-2 text-center text-xs text-orange-500">₱${totalLatePay.toFixed(2)}</td>
-                            <td class="py-3 px-2 text-center text-xs text-rose-500">₱${sssDed.toFixed(2)}</td>
-                            <td class="py-3 px-2 text-center text-xs text-rose-500">₱${phDed.toFixed(2)}</td>
-                            <td class="py-3 px-2 text-center text-xs text-rose-500">₱${pagibigDed.toFixed(2)}</td>
-                            <td class="py-3 px-2 text-center text-xs text-orange-500">₱${caDed.toFixed(2)}</td>
-                            <td class="py-3 px-2 text-center text-xs text-orange-500">₱${loanDed.toFixed(2)}</td>
-                            <td class="py-3 px-2 text-center text-xs text-orange-500">₱${penaltyDed.toFixed(2)}</td>
-                            <td class="py-3 px-3 text-center font-bold text-rose-600">₱${totalDeductions.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                            <td class="py-3 px-3 text-center font-bold text-emerald-600">₱${netPay.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
-                            <td class="py-3 px-3 text-center">
-                                <div class="flex justify-center space-x-2">
-                                    <button onclick="window.restoreTimesheet('${doc.id}')" class="text-xs bg-white text-emerald-600 hover:bg-emerald-50 px-2 py-1 rounded border border-emerald-200">Restore</button>
-                                    <button onclick="document.getElementById('ts-archive-modal').style.display='none'; window.openDailyModal('${emp.id}')" class="text-xs bg-white text-slate-600 hover:bg-slate-50 px-2 py-1 rounded border border-slate-200">Edit</button>
-                                    <button onclick="window.deleteTimesheetArchive('${doc.id}')" class="text-xs bg-white text-rose-600 hover:bg-rose-50 px-2 py-1 rounded border border-rose-200">Delete</button>
-                                </div>
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    }
-                });
-                
-                if(foundCount === 0) tbody.innerHTML = `<tr><td colspan="12" class="py-6 text-center text-slate-400">No archived timesheets match your search.</td></tr>`;
-                
-                document.getElementById('ts-archive-modal').style.display = 'flex';
-            } catch(e) { console.error(e); alert("Failed to load archive."); }
-            window.hideLoading();
-        };
+// 2. View 1: Show Grouped by Payroll Period
+window.showArchiveGroups = function() {
+    document.getElementById('archive-group-view').classList.remove('hidden');
+    document.getElementById('archive-detail-view').classList.add('hidden');
+    document.getElementById('archive-back-btn').classList.add('hidden');
+    document.getElementById('archive-search-container').classList.add('hidden');
+    document.getElementById('archive-group-filter-container').classList.remove('hidden');
+    document.getElementById('archive-modal-title').innerText = "Payroll History";
+    
+    const tbody = document.getElementById('ts-archive-group-tbody');
+    tbody.innerHTML = '';
+    
+    // KUNIN ANG VALUE NG PAYROLL / PAYOUT DATE FILTER (YYYY-MM-DD)
+    const filterPayoutDate = document.getElementById('archive-group-filter').value;
+    
+    if(window.cachedArchiveData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400">No archived timesheets found.</td></tr>`;
+        document.getElementById('ts-archive-modal').style.display = 'flex';
+        return;
+    }
+    
+    let groups = {};
+    window.cachedArchiveData.forEach(r => {
+        let key = `${r.start}_${r.end}`;
+        if(!groups[key]) {
+            groups[key] = { start: r.start, end: r.end, payout: r.payout || r.end, count: 0 };
+        }
+        groups[key].count++;
+    });
+    
+    let sortedGroups = Object.values(groups).sort((a,b) => new Date(b.end) - new Date(a.end));
+    let found = 0;
+    
+    sortedGroups.forEach(g => {
+        // FILTER DIRECTLY BY PAYOUT / PAYROLL DATE
+        if (filterPayoutDate && g.payout !== filterPayoutDate) return;
+        found++;
 
-        document.getElementById('btn-view-ts-archive').addEventListener('click', window.loadArchiveData);
-        document.getElementById('archive-search').addEventListener('keyup', window.loadArchiveData);
-        document.getElementById('archive-date-filter').addEventListener('change', window.loadArchiveData);
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 border-b border-slate-100";
+        tr.innerHTML = `
+            <td class="py-4 px-4 font-bold text-slate-800">${formatShortDate(g.start)} - ${formatShortDate(g.end)}</td>
+            <td class="py-4 px-4 font-bold text-emerald-600">${formatShortDate(g.payout)}</td>
+            <td class="py-4 px-4 text-center font-semibold text-slate-600">${g.count} employees</td>
+            <td class="py-4 px-4 text-center">
+                <button onclick="window.viewArchiveDetails('${g.start}', '${g.end}')" class="text-xs bg-white text-indigo-600 hover:bg-indigo-50 px-3 py-1.5 rounded-md border border-indigo-200 shadow-sm transition-colors font-bold cursor-pointer">View Records</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    if(found === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400">No payroll records found for Payroll Date: ${formatShortDate(filterPayoutDate)}</td></tr>`;
+    }
+    
+    document.getElementById('ts-archive-modal').style.display = 'flex';
+};
+
+// 3. View 2: Show Details of specific period
+window.viewArchiveDetails = function(start, end) {
+    window.currentArchiveViewFilter = { start, end };
+    document.getElementById('archive-group-view').classList.add('hidden');
+    document.getElementById('archive-detail-view').classList.remove('hidden');
+    document.getElementById('archive-back-btn').classList.remove('hidden');
+    document.getElementById('archive-group-filter-container').classList.add('hidden'); // HIDE GROUP FILTER
+    document.getElementById('archive-search-container').classList.remove('hidden'); // SHOW DETAILS SEARCH
+    document.getElementById('archive-modal-title').innerText = `Period: ${formatShortDate(start)} - ${formatShortDate(end)}`;
+    
+    window.renderArchiveDetails();
+};
+
+// Render Details Helper
+window.renderArchiveDetails = function() {
+    const tbody = document.getElementById('ts-archive-detail-tbody');
+    tbody.innerHTML = '';
+    
+    if(!window.currentArchiveViewFilter) return;
+    const {start, end} = window.currentArchiveViewFilter;
+    const searchQuery = document.getElementById('archive-search').value.toLowerCase();
+    
+    let filtered = window.cachedArchiveData.filter(r => r.start === start && r.end === end);
+    let foundCount = 0;
+    
+    filtered.forEach(data => {
+        const emp = window.employees.find(e => e.id === data.empId);
+        if(!emp) return;
+        
+        if (searchQuery && !emp.name.toLowerCase().includes(searchQuery)) return;
+        foundCount++;
+        
+        let totalHrs = (data.days || []).reduce((s, d) => s + d.duration, 0);
+        let grossPay = (data.days || []).reduce((s, d) => s + d.rate, 0);
+        let totalLateHrs = (data.days || []).reduce((s, d) => s + (d.late || 0), 0);
+        let totalLatePay = totalLateHrs * ((emp.rate || 0) / 8);
+        
+        let applyGov = data.applyGovDeductions || false; 
+        let sssDed = applyGov ? parseFloat(emp.sssDed || 0) : 0;
+        let phDed = applyGov ? parseFloat(emp.phicDed || 0) : 0;
+        let pagibigDed = applyGov ? parseFloat(emp.hdmfDed || 0) : 0;
+        let caDed = parseFloat(data.cashAdvance || 0);
+        let loanDed = parseFloat(data.loan || 0);
+        let penaltyDed = parseFloat(data.penalty || 0);
+        
+        let totalDeductions = sssDed + phDed + pagibigDed + caDed + loanDed + penaltyDed + totalLatePay;
+        let netPay = grossPay - totalDeductions;
+
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 border-b border-slate-100";
+        tr.innerHTML = `
+            <td class="py-3 px-3 font-bold text-slate-800">${emp.name}</td>
+            <td class="py-3 px-2 text-center font-bold text-slate-600">${totalHrs.toFixed(2)}</td>
+            <td class="py-3 px-3 text-center font-bold text-slate-800">₱${grossPay.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+            <td class="py-3 px-2 text-center text-xs text-orange-500">₱${totalLatePay.toFixed(2)}</td>
+            <td class="py-3 px-2 text-center text-xs text-rose-500">₱${sssDed.toFixed(2)}</td>
+            <td class="py-3 px-2 text-center text-xs text-rose-500">₱${phDed.toFixed(2)}</td>
+            <td class="py-3 px-2 text-center text-xs text-rose-500">₱${pagibigDed.toFixed(2)}</td>
+            <td class="py-3 px-2 text-center text-xs text-orange-500">₱${caDed.toFixed(2)}</td>
+            <td class="py-3 px-2 text-center text-xs text-orange-500">₱${loanDed.toFixed(2)}</td>
+            <td class="py-3 px-2 text-center text-xs text-orange-500">₱${penaltyDed.toFixed(2)}</td>
+            <td class="py-3 px-3 text-center font-bold text-rose-600">₱${totalDeductions.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+            <td class="py-3 px-3 text-center font-bold text-emerald-600">₱${netPay.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
+            <td class="py-3 px-3 text-center">
+                <div class="flex justify-center space-x-2">
+                    <button onclick="window.restoreTimesheet('${data.id}')" class="text-xs bg-white text-emerald-600 hover:bg-emerald-50 px-2 py-1 rounded border border-emerald-200 cursor-pointer shadow-sm">Restore</button>
+                    <button onclick="document.getElementById('ts-archive-modal').style.display='none'; window.openDailyModal('${emp.id}')" class="text-xs bg-white text-slate-600 hover:bg-slate-50 px-2 py-1 rounded border border-slate-200 cursor-pointer shadow-sm">Edit</button>
+                    <button onclick="window.deleteTimesheetArchive('${data.id}')" class="text-xs bg-white text-rose-600 hover:bg-rose-50 px-2 py-1 rounded border border-rose-200 cursor-pointer shadow-sm">Delete</button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+    
+    if(foundCount === 0) tbody.innerHTML = `<tr><td colspan="13" class="py-6 text-center text-slate-400">No records match your search.</td></tr>`;
+};
+
+// Replace Old Event Listeners Safely
+const btnArchiveHistory = document.getElementById('btn-view-ts-archive');
+if (btnArchiveHistory) {
+    const newBtnArchive = btnArchiveHistory.cloneNode(true);
+    btnArchiveHistory.parentNode.replaceChild(newBtnArchive, btnArchiveHistory);
+    newBtnArchive.addEventListener('click', window.loadArchiveData);
+}
+
+const archiveSearchInput = document.getElementById('archive-search');
+if (archiveSearchInput) {
+    const newSearchInput = archiveSearchInput.cloneNode(true);
+    archiveSearchInput.parentNode.replaceChild(newSearchInput, archiveSearchInput);
+    newSearchInput.addEventListener('keyup', window.renderArchiveDetails);
+}
 
        window.restoreTimesheet = async function(docId) {
             window.showLoading("Restoring...");
@@ -4500,7 +4598,7 @@ const getSafeVal = (id) => {
 
 
 
-// 3. ANG PINAKAMALINIS NA "GENERATE TIMESHEET" LOGIC
+// 3. ANG PINAKAMALINIS NA "GENERATE TIMESHEET" LOGIC (UPDATED WITH ARCHIVE BUTTON RESET)
 document.getElementById('btn-generate-timesheet').addEventListener('click', async () => {
     const startInput = document.getElementById('period-start').value;
     const endInput = document.getElementById('period-end').value;
@@ -4516,6 +4614,11 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
     const activeEmployees = window.employees.filter(e => (e.status || '').toLowerCase() === 'active' && !e.isArchived);
     const tbody = document.getElementById('timesheet-tbody');
     tbody.innerHTML = '';
+
+    // RESET CHECKBOXES & ARCHIVE BUTTON
+    const selectAllHeader = document.getElementById('select-all-ts');
+    if (selectAllHeader) selectAllHeader.checked = false;
+    if (typeof window.toggleTsBulkBtn === 'function') window.toggleTsBulkBtn();
 
     window.currentTimesheetData = {};
     if(!window.currentTimesheetExtra) window.currentTimesheetExtra = {};
@@ -4565,7 +4668,6 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
                         skillsAllow: dbExtra.skillsAllow || 0,
                         medAllow: dbExtra.medAllow || 0,
                         adjPay: dbExtra.adjPay || 0,
-                        // FIX: NGAYON BABASAHIN NA NIYA MULA SA DATABASE!
                         gasAllow: dbExtra.gasAllow || 0,
                         attInc: dbExtra.attInc || 0,
                         qualInc: dbExtra.qualInc || 0,
@@ -4628,7 +4730,6 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
             totalLateHrs += late; totalLatePay += lPay;
         });
 
-        // SINAMA ANG MGA BAGONG INCENTIVES SA PAG-COMPUTE NG GROSS
         let totalExtraEarnings = (extra.creditLeave||0) + (extra.leadAllow||0) + (extra.skillsAllow||0) + (extra.medAllow||0) + (extra.adjPay||0) + (extra.gasAllow||0) + (extra.attInc||0) + (extra.qualInc||0) + (extra.perfInc||0);
         let grossPay = totalBasicPay + totalHolidayPay + totalOtPay + totalNdPay + totalExtraEarnings;
         let totalHrs = totalBasicHrs + totalOtHrs;
@@ -4690,6 +4791,10 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
         `;
         tbody.appendChild(tr);
     }
+
+    // FINAL CHECK AFTER RENDERING ALL ROWS
+    if (typeof window.toggleTsBulkBtn === 'function') window.toggleTsBulkBtn();
+    
     window.hideLoading();
 });
         
@@ -5495,35 +5600,8 @@ window.switchAdjustmentTab = function(tab) {
         contentEarnings.style.display = 'none';
     }
 };
-// ==========================================
-// DYNAMIC PRICING & LOGS SEARCH INTEGRATION
-// ==========================================
 
-// 1. Default Pricing State
-window.systemPricing = { pro: 499, blaze: 1499 };
 
-// 2. Enterprise Tab Reset Override (Isinama ang Pricing Tab)
-window.resetEntTabs = function() {
-    const tabs = ['ent-tab-plan', 'ent-tab-users', 'ent-tab-db', 'ent-tab-access', 'ent-tab-pricing'];
-    const contents = ['ent-content-plan', 'ent-content-users', 'ent-content-db', 'ent-content-access', 'ent-content-pricing'];
-    
-    tabs.forEach(t => { 
-        let el = document.getElementById(t); 
-        if(el) el.className = "px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold cursor-pointer"; 
-    });
-    contents.forEach(c => { 
-        let el = document.getElementById(c); 
-        if(el) el.style.display = 'none'; 
-    });
-};
-
-// 3. Tab Click Listener para sa Pricing
-document.getElementById('ent-tab-pricing')?.addEventListener('click', (e) => {
-    window.resetEntTabs(); 
-    e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer";
-    const pricingContent = document.getElementById('ent-content-pricing');
-    if (pricingContent) pricingContent.style.display = 'block';
-});
 
 // 4. Fetch Pricing mula sa Firestore
 async function fetchGlobalPricing() {
@@ -5909,6 +5987,87 @@ window.renderAnalyticsCharts = function() {
         options: { responsive: true, maintainAspectRatio: false }
     });
 };
+// ENTERPRISE TABS SWITCHER (WITH MOBILE SWIPE SUPPORT)
+window.resetEntTabs = function() {
+    const tabs = ['ent-tab-plan', 'ent-tab-users', 'ent-tab-db', 'ent-tab-access', 'ent-tab-pricing'];
+    const contents = ['ent-content-plan', 'ent-content-users', 'ent-content-db', 'ent-content-access', 'ent-content-pricing'];
+    
+    tabs.forEach(t => { 
+        let el = document.getElementById(t); 
+        if(el) el.className = "px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold cursor-pointer whitespace-nowrap shrink-0"; 
+    });
+    contents.forEach(c => { 
+        let el = document.getElementById(c); 
+        if(el) el.style.display = 'none'; 
+    });
+};
+
+document.getElementById('ent-tab-plan')?.addEventListener('click', (e) => {
+    window.resetEntTabs(); 
+    e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer whitespace-nowrap shrink-0";
+    const content = document.getElementById('ent-content-plan');
+    if (content) content.style.display = 'block';
+});
+
+document.getElementById('ent-tab-users')?.addEventListener('click', (e) => {
+    window.resetEntTabs(); 
+    e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer whitespace-nowrap shrink-0";
+    const content = document.getElementById('ent-content-users');
+    if (content) content.style.display = 'block';
+});
+
+document.getElementById('ent-tab-db')?.addEventListener('click', (e) => {
+    window.resetEntTabs(); 
+    e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer whitespace-nowrap shrink-0";
+    const content = document.getElementById('ent-content-db');
+    if (content) content.style.display = 'flex';
+});
+
+document.getElementById('ent-tab-access')?.addEventListener('click', (e) => {
+    window.resetEntTabs(); 
+    e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer whitespace-nowrap shrink-0";
+    const content = document.getElementById('ent-content-access');
+    if (content) content.style.display = 'block';
+});
+
+document.getElementById('ent-tab-pricing')?.addEventListener('click', (e) => {
+    window.resetEntTabs(); 
+    e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold cursor-pointer whitespace-nowrap shrink-0";
+    const content = document.getElementById('ent-content-pricing');
+    if (content) content.style.display = 'block';
+});
+window.switchEntMobileTab = function(tabBtnId) {
+    const btn = document.getElementById(tabBtnId);
+    if (btn) btn.click();
+};
+// ==========================================
+// MOBILE DROPDOWN SELECTORS SYNC LOGIC
+// ==========================================
+// Para sa Company Settings Mobile Dropdown
+document.getElementById('mobile-set-selector')?.addEventListener('change', function(e) {
+    const tabVal = e.target.value;
+    const targetBtn = document.getElementById('set-tab-' + tabVal);
+    if(targetBtn) targetBtn.click(); // Pinipindot nito ng kusa yung desktop button sa background
+});
+
+// Para sa Enterprise Settings Mobile Dropdown
+document.getElementById('mobile-ent-selector')?.addEventListener('change', function(e) {
+    const tabVal = e.target.value;
+    const targetBtn = document.getElementById('ent-tab-' + tabVal);
+    if(targetBtn) targetBtn.click(); // Pinipindot nito ng kusa yung desktop button sa background
+});
+
+// I-reset ang selector sa 'general' kapag binuksan ang Company Settings
+document.getElementById('btn-settings-nav')?.addEventListener('click', () => {
+    const sel = document.getElementById('mobile-set-selector');
+    if(sel) sel.value = 'general';
+});
+
+// I-reset ang selector sa 'plan' kapag binuksan ang Enterprise Settings
+document.getElementById('btn-enterprise')?.addEventListener('click', () => {
+    const sel = document.getElementById('mobile-ent-selector');
+    if(sel) sel.value = 'plan';
+});
     </script>
 </body>
 </html>
