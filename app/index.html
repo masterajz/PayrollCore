@@ -5949,43 +5949,137 @@ window.exportCSV = function(type) {
     
     showToast(`${filename} exported successfully!`, "success");
 };
-window.renderAnalyticsCharts = function() {
+window.renderAnalyticsCharts = async function() {
     const ctxExpense = document.getElementById('chart-monthly-expense')?.getContext('2d');
     const ctxDistribution = document.getElementById('chart-pay-distribution')?.getContext('2d');
     if (!ctxExpense || !ctxDistribution) return;
 
-    if (window.chartInstance1) window.chartInstance1.destroy();
-    if (window.chartInstance2) window.chartInstance2.destroy();
+    window.showLoading("Loading Analytics...");
 
-    // Chart 1: Monthly Trend
-    window.chartInstance1 = new Chart(ctxExpense, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
-            datasets: [{
-                label: 'Total Payroll (₱)',
-                data: [42000, 45000, 48000, 46000, 52000, 51000, 53000, 58000],
-                borderColor: '#4f46e5',
-                backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                fill: true,
-                tension: 0.3
-            }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-    });
+    try {
+        // 1. KUNIN LAHAT NG TIMESHEETS MULA SA DATABASE
+        const tsSnap = await window.db.collection('timesheets').get();
+        const activeEmpIds = window.employees.map(e => e.id);
 
-    // Chart 2: Pay Distribution
-    window.chartInstance2 = new Chart(ctxDistribution, {
-        type: 'doughnut',
-        data: {
-            labels: ['Basic Pay', 'Overtime Pay', 'Allowances', 'Holidays'],
-            datasets: [{
-                data: [70, 15, 10, 5],
-                backgroundColor: ['#4f46e5', '#f59e0b', '#10b981', '#8b5cf6']
-            }]
-        },
-        options: { responsive: true, maintainAspectRatio: false }
-    });
+        let monthlyTotals = {}; // Para sa Line Chart (Kada Buwan)
+        let totalBasic = 0, totalOT = 0, totalAllowances = 0, totalHolidays = 0; // Para sa Doughnut Chart
+
+        // 2. I-COMPUTE ANG MGA DATA
+        tsSnap.forEach(doc => {
+            const data = doc.data();
+            // Siguraduhing employee ng kasalukuyang company
+            if (!activeEmpIds.includes(data.empId)) return; 
+
+            const emp = window.employees.find(e => e.id === data.empId);
+            const hourlyRate = (emp.rate || 0) / 8;
+            const otRateMultiplier = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
+
+            let tsBasic = 0, tsHol = 0, tsOT = 0, tsND = 0;
+            
+            // Computations galing sa Daily Logs
+            (data.days || []).forEach(d => {
+                let ot = parseFloat(d.ot) || 0;
+                let nd = parseFloat(d.nd) || 0;
+                let regHrs = (parseFloat(d.duration) || 0) - ot;
+                if (regHrs < 0) regHrs = 0;
+
+                tsBasic += d.basicPay !== undefined ? parseFloat(d.basicPay) : (regHrs * hourlyRate);
+                tsHol += d.holidayPay !== undefined ? parseFloat(d.holidayPay) : 0;
+                tsOT += ot * hourlyRate * otRateMultiplier;
+                tsND += nd * hourlyRate * 0.10;
+            });
+
+            // Computations galing sa Extra Allowances
+            const extra = data.extra || {};
+            let tsAllowances = (parseFloat(extra.creditLeave)||0) + (parseFloat(extra.leadAllow)||0) + 
+                               (parseFloat(extra.skillsAllow)||0) + (parseFloat(extra.medAllow)||0) + 
+                               (parseFloat(extra.adjPay)||0) + (parseFloat(extra.gasAllow)||0) + 
+                               (parseFloat(extra.attInc)||0) + (parseFloat(extra.qualInc)||0) + 
+                               (parseFloat(extra.perfInc)||0) + tsND; // Isinama ang Night Diff sa allowances
+            
+            let tsGross = tsBasic + tsHol + tsOT + tsAllowances;
+
+            // Idagdag sa grand total para sa Doughnut Chart
+            totalBasic += tsBasic;
+            totalOT += tsOT;
+            totalAllowances += tsAllowances;
+            totalHolidays += tsHol;
+
+            // Idagdag sa buwan para sa Line Chart (Gagamitin ang Payout Date o End Date)
+            let refDateStr = data.payout || data.end;
+            if (refDateStr) {
+                let d = new Date(refDateStr);
+                if (!isNaN(d.getTime())) {
+                    let monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; // Ex: 2026-08
+                    let monthLabel = d.toLocaleString('default', { month: 'short', year: 'numeric' }); // Ex: Aug 2026
+                    
+                    if (!monthlyTotals[monthKey]) {
+                        monthlyTotals[monthKey] = { label: monthLabel, total: 0 };
+                    }
+                    monthlyTotals[monthKey].total += tsGross;
+                }
+            }
+        });
+
+        // 3. I-FORMAT ANG DATA PARA SA LINE CHART
+        const sortedMonthKeys = Object.keys(monthlyTotals).sort();
+        const labelsLine = [];
+        const dataLine = [];
+        
+        sortedMonthKeys.forEach(key => {
+            labelsLine.push(monthlyTotals[key].label);
+            dataLine.push(parseFloat(monthlyTotals[key].total.toFixed(2)));
+        });
+
+        // Default na itsura kung walang data
+        if (labelsLine.length === 0) {
+            labelsLine.push(new Date().toLocaleString('default', { month: 'short', year: 'numeric' }));
+            dataLine.push(0);
+        }
+
+        // Tanggalin ang lumang chart bago gumuhit ng bago (Para iwas bug)
+        if (window.chartInstance1) window.chartInstance1.destroy();
+        if (window.chartInstance2) window.chartInstance2.destroy();
+
+        // CHART 1: MONTHLY EXPENSE TREND (Totoong Data na!)
+        window.chartInstance1 = new Chart(ctxExpense, {
+            type: 'line',
+            data: {
+                labels: labelsLine,
+                datasets: [{
+                    label: 'Total Payroll (₱)',
+                    data: dataLine,
+                    borderColor: '#4f46e5',
+                    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+        // CHART 2: PAY DISTRIBUTION (Totoong Data na!)
+        let doughnutData = [totalBasic, totalOT, totalAllowances, totalHolidays];
+        if (doughnutData.every(v => v === 0)) doughnutData = [1, 0, 0, 0]; // Iwas visual error kung walang timesheet
+
+        window.chartInstance2 = new Chart(ctxDistribution, {
+            type: 'doughnut',
+            data: {
+                labels: ['Basic Pay', 'Overtime Pay', 'Allowances', 'Holidays'],
+                datasets: [{
+                    data: doughnutData,
+                    backgroundColor: ['#4f46e5', '#f59e0b', '#10b981', '#8b5cf6']
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+
+    } catch (err) {
+        console.error("Analytics Error:", err);
+        showToast("Failed to load analytics data.", "error");
+    }
+    
+    window.hideLoading();
 };
 // ENTERPRISE TABS SWITCHER (WITH MOBILE SWIPE SUPPORT)
 window.resetEntTabs = function() {
