@@ -2367,7 +2367,7 @@ window.refreshAuditLogs = function() {
                 }
             }
 
-           async function fetchInitialData() {
+     async function fetchInitialData() {
     window.showLoading("Syncing database...");
     try {
         window.employees = [];
@@ -2426,10 +2426,21 @@ window.refreshAuditLogs = function() {
         }
 
         // =========================================================
-        // INJECTED: LOAD SAVED GLOBAL TAB ACCESS CHECKBOXES
+        // LOAD SAVED GLOBAL TAB ACCESS CHECKBOXES
         // =========================================================
         if (typeof window.loadGlobalTabSettings === 'function') {
             await window.loadGlobalTabSettings();
+        }
+
+        // =========================================================
+        // FIX: LOAD SAVED EMPLOYEE REQUEST FORMS TOGGLES
+        // =========================================================
+        if(window.companySettings && window.companySettings.reqSettings) {
+            const rs = window.companySettings.reqSettings;
+            const setTog = (id, val) => { let el = document.getElementById(id); if(el) el.checked = (val !== false); };
+            setTog('toggle-req-absence', rs.absence);
+            setTog('toggle-req-schedule', rs.schedule);
+            setTog('toggle-req-overtime', rs.overtime);
         }
 
     } catch (error) { console.error("Firebase Read Error:", error); }
@@ -2547,14 +2558,6 @@ window.populatePositionDropdowns = function() {
                     }
                     document.getElementById('db-stat-storage').innerText = storageText;
 					
-					// Load the toggles state on UI load
-if(window.companySettings.reqSettings) {
-    const rs = window.companySettings.reqSettings;
-    const setTog = (id, val) => { let el = document.getElementById(id); if(el) el.checked = val; };
-    setTog('toggle-req-absence', rs.absence);
-    setTog('toggle-req-schedule', rs.schedule);
-    setTog('toggle-req-overtime', rs.overtime);
-}
 
                     // LOAD SYSTEM LOGS
                     window.refreshLogs();
