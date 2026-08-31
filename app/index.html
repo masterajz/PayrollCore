@@ -255,49 +255,61 @@
 
             <div class="flex-1 overflow-auto p-8 flex flex-col">
                 
-                <!-- EMPLOYEE DATA VIEW -->
-                <div id="view-employee" class="block w-full shrink-0 mb-8">
-                  <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-3 w-full">
-                        <!-- TABS -->
-                        <div class="flex space-x-1 bg-white p-1 rounded-lg border border-slate-200 shadow-sm w-full sm:w-auto">
-                            <button id="tab-active-emp" class="flex-1 sm:flex-none px-4 py-1.5 text-sm font-medium bg-indigo-50 text-indigo-700 rounded-md transition-all cursor-pointer text-center">Active Employees</button>
-                            <button id="tab-archived-emp" class="flex-1 sm:flex-none px-4 py-1.5 text-sm font-medium text-slate-500 hover:text-slate-700 rounded-md transition-all cursor-pointer text-center">Archived</button>
-                        </div>
-                        
-                        <!-- BUTTONS -->
-                        <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
-                            <button id="add-employee-btn" class="w-full sm:w-auto flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer shadow-sm whitespace-nowrap">
-                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                                Add Employee
-                            </button>
-                            <button id="bulk-action-btn" style="display: none;" class="w-full sm:w-auto flex justify-center items-center bg-slate-700 hover:bg-slate-800 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm cursor-pointer">
-                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
-                                Archive Selected
-                            </button>
-                        </div>
-                    </div>
+               <!-- EMPLOYEE DATA VIEW -->
+<div id="view-employee" class="block w-full shrink-0 mb-8">
+    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-3 w-full">
+        <!-- TABS -->
+        <div class="flex space-x-1 bg-white p-1 rounded-lg border border-slate-200 shadow-sm w-full sm:w-auto shrink-0">
+            <button id="tab-active-emp" class="flex-1 sm:flex-none px-4 py-1.5 text-sm font-medium bg-indigo-50 text-indigo-700 rounded-md transition-all cursor-pointer text-center">Active</button>
+            <button id="tab-archived-emp" class="flex-1 sm:flex-none px-4 py-1.5 text-sm font-medium text-slate-500 hover:text-slate-700 rounded-md transition-all cursor-pointer text-center">Archived</button>
+        </div>
+        
+        <!-- BUTTONS -->
+        <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto">
+            <!-- ADVANCE SETTINGS BUTTON -->
+            <button id="btn-emp-adv-settings" onclick="window.openEmpAdvanceSettings()" class="w-full sm:w-auto flex justify-center items-center bg-slate-100 border border-slate-200 text-slate-700 hover:bg-slate-200 px-4 py-1.5 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm whitespace-nowrap">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+                Advance Settings
+            </button>
 
-                    <div class="bg-white rounded-xl border border-slate-200 overflow-x-auto shadow-sm w-full">
-                        <table class="w-full text-left border-collapse text-xs">
-                            <thead>
-                                <tr class="bg-slate-50 text-slate-500 uppercase tracking-wider border-b border-slate-200">
-                                    <th class="px-2 py-3 w-8 text-center"><input type="checkbox" id="select-all-emp" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></th>
-                                    <th class="px-2 py-3 font-semibold">Name</th>
-                                    <th class="px-2 py-3 font-semibold">Status</th>
-                                    <th class="px-2 py-3 font-semibold">Email</th>
-                                    <th class="px-2 py-3 font-semibold">Position</th>
-                                    <th class="px-2 py-3 font-semibold">Shift</th>
-                                    <th class="px-2 py-3 font-semibold">Rate</th>
-                                    <th class="px-2 py-3 font-semibold text-center text-rose-500">Gov't Cont.</th>
-                                    <th class="px-2 py-3 font-bold text-indigo-600 text-center">PIN</th>
-                                    <th class="px-2 py-3 font-semibold text-center">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="employee-tbody" class="divide-y divide-slate-100 text-slate-700">
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <!-- INJECTED: ADD EMPLOYEE BUTTON -->
+            <button id="add-employee-btn" class="w-full sm:w-auto flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm whitespace-nowrap">
+                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                Add Employee
+            </button>
+
+            <button id="bulk-action-btn" style="display: none;" class="w-full sm:w-auto flex justify-center items-center bg-slate-700 hover:bg-slate-800 text-white px-4 py-1.5 rounded-lg text-sm font-bold transition-colors shadow-sm cursor-pointer whitespace-nowrap">
+                Archive Selected
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl border border-slate-200 overflow-x-auto shadow-sm w-full">
+        <table class="w-max min-w-full text-left border-collapse text-xs">
+            <thead>
+                <tr class="bg-slate-50 text-slate-500 uppercase tracking-wider border-b border-slate-200">
+                    <th class="px-2 py-3 w-8 text-center"><input type="checkbox" id="select-all-emp" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></th>
+                    <th class="px-3 py-3 font-semibold col-empno whitespace-nowrap">Emp #</th>
+                    <th class="px-3 py-3 font-semibold col-name whitespace-nowrap">Name</th>
+                    <th class="px-3 py-3 font-semibold col-email whitespace-nowrap">Email</th>
+                    <th class="px-3 py-3 font-semibold col-dept whitespace-nowrap">Department/Designation</th>
+                    <th class="px-3 py-3 font-semibold col-account whitespace-nowrap">Account</th>
+                    <th class="px-3 py-3 font-semibold col-tl whitespace-nowrap">Assigned TL/Head</th>
+                    <th class="px-3 py-3 font-semibold col-position whitespace-nowrap">Position/Task</th>
+                    <th class="px-3 py-3 font-semibold col-shift whitespace-nowrap">Shift</th>
+                    <th class="px-3 py-3 font-semibold col-rate whitespace-nowrap">Rate</th>
+                    <th class="px-3 py-3 font-semibold col-hired whitespace-nowrap">Hired Date</th>
+                    <th class="px-3 py-3 font-semibold col-reg whitespace-nowrap">Reg. Date</th>
+                    <th class="px-2 py-3 font-semibold text-center text-rose-500 col-gov whitespace-nowrap">Gov't Cont.</th>
+                    <th class="px-2 py-3 font-bold text-indigo-600 text-center col-pin whitespace-nowrap">PIN</th>
+                    <th class="px-3 py-3 font-semibold text-center col-action w-48">Action</th>
+                </tr>
+            </thead>
+            <tbody id="employee-tbody" class="divide-y divide-slate-100 text-slate-700">
+            </tbody>
+        </table>
+    </div>
+</div>
 <!-- PAYROLL VIEW WITH DEDUCTIONS & ARCHIVE -->
 <div id="view-payroll" class="hidden w-full shrink-0 mb-8">
     <div class="flex flex-wrap items-center justify-between mb-6 bg-white p-4 rounded-xl border border-slate-200 shadow-sm gap-4">
@@ -790,80 +802,87 @@
             </div>
         </div>
     </div>
-
-    <!-- EMPLOYEE MODAL (Add/Edit) -->
-    <div id="employee-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-xl w-96 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-                <h3 class="text-lg font-bold text-slate-800" id="modal-title">Add Employee</h3>
-                <button id="close-modal-btn" class="text-slate-400 hover:text-slate-600 cursor-pointer">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
+	
+	<!-- COMBINED ADVANCE EMPLOYEE SETTINGS MODAL -->
+<div id="emp-adv-settings-modal" style="display: none;" class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-[80] p-4">
+    <div class="bg-white rounded-xl w-full max-w-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
+            <h3 class="text-lg font-bold text-slate-800">Advance Settings</h3>
+            <button onclick="document.getElementById('emp-adv-settings-modal').style.display='none'" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        
+        <!-- TABS NAVIGATION (Mobile Dropdown / Desktop Tabs) -->
+        <div class="px-6 pt-3 sm:pt-2 border-b border-slate-200 bg-white shrink-0 w-full">
+            <div class="sm:hidden pb-3">
+                <select id="mobile-emp-adv-selector" class="w-full bg-white border border-slate-300 text-indigo-700 font-bold text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 cursor-pointer outline-none">
+                    <option value="custom">Custom Fields</option>
+                    <option value="table">Table Config</option>
+                </select>
             </div>
-            <div class="p-6 space-y-4 overflow-y-auto bg-white">
-                <input type="hidden" id="emp-id">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name</label>
-                    <input type="text" id="emp-name" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
-                </div>
-                
-                <!-- ALIGNED NA EMAIL AT PIN -->
-                <div class="grid grid-cols-2 gap-4 items-end">
-                    <div class="flex flex-col justify-end">
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Email Address</label>
-                        <input type="email" id="emp-email" placeholder="example@email.com" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
-                    </div>
-                    <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <label class="block text-xs font-semibold text-slate-600">6 Digits PIN</label>
-                            <button type="button" onclick="window.generatePin()" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold cursor-pointer bg-indigo-50 px-2 py-0.5 rounded">Generate</button>
-                        </div>
-                        <input type="text" id="emp-pin" placeholder="123456" maxlength="6" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 text-center tracking-widest font-mono font-bold">
-                    </div>
-                </div>
-                
-                <div>
-                    <div class="flex justify-between items-center mb-1">
-                        <label class="block text-xs font-semibold text-slate-600">Status</label>
-                        <button id="manage-status-btn" type="button" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium cursor-pointer">Manage</button>
-                    </div>
-                    <select id="emp-status" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
-                        <option value="Active">Active</option>
-                        <option value="InActive">InActive</option>
-                        <option value="Resigned">Resigned</option>
-                        <option value="Terminated">Terminated</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <div class="flex justify-between items-center mb-1">
-                        <label class="block text-xs font-semibold text-slate-600">Position</label>
-                        <button id="manage-pos-btn" type="button" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium cursor-pointer">Manage</button>
-                    </div>
-                    <select id="emp-position" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Shift Schedule</label>
-                    <div class="flex items-center space-x-2">
-                        <input type="time" id="emp-shift-start" class="w-1/2 bg-white border border-slate-300 rounded-md px-2 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500" value="08:00">
-                        <span class="text-slate-400 text-xs">to</span>
-                        <input type="time" id="emp-shift-end" class="w-1/2 bg-white border border-slate-300 rounded-md px-2 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500" value="17:00">
-                    </div>
-                </div>
-                <div>
-    <label class="block text-xs font-semibold text-slate-600 mb-1">Daily Rate (₱/Day)</label>
-    <input type="number" id="emp-rate" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
-</div>
+            <div class="hidden sm:flex space-x-4">
+                <button id="emp-adv-tab-custom" class="px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold text-sm cursor-pointer whitespace-nowrap shrink-0">Custom Fields</button>
+                <button id="emp-adv-tab-table" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold text-sm cursor-pointer whitespace-nowrap shrink-0">Table Config</button>
+            </div>
+        </div>
 
+        <!-- TAB 1: CUSTOM FIELDS CONTENT -->
+        <div id="emp-adv-content-custom" class="flex flex-col flex-1 overflow-hidden bg-white">
+            <div class="p-6 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row gap-3 items-start sm:items-center shrink-0">
+                <input type="hidden" id="edit-col-idx" value="-1">
+                <input type="text" id="new-col-name" placeholder="Column Name (e.g. Department)" class="w-full sm:flex-1 px-3 py-2 text-sm border border-slate-300 rounded focus:border-indigo-500 text-slate-800 bg-white outline-none">
+                <select id="new-col-type" class="w-full sm:w-auto px-3 py-2 text-sm border border-slate-300 rounded focus:border-indigo-500 text-slate-800 bg-white outline-none cursor-pointer" onchange="document.getElementById('new-col-opts').style.display = this.value === 'dropdown' ? 'block' : 'none'">
+                    <option value="text">Text Input</option>
+                    <option value="dropdown">Dropdown Options</option>
+                </select>
+                <input type="text" id="new-col-opts" placeholder="Comma separated (HR, IT, Sales)" style="display:none;" class="w-full sm:flex-1 px-3 py-2 text-sm border border-slate-300 rounded focus:border-indigo-500 text-slate-800 bg-white outline-none">
+                
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button id="cancel-col-edit-btn" onclick="window.cancelEmpColEdit()" class="hidden flex-1 sm:flex-none px-4 py-2 bg-slate-200 text-slate-700 hover:bg-slate-300 border border-slate-300 rounded font-bold text-sm transition-colors cursor-pointer">Cancel</button>
+                    <button id="save-col-btn" onclick="window.addEmpCustomCol()" class="flex-1 sm:flex-none px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-bold text-sm transition-colors shadow-sm cursor-pointer">Add</button>
+                </div>
+            </div>
+            <div class="p-0 sm:p-6 flex-1 overflow-y-auto bg-white">
+                <table class="w-full text-left border-collapse text-sm min-w-[500px]">
+                    <thead>
+                        <tr class="text-slate-500 uppercase text-xs border-b border-slate-200 bg-slate-50">
+                            <th class="px-4 py-3 font-semibold">Column Name</th>
+                            <th class="px-4 py-3 font-semibold">Type</th>
+                            <th class="px-4 py-3 font-semibold">Options</th>
+                            <th class="px-4 py-3 font-semibold text-center w-32">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="emp-cols-tbody" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                </table>
+            </div>
+        </div>
 
-            </div>  
-            <div class="px-6 py-4 border-t border-slate-200 flex justify-end space-x-3 bg-slate-50 mt-auto">
-                <button id="cancel-modal-btn" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer">Cancel</button>
-                <button id="save-emp-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm font-medium text-white transition-colors shadow-sm cursor-pointer">Save Data</button>
+        <!-- TAB 2: TABLE CONFIG CONTENT -->
+        <div id="emp-adv-content-table" class="hidden flex-col flex-1 overflow-hidden bg-white">
+            <div class="p-6 bg-white flex-1 overflow-y-auto text-xs font-semibold text-slate-700">
+                <p class="text-slate-500 font-normal mb-4">Select the columns you want to display in the Employee Data table.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-empNo" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Employee #</span></label>
+                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-dept" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Department/Designation</span></label>
+                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-account" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Account</span></label>
+                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-tl" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Assigned TL/Head</span></label>
+                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-hired" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Hired Date</span></label>
+                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-reg" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Reg. Date</span></label>
+                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-email" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Email</span></label>
+                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-position" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Position/Task</span></label>
+                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-shift" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Shift</span></label>
+                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-rate" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Rate</span></label>
+                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-gov" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Gov't Cont.</span></label>
+                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-pin" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>PIN</span></label>
+                </div>
+            </div>
+            <div class="px-5 py-4 border-t border-slate-200 bg-slate-50 text-right shrink-0">
+                <button type="button" onclick="window.saveEmpTableCols()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer transition-colors">Apply & Save</button>
             </div>
         </div>
     </div>
+</div>
 
     <!-- SETTINGS MODAL -->
 <div id="settings-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-[60] p-4">
@@ -1338,6 +1357,104 @@
         </div>
     </div>
 </div>
+
+<!-- EMPLOYEE MODAL (ADD / EDIT) -->
+<div id="employee-modal" style="display: none;" class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-[80] p-4">
+    <div class="bg-white rounded-xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+        <!-- Modal Header -->
+        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
+            <h3 class="text-lg font-bold text-slate-800" id="modal-title">Add Employee</h3>
+            <button id="close-modal-btn" type="button" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="p-6 overflow-y-auto flex-1 bg-white space-y-4 text-xs font-semibold text-slate-600">
+            <input type="hidden" id="emp-id">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                    <label class="block mb-1">Employee #</label>
+                    <input type="text" id="emp-no" placeholder="EMP-001" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block mb-1">Full Name *</label>
+                    <input type="text" id="emp-name" placeholder="Juan Dela Cruz" required class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block mb-1">Email Address</label>
+                    <input type="email" id="emp-email" placeholder="juan@company.com" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block mb-1">Portal PIN (6 Digits) *</label>
+                    <div class="flex space-x-2">
+                        <input type="text" id="emp-pin" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 font-mono tracking-widest text-center">
+                        <button type="button" onclick="window.generatePin()" class="px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-md text-xs font-bold transition-colors cursor-pointer shrink-0">Gen</button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block mb-1">Department/Designation</label>
+                    <input type="text" id="emp-department" placeholder="IT / HR / Operations" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block mb-1">Account</label>
+                    <input type="text" id="emp-account" placeholder="Client / Project Account" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block mb-1">Assigned TL/Head</label>
+                    <input type="text" id="emp-assigned-tl" placeholder="Team Lead Name" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label>Position/Task</label>
+                        <button type="button" id="manage-pos-btn" class="text-[10px] text-indigo-600 hover:underline cursor-pointer">Manage</button>
+                    </div>
+                    <select id="emp-position" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer"></select>
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label>Status</label>
+                        <button type="button" id="manage-status-btn" class="text-[10px] text-indigo-600 hover:underline cursor-pointer">Manage</button>
+                    </div>
+                    <select id="emp-status" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer"></select>
+                </div>
+                <div>
+                    <label class="block mb-1">System Role</label>
+                    <input type="text" id="emp-role" placeholder="Staff / Supervisor" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block mb-1">Hired Date</label>
+                    <input type="date" id="emp-hired-date" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer">
+                </div>
+                <div>
+                    <label class="block mb-1">Regularization Date</label>
+                    <input type="date" id="emp-reg-date" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer">
+                </div>
+                <div>
+                    <label class="block mb-1">Shift Schedule (Start - End)</label>
+                    <div class="flex space-x-2">
+                        <input type="time" id="emp-shift-start" value="08:00" class="w-1/2 bg-slate-50 border border-slate-300 rounded-md px-2 py-2 text-slate-800 text-xs focus:outline-none focus:border-indigo-500 cursor-pointer">
+                        <input type="time" id="emp-shift-end" value="17:00" class="w-1/2 bg-slate-50 border border-slate-300 rounded-md px-2 py-2 text-slate-800 text-xs focus:outline-none focus:border-indigo-500 cursor-pointer">
+                    </div>
+                </div>
+                <div>
+                    <label class="block mb-1">Daily Rate (₱) *</label>
+                    <input type="number" id="emp-rate" placeholder="600" required class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+            </div>
+
+            <!-- Dynamic Fields Container -->
+            <div id="dynamic-emp-fields" class="mt-4"></div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="px-6 py-4 border-t border-slate-200 flex justify-end space-x-3 bg-slate-50 shrink-0">
+            <button id="cancel-modal-btn" type="button" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer">Cancel</button>
+            <button id="save-emp-btn" type="button" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-bold shadow-sm transition-colors cursor-pointer">Save Employee</button>
+        </div>
+    </div>
+</div>
 	
 	<!-- CUSTOM REJECT REASON MODAL -->
 <div id="reject-reason-modal" style="display: none;" class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-[130] p-4">
@@ -1359,6 +1476,24 @@
         <div class="px-5 py-3 border-t border-slate-200 bg-slate-50 flex justify-end space-x-2">
             <button type="button" onclick="window.closeRejectModal()" class="px-4 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-200 transition-colors cursor-pointer">Cancel</button>
             <button type="button" onclick="window.confirmRejectRequest()" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold shadow-sm transition-colors cursor-pointer">Confirm Rejection</button>
+        </div>
+    </div>
+</div>
+
+<!-- VIEW EMPLOYEE DATA MODAL -->
+<div id="view-emp-data-modal" style="display: none;" class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-[100] p-4">
+    <div class="bg-white rounded-xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
+            <h3 class="text-lg font-bold text-slate-800">Employee Details</h3>
+            <button onclick="document.getElementById('view-emp-data-modal').style.display='none'" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        <div class="p-6 bg-white overflow-y-auto text-slate-800" id="view-emp-data-body">
+            <!-- Content injected via JS -->
+        </div>
+        <div class="px-6 py-4 border-t border-slate-200 flex justify-end bg-slate-50 shrink-0">
+            <button onclick="document.getElementById('view-emp-data-modal').style.display='none'" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-bold shadow-sm cursor-pointer">Close</button>
         </div>
     </div>
 </div>
@@ -2042,22 +2177,43 @@ function switchTab(tab) {
 document.getElementById('btn-approvals')?.addEventListener('click', () => switchTab('approvals'));
 document.getElementById('btn-exports')?.addEventListener('click', () => switchTab('exports'));
 
-// Mock Audit Log Function
-window.refreshAuditLogs = function() {
+// TOTOONG AUDIT LOG DISPLAY FUNCTION
+window.refreshAuditLogs = async function() {
     const tbody = document.getElementById('audit-tbody');
     if(!tbody) return;
-    const currentUserEmail = window.auth.currentUser ? window.auth.currentUser.email : 'System';
-    const logs = [
-        { time: new Date().toISOString(), action: 'Logged into the system', user: currentUserEmail },
-        { time: new Date(Date.now() - 3600000).toISOString(), action: 'Updated Overtime Rate to 1.25', user: currentUserEmail },
-        { time: new Date(Date.now() - 7200000).toISOString(), action: 'Deleted timesheet record for Peter Test', user: currentUserEmail }
-    ];
-    tbody.innerHTML = '';
-    logs.forEach(log => {
-        tbody.innerHTML += `<tr class="hover:bg-slate-50"><td class="px-6 py-4 text-slate-500">${new Date(log.time).toLocaleString()}</td><td class="px-6 py-4 font-medium text-slate-800">${log.action}</td><td class="px-6 py-4 text-indigo-600 font-semibold">${log.user}</td></tr>`;
-    });
-};
+    
+    tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-8 text-center text-slate-400">Fetching live audit trail...</td></tr>';
+    
+    try {
+        // Kunin ang logs sa database (Limitahan sa 50 pinakabago para hindi bumagal)
+        const snap = await window.db.collection('audit_logs')
+            .where('companyId', '==', window.currentCompanyId)
+            .orderBy('timestamp', 'desc')
+            .limit(50)
+            .get();
+        
+        tbody.innerHTML = '';
+        
+        if (snap.empty) {
+            tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-8 text-center text-slate-400">No system activities recorded yet.</td></tr>';
+            return;
+        }
 
+        snap.forEach(doc => {
+            const log = doc.data();
+            tbody.innerHTML += `
+                <tr class="hover:bg-slate-50 border-b border-slate-100 transition-colors">
+                    <td class="px-6 py-4 text-slate-500 text-xs">${new Date(log.timestamp).toLocaleString()}</td>
+                    <td class="px-6 py-4 font-medium text-slate-800 text-xs">${log.action}</td>
+                    <td class="px-6 py-4 text-indigo-600 font-semibold text-xs">${log.user}</td>
+                </tr>
+            `;
+        });
+    } catch (err) {
+        console.error(err);
+        tbody.innerHTML = '<tr><td colspan="3" class="px-6 py-8 text-center text-rose-500">Error loading logs. Check console.</td></tr>';
+    }
+};
         document.getElementById('btn-settings-nav').addEventListener('click', () => {
             document.getElementById('set-name').value = window.companySettings.name || '';
             document.getElementById('set-address').value = window.companySettings.address || '';
@@ -2178,7 +2334,7 @@ window.refreshAuditLogs = function() {
      
 
         document.getElementById('close-modal-btn').addEventListener('click', () => document.getElementById('employee-modal').style.display = 'none');
-        document.getElementById('cancel-modal-btn').addEventListener('click', () => document.getElementById('employee-modal').style.display = 'none');
+document.getElementById('cancel-modal-btn').addEventListener('click', () => document.getElementById('employee-modal').style.display = 'none');
         document.getElementById('close-settings-btn').addEventListener('click', () => document.getElementById('settings-modal').style.display = 'none');
         document.getElementById('cancel-settings-btn').addEventListener('click', () => document.getElementById('settings-modal').style.display = 'none');
         document.getElementById('close-daily-btn').addEventListener('click', () => document.getElementById('daily-modal').style.display = 'none');
@@ -2699,52 +2855,185 @@ window.populatePositionDropdowns = function() {
                 return `<span>${status}</span>`;
             }
 
-            window.renderEmployees = function() {
-                const tbody = document.getElementById('employee-tbody');
-                tbody.innerHTML = '';
-                document.getElementById('select-all-emp').checked = false;
-                document.getElementById('bulk-action-btn').style.display = 'none';
+            window.saveEmpTableCols = async function() {
+    window.showLoading("Saving Preferences...");
+    const cols = {
+        empNo: document.getElementById('tcol-empNo').checked,
+        dept: document.getElementById('tcol-dept').checked,
+        account: document.getElementById('tcol-account').checked,
+        tl: document.getElementById('tcol-tl').checked,
+        hired: document.getElementById('tcol-hired').checked,
+        reg: document.getElementById('tcol-reg').checked,
+        email: document.getElementById('tcol-email').checked,
+        position: document.getElementById('tcol-position').checked,
+        shift: document.getElementById('tcol-shift').checked,
+        rate: document.getElementById('tcol-rate').checked,
+        gov: document.getElementById('tcol-gov').checked,
+        pin: document.getElementById('tcol-pin').checked
+    };
+    window.companySettings.empTableCols = cols;
+    try {
+        if(window.db) await window.db.collection('settings').doc('company_' + window.currentCompanyId).set({ empTableCols: cols }, { merge: true });
+        document.getElementById('emp-cols-config-modal').style.display = 'none';
+        window.renderEmployees();
+        showToast("Table settings saved!", "success");
+    } catch(e) { alert("Failed to save."); }
+    window.hideLoading();
+};
 
-                let filteredEmployees = window.employees.filter(e => window.showingArchived ? e.isArchived : !e.isArchived);
+window.viewEmployeeData = function(id) {
+    const emp = window.employees.find(e => e.id === id);
+    if(!emp) return;
 
-                if(filteredEmployees.length === 0) {
-                    return tbody.innerHTML = `<tr><td colspan="9" class="px-6 py-8 text-center text-slate-400">No employees found in this view.</td></tr>`;
-                }
+    let html = `<div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6">`;
+    const f = (label, val) => `<div class="bg-slate-50 p-3 rounded-lg border border-slate-100"><p class="text-[10px] uppercase font-bold text-indigo-500 mb-1">${label}</p><p class="text-sm font-semibold text-slate-800">${val || '<span class="text-slate-400 italic">None</span>'}</p></div>`;
+    
+    html += f("Employee #", emp.empNo);
+    html += f("Full Name", emp.name);
+    html += f("Status", getStatusBadge(emp.status));
+    html += f("Email", emp.email);
+    html += f("Department", emp.department);
+    html += f("Account", emp.account);
+    html += f("Assigned TL/Head", emp.assignedTl);
+    html += f("Position/Task", emp.position);
+    html += f("Role", emp.role);
+    html += f("Hired Date", emp.hiredDate);
+    html += f("Regularization Date", emp.regDate);
+    html += f("Shift Schedule", emp.shift);
+    html += f("Daily Rate", `₱${(emp.rate||0).toLocaleString()}`);
+    html += f("Portal PIN", `<span class="font-mono tracking-widest">${emp.pin}</span>`);
 
-                filteredEmployees.forEach(emp => {
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition-colors search-row";
-                    const actionBtn = window.showingArchived 
-                        ? `<button onclick="toggleArchiveSingle('${emp.id}')" class="text-emerald-600 hover:text-emerald-800 mx-1 text-xs font-medium cursor-pointer">Restore</button>
-                           <button onclick="deleteEmployee('${emp.id}')" class="text-rose-500 hover:text-rose-700 mx-1 text-xs font-medium cursor-pointer">Delete</button>`
-                        : `<button onclick="editEmployee('${emp.id}')" class="text-indigo-600 hover:text-indigo-800 mx-1 text-xs font-medium cursor-pointer">Edit</button>
-                           <button onclick="deleteEmployee('${emp.id}')" class="text-rose-500 hover:text-rose-700 mx-1 text-xs font-medium cursor-pointer">Delete</button>
-                           <button onclick="toggleArchiveSingle('${emp.id}')" class="text-slate-500 hover:text-slate-700 mx-1 text-xs font-medium cursor-pointer">Archive</button>`;
+    if (window.empCustomCols && window.empCustomCols.length > 0) {
+        html += `<div class="col-span-full mt-4"><h4 class="text-xs font-bold text-slate-600 uppercase border-b border-slate-200 pb-1 mb-3">Additional Information</h4><div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-6">`;
+        window.empCustomCols.forEach(col => {
+            let val = (emp.customData && emp.customData[col.id]) ? emp.customData[col.id] : '';
+            html += f(col.name, val);
+        });
+        html += `</div></div>`;
+    }
+    html += `</div>`;
+    
+    document.getElementById('view-emp-data-body').innerHTML = html;
+    document.getElementById('view-emp-data-modal').style.display = 'flex';
+};
 
-                    tr.innerHTML = `
-                        <td class="px-2 py-3 text-center border-b border-slate-100">
-                            <input type="checkbox" class="emp-checkbox rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" data-id="${emp.id}" onchange="toggleBulkBtn()">
-                        </td>
-                        <td class="px-2 py-3 font-bold text-indigo-600 hover:text-indigo-800 cursor-pointer border-b border-slate-100 whitespace-nowrap" onclick="window.editEmployee('${emp.id}')" title="Click to edit employee">${emp.name}</td>
-                        <td class="px-2 py-3 border-b border-slate-100">${getStatusBadge(emp.status)}</td>
-                        <td class="px-2 py-3 text-slate-500 border-b border-slate-100">${emp.email || '-'}</td>
-                        <td class="px-2 py-3 text-slate-600 border-b border-slate-100">${emp.position || '-'}</td>
-                       <td class="px-2 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap"><span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700">${emp.shift}</span></td>
-                        <td class="px-2 py-3 font-bold text-slate-800 border-b border-slate-100">₱${(emp.rate || 0).toLocaleString()}</td>
-						                        <td class="px-2 py-3 text-center border-b border-slate-100">
-                            <button onclick="window.openEmpGovModal('${emp.id}')" class="text-[10px] bg-rose-50 border border-rose-200 text-rose-600 px-2 py-1 rounded font-bold hover:bg-rose-100 transition-colors cursor-pointer whitespace-nowrap">Set Rates</button>
-                        </td>
-                        <td class="px-2 py-3 font-mono font-bold text-indigo-600 text-center tracking-widest border-b border-slate-100">${emp.pin || '----'}</td>
+window.renderEmployees = function() {
+    const tbody = document.getElementById('employee-tbody');
+    tbody.innerHTML = '';
+    document.getElementById('select-all-emp').checked = false;
+    document.getElementById('bulk-action-btn').style.display = 'none';
 
-                        <td class="px-2 py-3 text-center border-b border-slate-100">
-    <div class="flex items-center justify-center space-x-2 whitespace-nowrap">
-        ${actionBtn}
-    </div>
-</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            }
+    // Apply Table Configurations
+    let cols = window.companySettings.empTableCols || {};
+    const isShow = (key) => cols[key] !== false; // Default true kung walang laman
+
+    // Update Checkboxes in Config Modal on Load
+    const setCol = (id, key) => { let el = document.getElementById(id); if (el) el.checked = isShow(key); };
+    setCol('tcol-empNo', 'empNo'); setCol('tcol-dept', 'dept'); setCol('tcol-account', 'account');
+    setCol('tcol-tl', 'tl'); setCol('tcol-hired', 'hired'); setCol('tcol-reg', 'reg');
+    setCol('tcol-email', 'email'); setCol('tcol-position', 'position'); setCol('tcol-shift', 'shift');
+    setCol('tcol-rate', 'rate'); setCol('tcol-gov', 'gov'); setCol('tcol-pin', 'pin');
+
+    // Update thead visibility
+    const thead = tbody.previousElementSibling;
+    thead.querySelector('.col-empno').style.display = isShow('empNo') ? '' : 'none';
+    thead.querySelector('.col-email').style.display = isShow('email') ? '' : 'none';
+    thead.querySelector('.col-dept').style.display = isShow('dept') ? '' : 'none';
+    thead.querySelector('.col-account').style.display = isShow('account') ? '' : 'none';
+    thead.querySelector('.col-tl').style.display = isShow('tl') ? '' : 'none';
+    thead.querySelector('.col-position').style.display = isShow('position') ? '' : 'none';
+    thead.querySelector('.col-shift').style.display = isShow('shift') ? '' : 'none';
+    thead.querySelector('.col-rate').style.display = isShow('rate') ? '' : 'none';
+    thead.querySelector('.col-gov').style.display = isShow('gov') ? '' : 'none';
+    thead.querySelector('.col-hired').style.display = isShow('hired') ? '' : 'none';
+    thead.querySelector('.col-reg').style.display = isShow('reg') ? '' : 'none';
+    thead.querySelector('.col-pin').style.display = isShow('pin') ? '' : 'none';
+
+    // Render Dynamic Custom Column Headers
+    thead.querySelectorAll('.dyn-th').forEach(e => e.remove());
+    const actionTh = thead.querySelector('.col-action');
+    window.empCustomCols.forEach(col => {
+        let th = document.createElement('th');
+        th.className = "px-3 py-3 font-semibold text-emerald-600 dyn-th whitespace-nowrap";
+        th.innerText = col.name.toUpperCase();
+        thead.querySelector('tr').insertBefore(th, actionTh);
+    });
+
+    let filteredEmployees = window.employees.filter(e => window.showingArchived ? e.isArchived : !e.isArchived);
+
+    if(filteredEmployees.length === 0) {
+        return tbody.innerHTML = `<tr><td colspan="20" class="px-6 py-8 text-center text-slate-400">No employees found in this view.</td></tr>`;
+    }
+
+    filteredEmployees.forEach(emp => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-50 transition-colors search-row";
+        
+        const actionBtn = window.showingArchived 
+            ? `<button onclick="toggleArchiveSingle('${emp.id}')" class="text-emerald-600 hover:text-emerald-800 mx-1 text-xs font-bold cursor-pointer">Restore</button>
+               <button onclick="deleteEmployee('${emp.id}')" class="text-rose-500 hover:text-rose-700 mx-1 text-xs font-bold cursor-pointer">Delete</button>`
+            : `<button onclick="window.viewEmployeeData('${emp.id}')" class="text-slate-500 hover:text-slate-700 mx-1 text-xs font-bold cursor-pointer">View</button>
+               <button onclick="window.editEmployee('${emp.id}')" class="text-indigo-600 hover:text-indigo-800 mx-1 text-xs font-bold cursor-pointer">Edit</button>
+               <button onclick="deleteEmployee('${emp.id}')" class="text-rose-500 hover:text-rose-700 mx-1 text-xs font-bold cursor-pointer">Delete</button>
+               <button onclick="toggleArchiveSingle('${emp.id}')" class="text-slate-500 hover:text-slate-700 mx-1 text-xs font-bold cursor-pointer">Archive</button>`;
+
+        let dynTds = '';
+        let cData = emp.customData || {};
+        window.empCustomCols.forEach(col => {
+            dynTds += `<td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap">${cData[col.id] || '-'}</td>`;
+        });
+
+        tr.innerHTML = `
+            <td class="px-2 py-3 text-center border-b border-slate-100">
+                <input type="checkbox" class="emp-checkbox rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" data-id="${emp.id}" onchange="toggleBulkBtn()">
+            </td>
+            <td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap font-mono" style="display:${isShow('empNo')?'':'none'}">${emp.empNo || '-'}</td>
+            <td class="px-3 py-3 font-bold text-indigo-600 hover:text-indigo-800 cursor-pointer border-b border-slate-100 whitespace-nowrap" onclick="window.viewEmployeeData('${emp.id}')">${emp.name}</td>
+            <td class="px-3 py-3 text-slate-500 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('email')?'':'none'}">${emp.email || '-'}</td>
+            <td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('dept')?'':'none'}">${emp.department || '-'}</td>
+            <td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('account')?'':'none'}">${emp.account || '-'}</td>
+            <td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('tl')?'':'none'}">${emp.assignedTl || '-'}</td>
+            <td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('position')?'':'none'}">${emp.position || '-'}</td>
+            <td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('shift')?'':'none'}"><span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700">${emp.shift}</span></td>
+            <td class="px-3 py-3 font-bold text-slate-800 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('rate')?'':'none'}">₱${(emp.rate || 0).toLocaleString()}</td>
+            <td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('hired')?'':'none'}">${emp.hiredDate || '-'}</td>
+            <td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('reg')?'':'none'}">${emp.regDate || '-'}</td>
+            <td class="px-2 py-3 text-center border-b border-slate-100 whitespace-nowrap" style="display:${isShow('gov')?'':'none'}">
+                <button onclick="window.openEmpGovModal('${emp.id}')" class="text-[10px] bg-rose-50 border border-rose-200 text-rose-600 px-2 py-1 rounded font-bold hover:bg-rose-100 transition-colors cursor-pointer">Set Rates</button>
+            </td>
+            <td class="px-2 py-3 font-mono font-bold text-indigo-600 text-center tracking-widest border-b border-slate-100 whitespace-nowrap" style="display:${isShow('pin')?'':'none'}">${emp.pin || '----'}</td>
+            ${dynTds}
+            <td class="px-3 py-3 text-center border-b border-slate-100 w-48">
+                <div class="flex items-center justify-center space-x-1 whitespace-nowrap">
+                    ${actionBtn}
+                </div>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+};
+
+document.getElementById('add-employee-btn').addEventListener('click', () => {
+    window.editMode = false;
+    document.getElementById('modal-title').innerText = "Add Employee";
+    document.getElementById('emp-id').value = ''; 
+    document.getElementById('emp-no').value = '';
+    document.getElementById('emp-name').value = '';
+    document.getElementById('emp-email').value = ''; 
+    document.getElementById('emp-department').value = '';
+    document.getElementById('emp-account').value = '';
+    document.getElementById('emp-assigned-tl').value = '';
+    document.getElementById('emp-role').value = '';
+    document.getElementById('emp-hired-date').value = '';
+    document.getElementById('emp-reg-date').value = '';
+    document.getElementById('emp-pin').value = ''; 
+    document.getElementById('emp-rate').value = '';
+    window.renderDynamicEmpFields({});
+    document.getElementById('employee-modal').style.display = 'flex';
+});
+
+
+
 
             document.getElementById('tab-active-emp').addEventListener('click', (e) => {
                 window.showingArchived = false;
@@ -2816,10 +3105,199 @@ window.populatePositionDropdowns = function() {
                 document.getElementById('emp-pin').value = randomPin;
             };
 
-            document.getElementById('save-emp-btn').addEventListener('click', async function() {
-    const btn = this;
-    btn.disabled = true; 
+            window.empCustomCols = [];
 
+window.loadEmpCustomCols = async function() {
+    try {
+        const snap = await window.db.collection('settings').doc('emp_columns_' + window.currentCompanyId).get();
+        if (snap.exists) window.empCustomCols = snap.data().columns || [];
+        if(window.renderEmployees) window.renderEmployees();
+    } catch(e) { console.error(e); }
+};
+
+// Tawagin agad pag load
+setTimeout(() => { if(window.db) window.loadEmpCustomCols(); }, 2000);
+
+window.resetEmpAdvTabs = function() {
+    const tabs = ['emp-adv-tab-custom', 'emp-adv-tab-table'];
+    const contents = ['emp-adv-content-custom', 'emp-adv-content-table'];
+    tabs.forEach(t => { 
+        let el = document.getElementById(t); 
+        if(el) el.className = "px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold text-sm cursor-pointer whitespace-nowrap shrink-0"; 
+    });
+    contents.forEach(c => { 
+        let el = document.getElementById(c); 
+        if(el) el.style.display = 'none'; 
+    });
+};
+
+document.getElementById('emp-adv-tab-custom')?.addEventListener('click', (e) => {
+    window.resetEmpAdvTabs(); 
+    e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold text-sm cursor-pointer whitespace-nowrap shrink-0";
+    document.getElementById('emp-adv-content-custom').style.display = 'flex';
+});
+
+document.getElementById('emp-adv-tab-table')?.addEventListener('click', (e) => {
+    window.resetEmpAdvTabs(); 
+    e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold text-sm cursor-pointer whitespace-nowrap shrink-0";
+    document.getElementById('emp-adv-content-table').style.display = 'flex';
+});
+
+// Mobile Dropdown Switcher
+document.getElementById('mobile-emp-adv-selector')?.addEventListener('change', function(e) {
+    const tabVal = e.target.value;
+    const targetBtn = document.getElementById('emp-adv-tab-' + tabVal);
+    if(targetBtn) targetBtn.click();
+});
+
+// Bagong Open Function
+window.openEmpAdvanceSettings = function() {
+    // Reset View to Custom Tab First
+    document.getElementById('mobile-emp-adv-selector').value = 'custom';
+    document.getElementById('emp-adv-tab-custom').click();
+
+    window.cancelEmpColEdit(); // Reset form state
+    const tbody = document.getElementById('emp-cols-tbody');
+    tbody.innerHTML = '';
+    
+    if(window.empCustomCols.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="px-4 py-6 text-center text-slate-400">No custom columns added yet.</td></tr>';
+    } else {
+        window.empCustomCols.forEach((col, idx) => {
+            tbody.innerHTML += `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="px-4 py-3 font-bold text-slate-800">${col.name}</td>
+                    <td class="px-4 py-3 text-slate-500 uppercase text-[10px] font-bold"><span class="bg-slate-100 px-2 py-1 rounded border border-slate-200">${col.type}</span></td>
+                    <td class="px-4 py-3 text-slate-600 text-xs">${col.options || '-'}</td>
+                    <td class="px-4 py-3 text-center">
+                        <button onclick="window.editEmpCustomCol(${idx})" class="text-indigo-600 hover:text-indigo-800 text-xs font-bold mr-3 cursor-pointer">Edit</button>
+                        <button onclick="window.delEmpCustomCol(${idx})" class="text-rose-500 hover:text-rose-700 text-xs font-bold cursor-pointer">Delete</button>
+                    </td>
+                </tr>`;
+        });
+    }
+
+    // Isarado ang Config Modal just in case
+    let oldModal = document.getElementById('emp-cols-config-modal');
+    if (oldModal) oldModal.style.display = 'none';
+
+    document.getElementById('emp-adv-settings-modal').style.display = 'flex';
+};
+
+window.editEmpCustomCol = function(idx) {
+    const col = window.empCustomCols[idx];
+    document.getElementById('edit-col-idx').value = idx;
+    document.getElementById('new-col-name').value = col.name;
+    document.getElementById('new-col-type').value = col.type;
+    
+    const optsInput = document.getElementById('new-col-opts');
+    optsInput.value = col.options || '';
+    optsInput.style.display = col.type === 'dropdown' ? 'block' : 'none';
+    
+    const saveBtn = document.getElementById('save-col-btn');
+    saveBtn.innerText = 'Update';
+    saveBtn.classList.replace('bg-indigo-600', 'bg-emerald-600');
+    saveBtn.classList.replace('hover:bg-indigo-700', 'hover:bg-emerald-700');
+    document.getElementById('cancel-col-edit-btn').classList.remove('hidden');
+};
+
+window.cancelEmpColEdit = function() {
+    document.getElementById('edit-col-idx').value = '-1';
+    document.getElementById('new-col-name').value = '';
+    document.getElementById('new-col-type').value = 'text';
+    document.getElementById('new-col-opts').value = '';
+    document.getElementById('new-col-opts').style.display = 'none';
+    
+    const saveBtn = document.getElementById('save-col-btn');
+    saveBtn.innerText = 'Add';
+    saveBtn.classList.replace('bg-emerald-600', 'bg-indigo-600');
+    saveBtn.classList.replace('hover:bg-emerald-700', 'hover:bg-indigo-700');
+    document.getElementById('cancel-col-edit-btn').classList.add('hidden');
+};
+
+window.addEmpCustomCol = async function() {
+    const idx = parseInt(document.getElementById('edit-col-idx').value);
+    const name = document.getElementById('new-col-name').value.trim();
+    const type = document.getElementById('new-col-type').value;
+    const opts = document.getElementById('new-col-opts').value.trim();
+    
+    if(!name) return alert("Enter column name");
+    
+    window.showLoading(idx > -1 ? "Updating column..." : "Saving column...");
+    
+    if(idx > -1) {
+        window.empCustomCols[idx].name = name;
+        window.empCustomCols[idx].type = type;
+        window.empCustomCols[idx].options = type === 'dropdown' ? opts : '';
+    } else {
+        window.empCustomCols.push({ id: 'col_' + Date.now(), name: name, type: type, options: type === 'dropdown' ? opts : '' });
+    }
+    
+    try {
+        await window.db.collection('settings').doc('emp_columns_' + window.currentCompanyId).set({ columns: window.empCustomCols });
+        window.openEmpColModal(); 
+        window.renderEmployees(); 
+        if(typeof showToast === 'function') showToast(idx > -1 ? "Column updated!" : "Column added!", "success");
+    } catch (err) {
+        console.error(err);
+        alert("Failed to save column.");
+    }
+    window.hideLoading();
+};
+
+window.delEmpCustomCol = async function(idx) {
+    if(confirm("Delete this custom column? This will remove it from all employee records.")) {
+        window.showLoading("Deleting...");
+        window.empCustomCols.splice(idx, 1);
+        await window.db.collection('settings').doc('emp_columns_' + window.currentCompanyId).set({ columns: window.empCustomCols });
+        window.openEmpColModal(); window.renderEmployees(); window.hideLoading();
+    }
+};
+
+window.renderDynamicEmpFields = function(existingData = {}) {
+    const container = document.getElementById('dynamic-emp-fields');
+    if(!container) return;
+    container.innerHTML = '';
+    if(window.empCustomCols.length === 0) return;
+
+    // PINALITAN ANG TITLE TO "ADDITIONAL INFORMATION"
+    let html = `<h4 class="text-xs font-bold text-slate-500 uppercase mb-3 border-b border-slate-200 pb-1">Additional Information</h4><div class="grid grid-cols-1 sm:grid-cols-2 gap-4">`;
+    window.empCustomCols.forEach(col => {
+        let val = existingData[col.id] || '';
+        if(col.type === 'dropdown') {
+            let opts = (col.options || '').split(',').map(o => o.trim()).filter(o => o);
+            let optHtml = `<option value="">Select...</option>` + opts.map(o => `<option value="${o}" ${val===o?'selected':''}>${o}</option>`).join('');
+            html += `<div><label class="block text-xs font-semibold text-slate-600 mb-1">${col.name}</label><select id="dyn-${col.id}" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm outline-none focus:border-indigo-500 cursor-pointer">${optHtml}</select></div>`;
+        } else {
+            html += `<div><label class="block text-xs font-semibold text-slate-600 mb-1">${col.name}</label><input type="text" id="dyn-${col.id}" value="${val}" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm outline-none focus:border-indigo-500"></div>`;
+        }
+    });
+    container.innerHTML = html + `</div>`;
+};
+
+
+window.editEmployee = function(id) {
+    window.editMode = true; 
+    document.getElementById('modal-title').innerText = "Edit Employee";
+    const emp = window.employees.find(e => e.id === id);
+    if(emp) {
+        document.getElementById('emp-id').value = emp.id;
+        document.getElementById('emp-name').value = emp.name || '';
+        document.getElementById('emp-email').value = emp.email || '';
+        document.getElementById('emp-pin').value = emp.pin || ''; 
+        document.getElementById('emp-status').value = emp.status || 'Active';
+        document.getElementById('emp-position').value = emp.position || '';
+        document.getElementById('emp-shift-start').value = emp.shiftStart || '08:00';
+        document.getElementById('emp-shift-end').value = emp.shiftEnd || '17:00';
+        document.getElementById('emp-rate').value = emp.rate || 0;
+        
+        window.renderDynamicEmpFields(emp.customData || {}); // Populate dynamic fields
+        document.getElementById('employee-modal').style.display = 'flex';
+    }
+};
+
+document.getElementById('save-emp-btn').addEventListener('click', async function() {
+    const btn = this; btn.disabled = true; 
     const id = document.getElementById('emp-id').value;
     const name = document.getElementById('emp-name').value.trim();
     const email = document.getElementById('emp-email').value.trim();
@@ -2830,30 +3308,25 @@ window.populatePositionDropdowns = function() {
     const shiftEnd = document.getElementById('emp-shift-end').value;
     const rate = parseFloat(document.getElementById('emp-rate').value);
 
-    if(!name || isNaN(rate)) {
-        btn.disabled = false;
-        return showToast("Valid Name and Rate required!", "error");
-    }
-    if(!pin || pin.length !== 6 || isNaN(pin)) {
-        btn.disabled = false;
-        return showToast("Please enter a valid 6-digit PIN.", "error");
+    if(!name || isNaN(rate) || !pin || pin.length !== 6 || isNaN(pin)) {
+        btn.disabled = false; return showToast("Invalid Name, Rate, or PIN", "error");
     }
     
+    // KUNIN ANG DATA MULA SA CUSTOM COLUMNS
+    let customData = {};
+    window.empCustomCols.forEach(col => {
+        let el = document.getElementById('dyn-' + col.id);
+        if(el) customData[col.id] = el.value;
+    });
+
     const formattedShift = `${formatTimeAMPM(shiftStart)} - ${formatTimeAMPM(shiftEnd)}`;
     window.showLoading("Saving...");
-
-    const currentCompanyName = window.companySettings.name || "My Company";
-
-    // FIX: Nilagyan ng ?.value para hindi mag-error kung wala sa HTML modal
-    const leadAllow = parseFloat(document.getElementById('emp-allow-lead')?.value) || 0;
-    const skillsAllow = parseFloat(document.getElementById('emp-allow-skills')?.value) || 0;
-    const medAllow = parseFloat(document.getElementById('emp-allow-med')?.value) || 0;
 
     const empData = { 
         name, email, pin, status, position, 
         shift: formattedShift, shiftStart, shiftEnd, rate,
-        leadAllow, skillsAllow, medAllow,
-        companyName: currentCompanyName 
+        customData: customData,
+        companyName: window.companySettings.name || "My Company" 
     };
     
     try {
@@ -2862,22 +3335,16 @@ window.populatePositionDropdowns = function() {
             const idx = window.employees.findIndex(e => e.id === id);
             window.employees[idx] = { ...window.employees[idx], ...empData };
         } else {
-            empData.ytdSalary = 0; empData.isArchived = false;
-            empData.companyId = window.currentCompanyId; 
+            empData.ytdSalary = 0; empData.isArchived = false; empData.companyId = window.currentCompanyId; 
             const docRef = await window.db.collection("employees").add(empData);
             window.employees.push({ id: docRef.id, ...empData });
         }
-
         document.getElementById('employee-modal').style.display = 'none';
         window.renderEmployees();
         showToast("Employee saved successfully!", "success");
-    } catch (error) {
-        console.error(error);
-        showToast("Failed to save employee.", "error");
-    }
+    } catch (error) { showToast("Failed to save.", "error"); }
 
-    window.hideLoading();
-    btn.disabled = false; 
+    window.hideLoading(); btn.disabled = false; 
 });
 
             document.getElementById('save-advance-btn').addEventListener('click', async () => {
@@ -6165,6 +6632,22 @@ document.getElementById('btn-enterprise')?.addEventListener('click', () => {
     const sel = document.getElementById('mobile-ent-selector');
     if(sel) sel.value = 'plan';
 });
+// TOTOONG AUDIT LOGGER FUNCTION
+window.logAction = async function(actionMessage) {
+    try {
+        if (!window.db || !window.currentCompanyId) return;
+        const userEmail = window.auth.currentUser ? window.auth.currentUser.email : 'System';
+        
+        await window.db.collection('audit_logs').add({
+            companyId: window.currentCompanyId,
+            action: actionMessage,
+            user: userEmail,
+            timestamp: new Date().toISOString()
+        });
+    } catch (err) {
+        console.error("Failed to log action:", err);
+    }
+};
     </script>
 </body>
 </html>
