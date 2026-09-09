@@ -443,31 +443,36 @@
 				
 				<!-- EMPLOYEE REQUESTS VIEW -->
 <div id="view-approvals" class="hidden w-full shrink-0 mb-8">
-    <div class="mb-6 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
+    <div class="mb-6 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+        <div class="w-full lg:w-auto">
             <h2 class="text-lg font-bold text-slate-800">Employee Requests</h2>
             <p class="text-sm text-slate-500 mt-1">Review requests and toggle which forms are visible in the Employee Portal.</p>
         </div>
-        <div class="flex flex-wrap items-center gap-3">
-            <!-- PORTAL TOGGLES -->
-            <label class="flex items-center space-x-2 cursor-pointer bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 shadow-sm hover:bg-slate-100 transition-colors">
-                <input type="checkbox" id="toggle-req-absence" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4" onchange="window.saveRequestToggles()">
-                <span class="text-xs font-bold text-slate-700">Absence</span>
-            </label>
-            <label class="flex items-center space-x-2 cursor-pointer bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 shadow-sm hover:bg-slate-100 transition-colors">
-                <input type="checkbox" id="toggle-req-schedule" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4" onchange="window.saveRequestToggles()">
-                <span class="text-xs font-bold text-slate-700">Change Sched</span>
-            </label>
-            <label class="flex items-center space-x-2 cursor-pointer bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 shadow-sm hover:bg-slate-100 transition-colors">
-                <input type="checkbox" id="toggle-req-overtime" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4" onchange="window.saveRequestToggles()">
-                <span class="text-xs font-bold text-slate-700">Overtime</span>
-            </label>
+        
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 w-full lg:w-auto">
+            <!-- PORTAL TOGGLES (Mobile Responsive Grid) -->
+            <div class="grid grid-cols-2 sm:flex sm:flex-row gap-2 w-full sm:w-auto">
+                <label class="flex items-center space-x-2 cursor-pointer bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 shadow-sm hover:bg-slate-100 transition-colors">
+                    <input type="checkbox" id="toggle-req-absence" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4" onchange="window.saveRequestToggles()">
+                    <span class="text-xs font-bold text-slate-700">Absence</span>
+                </label>
+                <label class="flex items-center space-x-2 cursor-pointer bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 shadow-sm hover:bg-slate-100 transition-colors">
+                    <input type="checkbox" id="toggle-req-schedule" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4" onchange="window.saveRequestToggles()">
+                    <span class="text-xs font-bold text-slate-700">Change Sched</span>
+                </label>
+                <label class="flex items-center space-x-2 cursor-pointer bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 shadow-sm hover:bg-slate-100 transition-colors">
+                    <input type="checkbox" id="toggle-req-overtime" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer w-4 h-4" onchange="window.saveRequestToggles()">
+                    <span class="text-xs font-bold text-slate-700">Overtime</span>
+                </label>
+            </div>
             
-            <button onclick="window.loadApprovalsData()" class="px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg shadow-sm hover:bg-indigo-700 cursor-pointer transition-colors ml-auto">Refresh List</button>
+            <button onclick="window.loadApprovalsData()" class="w-full sm:w-auto px-4 py-2 bg-indigo-600 text-white font-bold text-xs rounded-lg shadow-sm hover:bg-indigo-700 cursor-pointer transition-colors mt-2 sm:mt-0">Refresh List</button>
         </div>
     </div>
     
     <div class="bg-white rounded-xl border border-slate-200 overflow-x-auto shadow-sm">
+<!-- ... (Hayaan lang yung <table> sa ibaba nito) ... -->
+<!-- ... (Hayaan lang yung table sa ibaba nito) ... -->
         <table class="w-full text-left border-collapse min-w-[900px]">
             <thead>
                 <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200">
@@ -6119,7 +6124,7 @@ window.copyPortalLink = function() {
         };
 
         // Kusa ding itatago ang sidebar kapag nag-click ng kahit anong tab sa mobile
-        ['btn-employee', 'btn-payroll', 'btn-bonuses', 'btn-enterprise'].forEach(id => {
+        ['btn-employee', 'btn-payroll', 'btn-bonuses', 'btn-approvals', 'btn-exports', 'btn-analytics', 'btn-audit', 'btn-enterprise', 'btn-settings-nav'].forEach(id => {
             const btn = document.getElementById(id);
             if (btn) {
                 btn.addEventListener('click', () => {
