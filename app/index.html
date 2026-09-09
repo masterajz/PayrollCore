@@ -123,7 +123,7 @@
 
             <form id="auth-form" class="space-y-4">
                 <div id="auth-name-group" class="hidden">
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Full Name</label>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Name</label>
                     <input type="text" id="auth-name" class="w-full bg-white border border-slate-300 rounded-lg px-4 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
                 <div>
@@ -272,6 +272,22 @@
                 Advance Settings
             </button>
 
+            <!-- EXPORT DATA BUTTON -->
+            <div class="relative w-full sm:w-auto">
+                <button onclick="document.getElementById('emp-export-menu').classList.toggle('hidden')" class="w-full sm:w-auto flex justify-center items-center bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm whitespace-nowrap">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    Export Data
+                </button>
+                <!-- DROPDOWN MENU PARA SA EXPORT OPTIONS -->
+                <div id="emp-export-menu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-slate-200 z-[50] overflow-hidden">
+                    <div class="px-4 py-2 bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100">Select Format</div>
+                    <button onclick="window.exportEmployeeData('csv')" class="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 border-b border-slate-100 cursor-pointer">Export as .CSV</button>
+                    <button onclick="window.exportEmployeeData('txt')" class="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 border-b border-slate-100 cursor-pointer">Export as .TXT</button>
+                    <button onclick="window.exportEmployeeData('doc')" class="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 border-b border-slate-100 cursor-pointer">Export as .DOC (Word)</button>
+                    <button onclick="window.printEmployeeList()" class="w-full text-left px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 cursor-pointer">Print to .PDF</button>
+                </div>
+            </div>
+
             <!-- INJECTED: ADD EMPLOYEE BUTTON -->
             <button id="add-employee-btn" class="w-full sm:w-auto flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 rounded-lg text-sm font-bold transition-colors cursor-pointer shadow-sm whitespace-nowrap">
                 <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
@@ -298,7 +314,7 @@
                     <th class="px-3 py-3 font-semibold col-position whitespace-nowrap">Position/Task</th>
                     <th class="px-3 py-3 font-semibold col-shift whitespace-nowrap">Shift</th>
                     <th class="px-3 py-3 font-semibold col-rate whitespace-nowrap">Rate</th>
-                    <th class="px-3 py-3 font-semibold col-hired whitespace-nowrap">Hired Date</th>
+                    <th class="px-3 py-3 font-semibold col-hired whitespace-nowrap">Date Hired</th>
                     <th class="px-3 py-3 font-semibold col-reg whitespace-nowrap">Reg. Date</th>
                     <th class="px-2 py-3 font-semibold text-center text-rose-500 col-gov whitespace-nowrap">Gov't Cont.</th>
                     <th class="px-2 py-3 font-bold text-indigo-600 text-center col-pin whitespace-nowrap">PIN</th>
@@ -358,6 +374,13 @@
         <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
         Generate Timesheet
     </button>
+	
+	<!-- BAGONG IMPORT ACCESSRF LOGS BUTTON -->
+<input type="file" id="import-accessrf-csv" accept=".csv" class="hidden" onchange="window.handleCSVImport(event)">
+<button id="btn-import-csv" onclick="document.getElementById('import-accessrf-csv').click()" class="w-full sm:w-auto flex justify-center items-center bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors cursor-pointer shadow-sm whitespace-nowrap">
+    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+    Import Timesheets
+</button>
     
     <button id="bulk-archive-ts-btn" style="display: none;" class="w-full sm:w-auto justify-center items-center bg-slate-700 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-xs font-bold transition-colors shadow-sm cursor-pointer whitespace-nowrap">
         <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
@@ -804,85 +827,112 @@
     </div>
 	
 	<!-- COMBINED ADVANCE EMPLOYEE SETTINGS MODAL -->
-<div id="emp-adv-settings-modal" style="display: none;" class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-[80] p-4">
-    <div class="bg-white rounded-xl w-full max-w-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
-        <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
-            <h3 class="text-lg font-bold text-slate-800">Advance Settings</h3>
-            <button onclick="document.getElementById('emp-adv-settings-modal').style.display='none'" class="text-slate-400 hover:text-slate-600 cursor-pointer">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
-        
-        <!-- TABS NAVIGATION (Mobile Dropdown / Desktop Tabs) -->
-        <div class="px-6 pt-3 sm:pt-2 border-b border-slate-200 bg-white shrink-0 w-full">
-            <div class="sm:hidden pb-3">
-                <select id="mobile-emp-adv-selector" class="w-full bg-white border border-slate-300 text-indigo-700 font-bold text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 cursor-pointer outline-none">
-                    <option value="custom">Custom Fields</option>
-                    <option value="table">Table Config</option>
-                </select>
+    <div id="emp-adv-settings-modal" style="display: none;" class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-[80] p-4">
+        <div class="bg-white rounded-xl w-full max-w-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
+                <h3 class="text-lg font-bold text-slate-800">Advance Settings</h3>
+                <button onclick="document.getElementById('emp-adv-settings-modal').style.display='none'" class="text-slate-400 hover:text-slate-600 cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
             </div>
-            <div class="hidden sm:flex space-x-4">
-                <button id="emp-adv-tab-custom" class="px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold text-sm cursor-pointer whitespace-nowrap shrink-0">Custom Fields</button>
-                <button id="emp-adv-tab-table" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold text-sm cursor-pointer whitespace-nowrap shrink-0">Table Config</button>
-            </div>
-        </div>
-
-        <!-- TAB 1: CUSTOM FIELDS CONTENT -->
-        <div id="emp-adv-content-custom" class="flex flex-col flex-1 overflow-hidden bg-white">
-            <div class="p-6 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row gap-3 items-start sm:items-center shrink-0">
-                <input type="hidden" id="edit-col-idx" value="-1">
-                <input type="text" id="new-col-name" placeholder="Column Name (e.g. Department)" class="w-full sm:flex-1 px-3 py-2 text-sm border border-slate-300 rounded focus:border-indigo-500 text-slate-800 bg-white outline-none">
-                <select id="new-col-type" class="w-full sm:w-auto px-3 py-2 text-sm border border-slate-300 rounded focus:border-indigo-500 text-slate-800 bg-white outline-none cursor-pointer" onchange="document.getElementById('new-col-opts').style.display = this.value === 'dropdown' ? 'block' : 'none'">
-                    <option value="text">Text Input</option>
-                    <option value="dropdown">Dropdown Options</option>
-                </select>
-                <input type="text" id="new-col-opts" placeholder="Comma separated (HR, IT, Sales)" style="display:none;" class="w-full sm:flex-1 px-3 py-2 text-sm border border-slate-300 rounded focus:border-indigo-500 text-slate-800 bg-white outline-none">
-                
-                <div class="flex gap-2 w-full sm:w-auto">
-                    <button id="cancel-col-edit-btn" onclick="window.cancelEmpColEdit()" class="hidden flex-1 sm:flex-none px-4 py-2 bg-slate-200 text-slate-700 hover:bg-slate-300 border border-slate-300 rounded font-bold text-sm transition-colors cursor-pointer">Cancel</button>
-                    <button id="save-col-btn" onclick="window.addEmpCustomCol()" class="flex-1 sm:flex-none px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-bold text-sm transition-colors shadow-sm cursor-pointer">Add</button>
+            
+            <!-- TABS NAVIGATION (Mobile Dropdown / Desktop Tabs) -->
+            <div class="px-6 pt-3 sm:pt-2 border-b border-slate-200 bg-white shrink-0 w-full">
+                <div class="sm:hidden pb-3">
+                    <select id="mobile-emp-adv-selector" class="w-full bg-white border border-slate-300 text-indigo-700 font-bold text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block p-2.5 cursor-pointer outline-none">
+                        <option value="custom">Custom Fields</option>
+                        <option value="table">Table Config</option>
+                        <option value="export">Export Config</option>
+                    </select>
+                </div>
+                <div class="hidden sm:flex space-x-4 overflow-x-auto">
+                    <button id="emp-adv-tab-custom" class="px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold text-sm cursor-pointer whitespace-nowrap shrink-0">Custom Fields</button>
+                    <button id="emp-adv-tab-table" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold text-sm cursor-pointer whitespace-nowrap shrink-0">Table Config</button>
+                    <button id="emp-adv-tab-export" class="px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold text-sm cursor-pointer whitespace-nowrap shrink-0">Export Config</button>
                 </div>
             </div>
-            <div class="p-0 sm:p-6 flex-1 overflow-y-auto bg-white">
-                <table class="w-full text-left border-collapse text-sm min-w-[500px]">
-                    <thead>
-                        <tr class="text-slate-500 uppercase text-xs border-b border-slate-200 bg-slate-50">
-                            <th class="px-4 py-3 font-semibold">Column Name</th>
-                            <th class="px-4 py-3 font-semibold">Type</th>
-                            <th class="px-4 py-3 font-semibold">Options</th>
-                            <th class="px-4 py-3 font-semibold text-center w-32">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="emp-cols-tbody" class="divide-y divide-slate-100 text-slate-700"></tbody>
-                </table>
-            </div>
-        </div>
 
-        <!-- TAB 2: TABLE CONFIG CONTENT -->
-        <div id="emp-adv-content-table" class="hidden flex-col flex-1 overflow-hidden bg-white">
-            <div class="p-6 bg-white flex-1 overflow-y-auto text-xs font-semibold text-slate-700">
-                <p class="text-slate-500 font-normal mb-4">Select the columns you want to display in the Employee Data table.</p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-empNo" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Employee #</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-dept" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Department/Designation</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-account" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Account</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-tl" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Assigned TL/Head</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-hired" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Hired Date</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-reg" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Reg. Date</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-email" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Email</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-position" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Position/Task</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-shift" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Shift</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-rate" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Rate</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-gov" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Gov't Cont.</span></label>
-                    <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-pin" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>PIN</span></label>
+            <!-- TAB 1: CUSTOM FIELDS CONTENT -->
+            <div id="emp-adv-content-custom" class="flex flex-col flex-1 overflow-hidden bg-white">
+                <div class="p-6 bg-slate-50 border-b border-slate-200 flex flex-col sm:flex-row gap-3 items-start sm:items-center shrink-0">
+                    <input type="hidden" id="edit-col-idx" value="-1">
+                    <input type="text" id="new-col-name" placeholder="Column Name (e.g. Department)" class="w-full sm:flex-1 px-3 py-2 text-sm border border-slate-300 rounded focus:border-indigo-500 text-slate-800 bg-white outline-none">
+                    <select id="new-col-type" class="w-full sm:w-auto px-3 py-2 text-sm border border-slate-300 rounded focus:border-indigo-500 text-slate-800 bg-white outline-none cursor-pointer" onchange="document.getElementById('new-col-opts').style.display = this.value === 'dropdown' ? 'block' : 'none'">
+                        <option value="text">Text Input</option>
+                        <option value="dropdown">Dropdown Options</option>
+                    </select>
+                    <input type="text" id="new-col-opts" placeholder="Comma separated (HR, IT, Sales)" style="display:none;" class="w-full sm:flex-1 px-3 py-2 text-sm border border-slate-300 rounded focus:border-indigo-500 text-slate-800 bg-white outline-none">
+                    
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button id="cancel-col-edit-btn" onclick="window.cancelEmpColEdit()" class="hidden flex-1 sm:flex-none px-4 py-2 bg-slate-200 text-slate-700 hover:bg-slate-300 border border-slate-300 rounded font-bold text-sm transition-colors cursor-pointer">Cancel</button>
+                        <button id="save-col-btn" onclick="window.addEmpCustomCol()" class="flex-1 sm:flex-none px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-bold text-sm transition-colors shadow-sm cursor-pointer">Add</button>
+                    </div>
+                </div>
+                <div class="p-0 sm:p-6 flex-1 overflow-y-auto bg-white">
+                    <table class="w-full text-left border-collapse text-sm min-w-[500px]">
+                        <thead>
+                            <tr class="text-slate-500 uppercase text-xs border-b border-slate-200 bg-slate-50">
+                                <th class="px-4 py-3 font-semibold">Column Name</th>
+                                <th class="px-4 py-3 font-semibold">Type</th>
+                                <th class="px-4 py-3 font-semibold">Options</th>
+                                <th class="px-4 py-3 font-semibold text-center w-32">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="emp-cols-tbody" class="divide-y divide-slate-100 text-slate-700"></tbody>
+                    </table>
                 </div>
             </div>
-            <div class="px-5 py-4 border-t border-slate-200 bg-slate-50 text-right shrink-0">
-                <button type="button" onclick="window.saveEmpTableCols()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer transition-colors">Apply & Save</button>
+
+            <!-- TAB 2: TABLE CONFIG CONTENT -->
+            <div id="emp-adv-content-table" class="hidden flex-col flex-1 overflow-hidden bg-white">
+                <div class="p-6 bg-white flex-1 overflow-y-auto text-xs font-semibold text-slate-700">
+                    <p class="text-slate-500 font-normal mb-4">Select the columns you want to display in the Employee Data table.</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-empNo" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Employee #</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-dept" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Department/Designation</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-account" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Account</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-tl" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Assigned TL/Head</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-hired" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Date Hired</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-reg" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Reg. Date</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-email" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Email</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-position" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Position/Task</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-shift" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Shift</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-rate" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Rate</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-gov" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Gov't Cont.</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="tcol-pin" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>PIN</span></label>
+                    </div>
+                </div>
+                <div class="px-5 py-4 border-t border-slate-200 bg-slate-50 text-right shrink-0">
+                    <button type="button" onclick="window.saveEmpTableCols()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer transition-colors">Apply & Save Table</button>
+                </div>
             </div>
+
+            <!-- TAB 3: EXPORT CONFIG CONTENT -->
+            <div id="emp-adv-content-export" class="hidden flex-col flex-1 overflow-hidden bg-white">
+                <div class="p-6 bg-white flex-1 overflow-y-auto text-xs font-semibold text-slate-700">
+                    <p class="text-slate-500 font-normal mb-4">Select the columns you want to include when exporting Employee Data to CSV, Text, or Print (PDF).</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="ecol-empNo" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Employee #</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="ecol-name" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Name</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="ecol-dept" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Department</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="ecol-tl" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Assigned TL</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="ecol-account" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Account</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="ecol-position" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Position/Task</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="ecol-shift" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Shift</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="ecol-email" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Email</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="ecol-hired" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Date Hired</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="ecol-reg" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Reg. Date</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="ecol-rate" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Salary Rate</span></label>
+                        <label class="flex items-center space-x-2"><input type="checkbox" id="ecol-status" checked class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"> <span>Status</span></label>
+                    </div>
+                </div>
+                <div class="px-5 py-4 border-t border-slate-200 bg-slate-50 text-right shrink-0">
+                    <button type="button" onclick="window.saveEmpExportCols()" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold shadow-sm cursor-pointer transition-colors">Apply & Save Export Config</button>
+                </div>
+            </div>
+            
         </div>
     </div>
-</div>
 
     <!-- SETTINGS MODAL -->
 <div id="settings-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-[60] p-4">
@@ -1017,12 +1067,13 @@
         </div>
             
             <!-- PLAN DETAILS TAB (SA LOOB NG COMPANY SETTINGS MODAL) -->
+<!-- PLAN DETAILS TAB (SA LOOB NG COMPANY SETTINGS MODAL) -->
 <div class="p-6 space-y-4 bg-white overflow-y-auto flex-1 hidden" id="set-content-plan" style="display: none;">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <!-- Trial Plan -->
         <div class="border border-slate-200 rounded-xl p-4 flex flex-col justify-between bg-slate-50">
             <div>
-                <span class="text-xs font-bold text-slate-500 uppercase">Current</span>
+                <span id="badge-trial" class="text-xs font-bold text-slate-500 uppercase">Current</span>
                 <h4 class="text-lg font-bold text-slate-800 mt-1">Trial Plan</h4>
                 <p class="text-2xl font-bold text-slate-900 mt-2">₱0 <span class="text-xs text-slate-500 font-normal">/ 7 days</span></p>
                 <ul class="text-xs text-slate-600 space-y-2 mt-4">
@@ -1032,35 +1083,32 @@
                     <li>✗ Limited Access Roles</li>
                 </ul>
             </div>
-            <button disabled class="w-full mt-6 py-2 bg-slate-200 text-slate-500 rounded-lg text-xs font-bold cursor-not-allowed">Active Plan</button>
+            <button id="btn-plan-trial" disabled class="w-full mt-6 py-2 bg-slate-200 text-slate-500 rounded-lg text-xs font-bold cursor-not-allowed">Active Plan</button>
         </div>
 
         <!-- Pro Plan -->
         <div class="border-2 border-indigo-500 rounded-xl p-4 flex flex-col justify-between bg-white shadow-sm relative">
             <span class="absolute -top-3 right-4 bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">POPULAR</span>
             <div>
-                <span class="text-xs font-bold text-indigo-600 uppercase">Upgrade</span>
+                <span id="badge-pro" class="text-xs font-bold text-indigo-600 uppercase">Upgrade</span>
                 <h4 class="text-lg font-bold text-slate-800 mt-1">PaySync Pro</h4>
-                <!-- INJECTED: ID para sa dynamic na presyo -->
-                <p class="text-2xl font-bold text-slate-900 mt-2"><span id="display-price-pro">₱499</span> <span class="text-xs text-slate-500 font-normal">/ month</span></p>
+                <p class="text-2xl font-bold text-slate-900 mt-2"><span id="display-price-pro">₱699</span> <span class="text-xs text-slate-500 font-normal">/ month</span></p>
                 <ul class="text-xs text-slate-600 space-y-2 mt-4">
-                    <li>✓ Up to 50 Employees</li>
+                    <li>✓ Up to 30 Employees</li>
                     <li>✓ Custom Shift Schedules</li>
                     <li>✓ Auto Gov't Deductions</li>
-                    <li>✓ Email Timesheet via GAS</li>
+                    <li>✓ Email Timesheet</li>
                 </ul>
             </div>
-            <!-- INJECTED: Dynamic pricing variable sa onclick -->
-            <button onclick="window.openPaymentModal('PaySync Pro', window.systemPricing.pro)" class="w-full mt-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold cursor-pointer transition-colors">Upgrade to Pro</button>
+            <button id="btn-plan-pro" onclick="window.openPaymentModal('PaySync Pro', window.systemPricing.pro)" class="w-full mt-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold cursor-pointer transition-colors">Upgrade to Pro</button>
         </div>
 
         <!-- Enterprise Plan -->
         <div class="border border-rose-300 rounded-xl p-4 flex flex-col justify-between bg-rose-50/30">
             <div>
-                <span class="text-xs font-bold text-rose-600 uppercase">Enterprise</span>
+                <span id="badge-blaze" class="text-xs font-bold text-rose-600 uppercase">Enterprise</span>
                 <h4 class="text-lg font-bold text-slate-800 mt-1">PayrollCore Blaze</h4>
-                <!-- INJECTED: ID para sa dynamic na presyo -->
-                <p class="text-2xl font-bold text-slate-900 mt-2"><span id="display-price-blaze">₱1,499</span> <span class="text-xs text-slate-500 font-normal">/ month</span></p>
+                <p class="text-2xl font-bold text-slate-900 mt-2"><span id="display-price-blaze">₱1,699</span> <span class="text-xs text-slate-500 font-normal">/ month</span></p>
                 <ul class="text-xs text-slate-600 space-y-2 mt-4">
                     <li>✓ Unlimited Employees</li>
                     <li>✓ Full Enterprise Control</li>
@@ -1068,8 +1116,7 @@
                     <li>✓ Unlimited Storage & Logs</li>
                 </ul>
             </div>
-            <!-- INJECTED: Dynamic pricing variable sa onclick -->
-            <button onclick="window.openPaymentModal('PayrollCore Blaze', window.systemPricing.blaze)" class="w-full mt-6 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold cursor-pointer transition-colors">Upgrade to Blaze</button>
+            <button id="btn-plan-blaze" onclick="window.openPaymentModal('PayrollCore Blaze', window.systemPricing.blaze)" class="w-full mt-6 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold cursor-pointer transition-colors">Upgrade to Blaze</button>
         </div>
     </div>
 </div>
@@ -1379,7 +1426,7 @@
                     <input type="text" id="emp-no" placeholder="EMP-001" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
                 </div>
                 <div>
-                    <label class="block mb-1">Full Name *</label>
+                    <label class="block mb-1">Name *</label>
                     <input type="text" id="emp-name" placeholder="Juan Dela Cruz" required class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
                 </div>
                 <div>
@@ -1394,16 +1441,25 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block mb-1">Department/Designation</label>
-                    <input type="text" id="emp-department" placeholder="IT / HR / Operations" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                    <div class="flex justify-between items-center mb-1">
+                        <label>Department/Designation</label>
+                        <button type="button" id="manage-dept-btn" class="text-[10px] text-indigo-600 hover:underline cursor-pointer">Manage</button>
+                    </div>
+                    <select id="emp-department" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer"></select>
                 </div>
                 <div>
-                    <label class="block mb-1">Account</label>
-                    <input type="text" id="emp-account" placeholder="Client / Project Account" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                    <div class="flex justify-between items-center mb-1">
+                        <label>Account</label>
+                        <button type="button" id="manage-acc-btn" class="text-[10px] text-indigo-600 hover:underline cursor-pointer">Manage</button>
+                    </div>
+                    <select id="emp-account" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer"></select>
                 </div>
                 <div>
-                    <label class="block mb-1">Assigned TL/Head</label>
-                    <input type="text" id="emp-assigned-tl" placeholder="Team Lead Name" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                    <div class="flex justify-between items-center mb-1">
+                        <label>Assigned TL/Head</label>
+                        <button type="button" id="manage-tl-btn" class="text-[10px] text-indigo-600 hover:underline cursor-pointer">Manage</button>
+                    </div>
+                    <select id="emp-assigned-tl" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer"></select>
                 </div>
                 <div>
                     <div class="flex justify-between items-center mb-1">
@@ -1424,7 +1480,7 @@
                     <input type="text" id="emp-role" placeholder="Staff / Supervisor" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
                 </div>
                 <div>
-                    <label class="block mb-1">Hired Date</label>
+                    <label class="block mb-1">Date Hired</label>
                     <input type="date" id="emp-hired-date" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer">
                 </div>
                 <div>
@@ -1439,7 +1495,7 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block mb-1">Daily Rate (₱) *</label>
+                    <label class="block mb-1">Salary Rate (₱) *</label>
                     <input type="number" id="emp-rate" placeholder="600" required class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
                 </div>
             </div>
@@ -1536,8 +1592,8 @@
         </div>
     </div>
 
-    <!-- MANAGE POSITIONS MODAL -->
-    <div id="manage-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-[70] p-4">
+<!-- MANAGE POSITIONS MODAL -->
+    <div id="manage-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-[100] p-4">
         <div class="bg-white border border-slate-200 rounded-xl w-96 p-6 shadow-2xl">
             <h3 class="text-lg font-bold text-slate-800 mb-2" id="manage-modal-title">Manage</h3>
             <input type="text" id="manage-input" placeholder="Type new option..." class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 mb-4">
@@ -1560,41 +1616,56 @@
             
             <form id="payment-form" class="p-6 space-y-4 bg-white">
                 <input type="hidden" id="pay-plan-name">
+                <input type="hidden" id="pay-active-method" value="gcash"> <!-- GCash na ang default -->
+
                 <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100 flex justify-between items-center">
                     <span class="text-xs font-semibold text-indigo-900" id="pay-selected-plan">Selected Plan</span>
                     <span class="text-sm font-bold text-indigo-700" id="pay-selected-price">₱0/mo</span>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-slate-600 mb-1">Payment Method</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button type="button" id="pay-method-card" class="py-2 border-2 border-indigo-600 text-indigo-600 font-bold rounded-lg text-xs flex items-center justify-center cursor-pointer">Credit / Debit Card</button>
-                        <button type="button" id="pay-method-paypal" class="py-2 border border-slate-300 text-slate-600 font-semibold rounded-lg text-xs flex items-center justify-center cursor-pointer hover:bg-slate-50">PayPal</button>
+                    <label class="block text-xs font-semibold text-slate-600 mb-2">Payment Method</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <!-- NI-REORDER NA ANG BUTTONS -->
+                        <button type="button" id="pay-method-gcash" class="py-2 border-2 border-indigo-600 text-indigo-600 font-bold rounded-lg text-xs flex items-center justify-center cursor-pointer transition-colors">GCash</button>
+                        <button type="button" id="pay-method-card" class="py-2 border border-slate-300 text-slate-600 font-semibold rounded-lg text-xs flex items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors">Credit Card</button>
+                        <button type="button" id="pay-method-paypal" class="py-2 border border-slate-300 text-slate-600 font-semibold rounded-lg text-xs flex items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors">PayPal</button>
                     </div>
                 </div>
 
-                <div id="card-fields" class="space-y-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Cardholder Name</label>
-                        <input type="text" required placeholder="Juan Dela Cruz" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                <!-- GCASH FIELDS (Ito ang unang nakikita) -->
+                <div id="gcash-fields" class="space-y-3 block">
+                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-200 mb-2 text-center">
+                        <p class="text-xs text-blue-800 font-semibold mb-1">Please send your payment to:</p>
+                        <p class="text-sm font-bold text-blue-900 tracking-wider">0919-757-3390 (Ragie T.)</p>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-slate-600 mb-1">Card Number</label>
-                        <input type="text" required maxlength="19" placeholder="4532 •••• •••· 8890" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Amount Sent (₱) *</label>
+                        <input type="number" id="gcash-amount" placeholder="0.00" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-blue-500">
                     </div>
-                    <div class="flex space-x-2">
-                        <div class="w-1/2">
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">Expiry (MM/YY)</label>
-                            <input type="text" required placeholder="12/28" maxlength="5" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
-                        </div>
-                        <div class="w-1/2">
-                            <label class="block text-xs font-semibold text-slate-600 mb-1">CVV</label>
-                            <input type="password" required maxlength="4" placeholder="123" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
-                        </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Reference Number *</label>
+                        <input type="text" id="gcash-ref" placeholder="0000 0000 0000" class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Upload Screenshot *</label>
+                        <input type="file" id="gcash-receipt" accept="image/*" class="w-full bg-white border border-slate-300 rounded-md px-3 py-1.5 text-slate-800 text-xs focus:outline-none focus:border-blue-500 file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                     </div>
                 </div>
 
-                <button type="submit" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-bold shadow-md transition-colors cursor-pointer mt-4">Confirm & Pay</button>
+                <!-- MAINTENANCE MESSAGE PARA SA CARD AT PAYPAL -->
+                <div id="maintenance-fields" class="space-y-3 hidden">
+                    <div class="bg-slate-50 p-6 rounded-lg border border-slate-200 text-center mt-2">
+                        <svg class="w-12 h-12 mx-auto mb-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </svg>
+                        <h4 class="text-sm font-bold text-slate-700 mb-1">System Maintenance</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">This payment gateway is currently undergoing scheduled maintenance to improve our services. Please use <b>GCash</b> for the meantime.</p>
+                    </div>
+                </div>
+
+                <button type="submit" id="confirm-pay-btn" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-sm font-bold shadow-md transition-colors cursor-pointer mt-4">Confirm & Pay</button>
             </form>
         </div>
     </div>
@@ -2411,6 +2482,9 @@ document.getElementById('cancel-modal-btn').addEventListener('click', () => docu
             window.currentTimesheetData = {};
             window.currentTimesheetExtra = {};
             window.companyPositions = [];
+            window.companyDepartments = [];
+            window.companyAccounts = [];
+            window.companyTLs = [];
             window.systemUsers = [];
             window.companySettings = {
                 name: "Zjar PayrollCore", logo: "", address: "123 Business Road, Metro Manila, PH", phone: "+63 912 345 6789",
@@ -2459,45 +2533,83 @@ document.getElementById('cancel-modal-btn').addEventListener('click', () => docu
             document.getElementById('btn-logout').addEventListener('click', () => { window.auth.signOut(); });
 
             window.auth.onAuthStateChanged(async (user) => {
-                if (user) {
-                    document.getElementById('auth-screen').style.display = 'none';
-                    document.getElementById('dashboard-screen').style.display = 'flex';
-                    
-                    try {
-                        const userRef = window.db.collection('users').doc(user.uid);
-                        let userDoc = await userRef.get();
-                        
-                        if(!userDoc.exists) {
-                            const snapshot = await window.db.collection('users').limit(1).get();
-                            let role = "Admin";
+    if (user) {
+        document.getElementById('auth-screen').style.display = 'none';
+        document.getElementById('dashboard-screen').style.display = 'flex';
+        
+        try {
+            const userRef = window.db.collection('users').doc(user.uid);
+            let userDoc = await userRef.get();
+            
+            if(!userDoc.exists) {
+                const snapshot = await window.db.collection('users').limit(1).get();
+                let role = "Admin";
 
-                            await userRef.set({
-                                name: user.displayName || user.email.split('@')[0],
-                                email: user.email,
-                                systemRole: role,
-                                activePlan: "Trial (7 days)",
-                                registeredAt: new Date().toISOString()
-                            });
-                            userDoc = await userRef.get();
-                        }
+                await userRef.set({
+                    name: user.displayName || user.email.split('@')[0],
+                    email: user.email,
+                    systemRole: role,
+                    activePlan: "Trial (7 days)",
+                    registeredAt: new Date().toISOString(),
+                    reminderSent: false // Tracker para isahan lang ang email
+                });
+                userDoc = await userRef.get();
+            }
 
-                        const userData = userDoc.data();
-                        window.currentCompanyId = userData.companyId || user.uid; 
-                        window.currentUserRole = userData.systemRole || "User"; // <-- GOD MODE TRACKER
-                        
-                        document.getElementById('sidebar-greeting').innerText = "Hi " + (userData.name || "Admin") + "!";
-                        document.getElementById('sidebar-role').innerText = userData.systemRole || "User";
-                        
-                        applyAccessRoles(userData.systemRole || 'Staff', user.email);
-                    } catch(err) { console.error(err); }
+            const userData = userDoc.data();
+            window.currentCompanyId = userData.companyId || user.uid; 
+            window.currentUserRole = userData.systemRole || "User"; 
+			// I-SAVE NATIN ANG TUNAY NA PLAN NG USER SA MEMORY
+            window.currentUserPlan = userData.activePlan || "Trial (7 days)";
+            if (typeof window.updatePlanUI === 'function') window.updatePlanUI();
+            
+            // ==========================================
+            // 7-DAY TRIAL LOCKOUT & EMAIL REMINDER
+            // ==========================================
+            const regDate = new Date(userData.registeredAt || new Date());
+            const now = new Date();
+            const daysElapsed = (now - regDate) / (1000 * 60 * 60 * 24);
+
+            if (userData.activePlan.includes('Trial')) {
+                if (daysElapsed > 7) {
+                    // Kukunin ang current price, tapos ipapasa sa bago nating magandang modal
+                    const proPrice = window.systemPricing ? window.systemPricing.pro : 699;
                     
-                    fetchInitialData();
-                } else {
-                    window.hideLoading();
-                    document.getElementById('auth-screen').style.display = 'flex';
-                    document.getElementById('dashboard-screen').style.display = 'none';
+                    // Papalitan natin ang pangit na alert ng modern popup
+                    window.showTrialExpiredModal(proPrice);
+                    
+                    return; // STOP EXECUTION! Para hindi mag-load ang background.
                 }
-            });
+                else if (daysElapsed >= 6 && !userData.reminderSent) {
+                    // Mag-send ng 1-Day Reminder Email kapag nag-login sa ika-6 na araw
+                    fetch(GAS_WEB_APP_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        body: JSON.stringify({
+                            action: 'sendTrialReminder',
+                            email: userData.email,
+                            name: userData.name
+                        })
+                    });
+                    // Mark as sent sa Firebase para hindi na mag-email ulit
+                    await userRef.update({ reminderSent: true });
+                }
+            }
+            // ==========================================
+
+            document.getElementById('sidebar-greeting').innerText = "Hi " + (userData.name || "Admin") + "!";
+            document.getElementById('sidebar-role').innerText = userData.systemRole || "User";
+            
+            applyAccessRoles(userData.systemRole || 'Staff', user.email);
+        } catch(err) { console.error(err); }
+        
+        fetchInitialData();
+    } else {
+        window.hideLoading();
+        document.getElementById('auth-screen').style.display = 'flex';
+        document.getElementById('dashboard-screen').style.display = 'none';
+    }
+});
 
             function applyAccessRoles(role) {
                 const isDevOrAdmin = (role === 'System Developer' || role === 'Admin');
@@ -2523,7 +2635,7 @@ document.getElementById('cancel-modal-btn').addEventListener('click', () => docu
                 }
             }
 
-     async function fetchInitialData() {
+    async function fetchInitialData() {
     window.showLoading("Syncing database...");
     try {
         window.employees = [];
@@ -2542,13 +2654,30 @@ document.getElementById('cancel-modal-btn').addEventListener('click', () => docu
             window.applyTheme(activeTheme);
         }
 
+        // ==========================================
+        // KUMPLETONG FETCH PARA SA LAHAT NG DROPDOWNS
+        // ==========================================
         const posDocSnap = await window.db.collection("settings").doc("positions_" + window.currentCompanyId).get();
         if(posDocSnap.exists) window.companyPositions = posDocSnap.data().list || [];
+
+        const statDocSnap = await window.db.collection("settings").doc("statuses_" + window.currentCompanyId).get();
+        if(statDocSnap.exists) window.companyStatuses = statDocSnap.data().list || ['Active', 'InActive', 'Resigned', 'Terminated'];
+
+        const deptDocSnap = await window.db.collection("settings").doc("departments_" + window.currentCompanyId).get();
+        if(deptDocSnap.exists) window.companyDepartments = deptDocSnap.data().list || [];
+        
+        const accDocSnap = await window.db.collection("settings").doc("accounts_" + window.currentCompanyId).get();
+        if(accDocSnap.exists) window.companyAccounts = accDocSnap.data().list || [];
+        
+        const tlDocSnap = await window.db.collection("settings").doc("tls_" + window.currentCompanyId).get();
+        if(tlDocSnap.exists) window.companyTLs = tlDocSnap.data().list || [];
 
         const ratesDocSnap = await window.db.collection("settings").doc("deductions_" + window.currentCompanyId).get();
         if(ratesDocSnap.exists) window.govRates = { ...window.govRates, ...ratesDocSnap.data() };
         
-        populatePositionDropdowns();
+        // POPULATE DROPDOWNS
+        if (typeof populatePositionDropdowns === 'function') populatePositionDropdowns();
+        // ==========================================
         
         const savedStart = localStorage.getItem('saved_start');
         const savedEnd = localStorage.getItem('saved_end');
@@ -2564,11 +2693,6 @@ document.getElementById('cancel-modal-btn').addEventListener('click', () => docu
         if(savedStart && savedEnd) {
             const displayPeriod = document.getElementById('display-period');
             if (displayPeriod) displayPeriod.innerText = `${formatShortDate(savedStart)} - ${formatShortDate(savedEnd)}`;
-            
-            setTimeout(() => {
-                const genBtn = document.getElementById('btn-generate-timesheet');
-                if(genBtn) genBtn.click();
-            }, 500);
         }
         if(savedPayout) {
             const displayPayout = document.getElementById('display-payout');
@@ -2581,16 +2705,10 @@ document.getElementById('cancel-modal-btn').addEventListener('click', () => docu
             if(userDoc.exists) applyAccessRoles(userDoc.data().systemRole);
         }
 
-        // =========================================================
-        // LOAD SAVED GLOBAL TAB ACCESS CHECKBOXES
-        // =========================================================
         if (typeof window.loadGlobalTabSettings === 'function') {
             await window.loadGlobalTabSettings();
         }
 
-        // =========================================================
-        // FIX: LOAD SAVED EMPLOYEE REQUEST FORMS TOGGLES
-        // =========================================================
         if(window.companySettings && window.companySettings.reqSettings) {
             const rs = window.companySettings.reqSettings;
             const setTog = (id, val) => { let el = document.getElementById(id); if(el) el.checked = (val !== false); };
@@ -2611,12 +2729,21 @@ window.manageTarget = '';
 window.populatePositionDropdowns = function() {
     const posSelect = document.getElementById('emp-position');
     const statSelect = document.getElementById('emp-status');
+    const deptSelect = document.getElementById('emp-department');
+    const accSelect = document.getElementById('emp-account');
+    const tlSelect = document.getElementById('emp-assigned-tl');
     
-    if(posSelect) {
-        posSelect.innerHTML = '';
-        if(window.companyPositions.length === 0) posSelect.add(new Option("No positions found.", "", true, true));
-        else window.companyPositions.forEach(p => posSelect.add(new Option(p, p)));
-    }
+    const fillDropdown = (el, arrayList, emptyMsg) => {
+        if(!el) return;
+        el.innerHTML = '';
+        if(arrayList.length === 0) el.add(new Option(emptyMsg, "", true, true));
+        else arrayList.forEach(item => el.add(new Option(item, item)));
+    };
+
+    fillDropdown(posSelect, window.companyPositions, "No positions found.");
+    fillDropdown(deptSelect, window.companyDepartments, "No departments found.");
+    fillDropdown(accSelect, window.companyAccounts, "No accounts found.");
+    fillDropdown(tlSelect, window.companyTLs, "No TLs/Heads found.");
 
     if(statSelect) {
         statSelect.innerHTML = '';
@@ -2627,6 +2754,25 @@ window.populatePositionDropdowns = function() {
             document.getElementById('manage-pos-btn').addEventListener('click', () => {
                 window.manageTarget = 'position';
                 document.getElementById('manage-modal-title').innerText = "Manage Positions";
+                document.getElementById('manage-input').value = '';
+                document.getElementById('manage-modal').style.display = 'flex';
+            });
+			
+			document.getElementById('manage-dept-btn').addEventListener('click', () => {
+                window.manageTarget = 'department';
+                document.getElementById('manage-modal-title').innerText = "Manage Departments";
+                document.getElementById('manage-input').value = '';
+                document.getElementById('manage-modal').style.display = 'flex';
+            });
+            document.getElementById('manage-acc-btn').addEventListener('click', () => {
+                window.manageTarget = 'account';
+                document.getElementById('manage-modal-title').innerText = "Manage Accounts";
+                document.getElementById('manage-input').value = '';
+                document.getElementById('manage-modal').style.display = 'flex';
+            });
+            document.getElementById('manage-tl-btn').addEventListener('click', () => {
+                window.manageTarget = 'tl';
+                document.getElementById('manage-modal-title').innerText = "Manage Assigned TLs";
                 document.getElementById('manage-input').value = '';
                 document.getElementById('manage-modal').style.display = 'flex';
             });
@@ -2647,9 +2793,18 @@ window.populatePositionDropdowns = function() {
                 if (window.manageTarget === 'position') {
                     if(!window.companyPositions.includes(val)) window.companyPositions.push(val);
                     if(window.db) await window.db.collection('settings').doc('positions_' + window.currentCompanyId).set({ list: window.companyPositions });
-                } else {
+                } else if (window.manageTarget === 'status') {
                     if(!window.companyStatuses.includes(val)) window.companyStatuses.push(val);
                     if(window.db) await window.db.collection('settings').doc('statuses_' + window.currentCompanyId).set({ list: window.companyStatuses });
+                } else if (window.manageTarget === 'department') {
+                    if(!window.companyDepartments.includes(val)) window.companyDepartments.push(val);
+                    if(window.db) await window.db.collection('settings').doc('departments_' + window.currentCompanyId).set({ list: window.companyDepartments });
+                } else if (window.manageTarget === 'account') {
+                    if(!window.companyAccounts.includes(val)) window.companyAccounts.push(val);
+                    if(window.db) await window.db.collection('settings').doc('accounts_' + window.currentCompanyId).set({ list: window.companyAccounts });
+                } else if (window.manageTarget === 'tl') {
+                    if(!window.companyTLs.includes(val)) window.companyTLs.push(val);
+                    if(window.db) await window.db.collection('settings').doc('tls_' + window.currentCompanyId).set({ list: window.companyTLs });
                 }
                 
                 window.populatePositionDropdowns();
@@ -2855,7 +3010,7 @@ window.populatePositionDropdowns = function() {
                 return `<span>${status}</span>`;
             }
 
-            window.saveEmpTableCols = async function() {
+window.saveEmpTableCols = async function() {
     window.showLoading("Saving Preferences...");
     const cols = {
         empNo: document.getElementById('tcol-empNo').checked,
@@ -2873,11 +3028,17 @@ window.populatePositionDropdowns = function() {
     };
     window.companySettings.empTableCols = cols;
     try {
-        if(window.db) await window.db.collection('settings').doc('company_' + window.currentCompanyId).set({ empTableCols: cols }, { merge: true });
-        document.getElementById('emp-cols-config-modal').style.display = 'none';
+        if(window.db) {
+            await window.db.collection('settings').doc('company_' + window.currentCompanyId).set({ empTableCols: cols }, { merge: true });
+        }
+        // DITO YUNG BUG KANINA, INAYOS NA NATIN ANG MODAL ID
+        document.getElementById('emp-adv-settings-modal').style.display = 'none';
         window.renderEmployees();
         showToast("Table settings saved!", "success");
-    } catch(e) { alert("Failed to save."); }
+    } catch(e) { 
+        console.error("Save Error:", e);
+        alert("Failed to save: " + e.message); 
+    }
     window.hideLoading();
 };
 
@@ -2889,7 +3050,7 @@ window.viewEmployeeData = function(id) {
     const f = (label, val) => `<div class="bg-slate-50 p-3 rounded-lg border border-slate-100"><p class="text-[10px] uppercase font-bold text-indigo-500 mb-1">${label}</p><p class="text-sm font-semibold text-slate-800">${val || '<span class="text-slate-400 italic">None</span>'}</p></div>`;
     
     html += f("Employee #", emp.empNo);
-    html += f("Full Name", emp.name);
+    html += f("Name", emp.name);
     html += f("Status", getStatusBadge(emp.status));
     html += f("Email", emp.email);
     html += f("Department", emp.department);
@@ -2897,10 +3058,10 @@ window.viewEmployeeData = function(id) {
     html += f("Assigned TL/Head", emp.assignedTl);
     html += f("Position/Task", emp.position);
     html += f("Role", emp.role);
-    html += f("Hired Date", emp.hiredDate);
+    html += f("Date Hired", emp.hiredDate);
     html += f("Regularization Date", emp.regDate);
     html += f("Shift Schedule", emp.shift);
-    html += f("Daily Rate", `₱${(emp.rate||0).toLocaleString()}`);
+    html += f("Salary Rate", `₱${(emp.rate||0).toLocaleString()}`);
     html += f("Portal PIN", `<span class="font-mono tracking-widest">${emp.pin}</span>`);
 
     if (window.empCustomCols && window.empCustomCols.length > 0) {
@@ -2996,8 +3157,8 @@ window.renderEmployees = function() {
             <td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('position')?'':'none'}">${emp.position || '-'}</td>
             <td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('shift')?'':'none'}"><span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-indigo-50 text-indigo-700">${emp.shift}</span></td>
             <td class="px-3 py-3 font-bold text-slate-800 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('rate')?'':'none'}">₱${(emp.rate || 0).toLocaleString()}</td>
-            <td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('hired')?'':'none'}">${emp.hiredDate || '-'}</td>
-            <td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('reg')?'':'none'}">${emp.regDate || '-'}</td>
+            <td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('hired')?'':'none'}">${formatShortDate(emp.hiredDate)}</td>
+            <td class="px-3 py-3 text-slate-600 border-b border-slate-100 whitespace-nowrap" style="display:${isShow('reg')?'':'none'}">${formatShortDate(emp.regDate)}</td>
             <td class="px-2 py-3 text-center border-b border-slate-100 whitespace-nowrap" style="display:${isShow('gov')?'':'none'}">
                 <button onclick="window.openEmpGovModal('${emp.id}')" class="text-[10px] bg-rose-50 border border-rose-200 text-rose-600 px-2 py-1 rounded font-bold hover:bg-rose-100 transition-colors cursor-pointer">Set Rates</button>
             </td>
@@ -3119,8 +3280,8 @@ window.loadEmpCustomCols = async function() {
 setTimeout(() => { if(window.db) window.loadEmpCustomCols(); }, 2000);
 
 window.resetEmpAdvTabs = function() {
-    const tabs = ['emp-adv-tab-custom', 'emp-adv-tab-table'];
-    const contents = ['emp-adv-content-custom', 'emp-adv-content-table'];
+    const tabs = ['emp-adv-tab-custom', 'emp-adv-tab-table', 'emp-adv-tab-export'];
+    const contents = ['emp-adv-content-custom', 'emp-adv-content-table', 'emp-adv-content-export'];
     tabs.forEach(t => { 
         let el = document.getElementById(t); 
         if(el) el.className = "px-4 py-2 border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-semibold text-sm cursor-pointer whitespace-nowrap shrink-0"; 
@@ -3141,6 +3302,12 @@ document.getElementById('emp-adv-tab-table')?.addEventListener('click', (e) => {
     window.resetEmpAdvTabs(); 
     e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold text-sm cursor-pointer whitespace-nowrap shrink-0";
     document.getElementById('emp-adv-content-table').style.display = 'flex';
+});
+
+document.getElementById('emp-adv-tab-export')?.addEventListener('click', (e) => {
+    window.resetEmpAdvTabs(); 
+    e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold text-sm cursor-pointer whitespace-nowrap shrink-0";
+    document.getElementById('emp-adv-content-export').style.display = 'flex';
 });
 
 // Mobile Dropdown Switcher
@@ -3177,9 +3344,13 @@ window.openEmpAdvanceSettings = function() {
         });
     }
 
-    // Isarado ang Config Modal just in case
-    let oldModal = document.getElementById('emp-cols-config-modal');
-    if (oldModal) oldModal.style.display = 'none';
+    // LOAD EXPORT COLUMN PREFERENCES
+    let exCols = window.companySettings.empExportCols || {};
+    const setECol = (id, key) => { let el = document.getElementById(id); if (el) el.checked = exCols[key] !== false; };
+    setECol('ecol-empNo', 'empNo'); setECol('ecol-name', 'name'); setECol('ecol-email', 'email');
+    setECol('ecol-dept', 'dept'); setECol('ecol-account', 'account'); setECol('ecol-tl', 'tl');
+    setECol('ecol-position', 'position'); setECol('ecol-shift', 'shift'); setECol('ecol-rate', 'rate');
+    setECol('ecol-status', 'status'); setECol('ecol-hired', 'hired'); setECol('ecol-reg', 'reg');
 
     document.getElementById('emp-adv-settings-modal').style.display = 'flex';
 };
@@ -3276,76 +3447,7 @@ window.renderDynamicEmpFields = function(existingData = {}) {
 };
 
 
-window.editEmployee = function(id) {
-    window.editMode = true; 
-    document.getElementById('modal-title').innerText = "Edit Employee";
-    const emp = window.employees.find(e => e.id === id);
-    if(emp) {
-        document.getElementById('emp-id').value = emp.id;
-        document.getElementById('emp-name').value = emp.name || '';
-        document.getElementById('emp-email').value = emp.email || '';
-        document.getElementById('emp-pin').value = emp.pin || ''; 
-        document.getElementById('emp-status').value = emp.status || 'Active';
-        document.getElementById('emp-position').value = emp.position || '';
-        document.getElementById('emp-shift-start').value = emp.shiftStart || '08:00';
-        document.getElementById('emp-shift-end').value = emp.shiftEnd || '17:00';
-        document.getElementById('emp-rate').value = emp.rate || 0;
-        
-        window.renderDynamicEmpFields(emp.customData || {}); // Populate dynamic fields
-        document.getElementById('employee-modal').style.display = 'flex';
-    }
-};
 
-document.getElementById('save-emp-btn').addEventListener('click', async function() {
-    const btn = this; btn.disabled = true; 
-    const id = document.getElementById('emp-id').value;
-    const name = document.getElementById('emp-name').value.trim();
-    const email = document.getElementById('emp-email').value.trim();
-    const pin = document.getElementById('emp-pin').value.trim(); 
-    const status = document.getElementById('emp-status').value;
-    const position = document.getElementById('emp-position').value;
-    const shiftStart = document.getElementById('emp-shift-start').value;
-    const shiftEnd = document.getElementById('emp-shift-end').value;
-    const rate = parseFloat(document.getElementById('emp-rate').value);
-
-    if(!name || isNaN(rate) || !pin || pin.length !== 6 || isNaN(pin)) {
-        btn.disabled = false; return showToast("Invalid Name, Rate, or PIN", "error");
-    }
-    
-    // KUNIN ANG DATA MULA SA CUSTOM COLUMNS
-    let customData = {};
-    window.empCustomCols.forEach(col => {
-        let el = document.getElementById('dyn-' + col.id);
-        if(el) customData[col.id] = el.value;
-    });
-
-    const formattedShift = `${formatTimeAMPM(shiftStart)} - ${formatTimeAMPM(shiftEnd)}`;
-    window.showLoading("Saving...");
-
-    const empData = { 
-        name, email, pin, status, position, 
-        shift: formattedShift, shiftStart, shiftEnd, rate,
-        customData: customData,
-        companyName: window.companySettings.name || "My Company" 
-    };
-    
-    try {
-        if(window.editMode) {
-            await window.db.collection("employees").doc(id).update(empData);
-            const idx = window.employees.findIndex(e => e.id === id);
-            window.employees[idx] = { ...window.employees[idx], ...empData };
-        } else {
-            empData.ytdSalary = 0; empData.isArchived = false; empData.companyId = window.currentCompanyId; 
-            const docRef = await window.db.collection("employees").add(empData);
-            window.employees.push({ id: docRef.id, ...empData });
-        }
-        document.getElementById('employee-modal').style.display = 'none';
-        window.renderEmployees();
-        showToast("Employee saved successfully!", "success");
-    } catch (error) { showToast("Failed to save.", "error"); }
-
-    window.hideLoading(); btn.disabled = false; 
-});
 
             document.getElementById('save-advance-btn').addEventListener('click', async () => {
                 const sss = parseFloat(document.getElementById('adv-sss').value) || 0;
@@ -3719,26 +3821,127 @@ window.print13thMonth = function(empName, position, totalBasic, thirteenthPay) {
             console.error("Firebase Initialization Error:", e);
         }
 
-        window.editEmployee = function(id) {
-            window.editMode = true; 
-            document.getElementById('modal-title').innerText = "Edit Employee";
-            const emp = window.employees.find(e => e.id === id);
-            if(emp) {
-                document.getElementById('emp-id').value = emp.id;
-                document.getElementById('emp-name').value = emp.name || '';
-                document.getElementById('emp-email').value = emp.email || '';
-                document.getElementById('emp-pin').value = emp.pin || ''; 
-                document.getElementById('emp-status').value = emp.status || 'Active';
-                document.getElementById('emp-position').value = emp.position || '';
-                document.getElementById('emp-shift-start').value = emp.shiftStart || '08:00';
-                document.getElementById('emp-shift-end').value = emp.shiftEnd || '17:00';
-                document.getElementById('emp-rate').value = emp.rate || 0;
-                document.getElementById('employee-modal').style.display = 'flex';
-				document.getElementById('emp-allow-lead').value = emp.leadAllow || 0;
-document.getElementById('emp-allow-skills').value = emp.skillsAllow || 0;
-document.getElementById('emp-allow-med').value = emp.medAllow || 0;
-            }
+window.editEmployee = function(id) {
+    window.editMode = true; 
+    document.getElementById('modal-title').innerText = "Edit Employee";
+    const emp = window.employees.find(e => e.id === id);
+    
+    if(emp) {
+        document.getElementById('emp-id').value = emp.id;
+        document.getElementById('emp-no').value = emp.empNo || '';
+        document.getElementById('emp-name').value = emp.name || '';
+        document.getElementById('emp-email').value = emp.email || '';
+        document.getElementById('emp-pin').value = emp.pin || ''; 
+        document.getElementById('emp-department').value = emp.department || '';
+        document.getElementById('emp-account').value = emp.account || '';
+        document.getElementById('emp-assigned-tl').value = emp.assignedTl || '';
+        document.getElementById('emp-position').value = emp.position || '';
+        document.getElementById('emp-status').value = emp.status || 'Active';
+        document.getElementById('emp-role').value = emp.role || '';
+        document.getElementById('emp-hired-date').value = emp.hiredDate || '';
+        document.getElementById('emp-reg-date').value = emp.regDate || '';
+        document.getElementById('emp-shift-start').value = emp.shiftStart || '08:00';
+        document.getElementById('emp-shift-end').value = emp.shiftEnd || '17:00';
+        document.getElementById('emp-rate').value = emp.rate || 0;
+        
+        // Allowances (Mula sa 2nd snippet mo)
+        if (document.getElementById('emp-allow-lead')) document.getElementById('emp-allow-lead').value = emp.leadAllow || 0;
+        if (document.getElementById('emp-allow-skills')) document.getElementById('emp-allow-skills').value = emp.skillsAllow || 0;
+        if (document.getElementById('emp-allow-med')) document.getElementById('emp-allow-med').value = emp.medAllow || 0;
+        
+        // Custom/Dynamic fields (Mula sa 1st snippet mo)
+        window.renderDynamicEmpFields(emp.customData || {}); 
+        document.getElementById('employee-modal').style.display = 'flex';
+    }
+};
+
+document.getElementById('save-emp-btn').addEventListener('click', async function() {
+    const btn = this; btn.disabled = true; 
+    const id = document.getElementById('emp-id').value;
+    
+    // Kunin lahat ng values mula sa form
+    const empNo = document.getElementById('emp-no').value.trim();
+    const name = document.getElementById('emp-name').value.trim();
+    const email = document.getElementById('emp-email').value.trim();
+    const pin = document.getElementById('emp-pin').value.trim(); 
+    const department = document.getElementById('emp-department').value.trim();
+    const account = document.getElementById('emp-account').value.trim();
+    const assignedTl = document.getElementById('emp-assigned-tl').value.trim();
+    const position = document.getElementById('emp-position').value;
+    const status = document.getElementById('emp-status').value;
+    const role = document.getElementById('emp-role').value.trim();
+    const hiredDate = document.getElementById('emp-hired-date').value;
+    const regDate = document.getElementById('emp-reg-date').value;
+    const shiftStart = document.getElementById('emp-shift-start').value;
+    const shiftEnd = document.getElementById('emp-shift-end').value;
+    const rate = parseFloat(document.getElementById('emp-rate').value);
+
+    // Validation (English na ang popup)
+    if(!name || isNaN(rate) || !pin || pin.length !== 6 || isNaN(pin)) {
+        btn.disabled = false; return showToast("Invalid Name, Rate, or PIN.", "error");
+    }
+
+    // ==========================================
+    // EMPLOYEE LIMIT RESTRICTION (FIXED)
+    // ==========================================
+    let maxEmployees = 5; // Default for Trial
+    const currentPlan = window.currentUserPlan || 'Trial (7 days)'; // GINAMIT ANG TUNAY NA PLAN
+
+    if (currentPlan.includes('Pro')) maxEmployees = 30;
+    if (currentPlan.includes('Blaze') || currentPlan.includes('Enterprise')) maxEmployees = Infinity;
+
+    const activeCount = window.employees.filter(e => !e.isArchived).length;
+
+    if (!window.editMode && activeCount >= maxEmployees) {
+        btn.disabled = false;
+        alert(`Limit Reached: Your ${currentPlan} plan only allows up to ${maxEmployees} active employees. Please upgrade your plan to add more.`);
+        window.openPaymentModal('PaySync Pro', window.systemPricing ? window.systemPricing.pro : 699);
+        return; 
+    }
+    // ==========================================
+
+    // Kunin ang allowances
+    const leadAllow = document.getElementById('emp-allow-lead') ? parseFloat(document.getElementById('emp-allow-lead').value) || 0 : 0;
+    const skillsAllow = document.getElementById('emp-allow-skills') ? parseFloat(document.getElementById('emp-allow-skills').value) || 0 : 0;
+    const medAllow = document.getElementById('emp-allow-med') ? parseFloat(document.getElementById('emp-allow-med').value) || 0 : 0;
+    
+    // Kunin ang data mula sa custom columns
+    let customData = {};
+    window.empCustomCols.forEach(col => {
+        let el = document.getElementById('dyn-' + col.id);
+        if(el) customData[col.id] = el.value;
+    });
+
+    const formattedShift = `${formatTimeAMPM(shiftStart)} - ${formatTimeAMPM(shiftEnd)}`;
+    window.showLoading("Saving...");
+
+    // Pagsama-samahin ang data
+    const empData = { 
+        empNo, name, email, pin, department, account, assignedTl, 
+        position, status, role, hiredDate, regDate,
+        shift: formattedShift, shiftStart, shiftEnd, rate,
+        leadAllow, skillsAllow, medAllow,
+        customData: customData,
+        companyName: window.companySettings.name || "My Company" 
+    };
+    
+    try {
+        if(window.editMode) {
+            await window.db.collection("employees").doc(id).update(empData);
+            const idx = window.employees.findIndex(e => e.id === id);
+            window.employees[idx] = { ...window.employees[idx], ...empData };
+        } else {
+            empData.ytdSalary = 0; empData.isArchived = false; empData.companyId = window.currentCompanyId; 
+            const docRef = await window.db.collection("employees").add(empData);
+            window.employees.push({ id: docRef.id, ...empData });
         }
+        document.getElementById('employee-modal').style.display = 'none';
+        window.renderEmployees(); // I-refresh ang table
+        showToast("Employee saved successfully!", "success");
+    } catch (error) { showToast("Failed to save employee data.", "error"); }
+
+    window.hideLoading(); btn.disabled = false; 
+});
 
         document.getElementById('set-tab-plan').addEventListener('click', (e) => {
             e.target.className = "px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold text-sm cursor-pointer";
@@ -3754,41 +3957,254 @@ document.getElementById('emp-allow-med').value = emp.medAllow || 0;
             document.getElementById('pay-plan-name').value = planName;
             document.getElementById('pay-selected-plan').innerText = planName;
             document.getElementById('pay-selected-price').innerText = `₱${price}/mo`;
+            
+            // Auto-fill ng Amount sa GCash
+            document.getElementById('gcash-amount').value = price;
+
+            // Reset sa GCash ang pagbukas ng Modal
+            document.getElementById('pay-method-gcash').click();
+            
             document.getElementById('payment-modal').style.display = 'flex';
         };
 
+        const activePayClass = "py-2 border-2 border-indigo-600 text-indigo-600 font-bold rounded-lg text-xs flex items-center justify-center cursor-pointer transition-colors";
+        const inactivePayClass = "py-2 border border-slate-300 text-slate-600 font-semibold rounded-lg text-xs flex items-center justify-center cursor-pointer hover:bg-slate-50 transition-colors";
+        const confirmPayBtn = document.getElementById('confirm-pay-btn');
+
+        document.getElementById('pay-method-gcash').addEventListener('click', function() {
+            document.getElementById('pay-active-method').value = 'gcash';
+            this.className = activePayClass;
+            document.getElementById('pay-method-card').className = inactivePayClass;
+            document.getElementById('pay-method-paypal').className = inactivePayClass;
+            
+            document.getElementById('gcash-fields').style.display = 'block';
+            document.getElementById('maintenance-fields').style.display = 'none';
+            confirmPayBtn.style.display = 'block'; // Ipakita ang button dahil GCash ito
+        });
+
         document.getElementById('pay-method-card').addEventListener('click', function() {
-            this.className = "py-2 border-2 border-indigo-600 text-indigo-600 font-bold rounded-lg text-xs flex items-center justify-center cursor-pointer";
-            document.getElementById('pay-method-paypal').className = "py-2 border border-slate-300 text-slate-600 font-semibold rounded-lg text-xs flex items-center justify-center cursor-pointer hover:bg-slate-50";
+            document.getElementById('pay-active-method').value = 'card';
+            this.className = activePayClass;
+            document.getElementById('pay-method-gcash').className = inactivePayClass;
+            document.getElementById('pay-method-paypal').className = inactivePayClass;
+            
+            document.getElementById('gcash-fields').style.display = 'none';
+            document.getElementById('maintenance-fields').style.display = 'block';
+            confirmPayBtn.style.display = 'none'; // Itago ang submit button
         });
 
         document.getElementById('pay-method-paypal').addEventListener('click', function() {
-            this.className = "py-2 border-2 border-indigo-600 text-indigo-600 font-bold rounded-lg text-xs flex items-center justify-center cursor-pointer";
-            document.getElementById('pay-method-card').className = "py-2 border border-slate-300 text-slate-600 font-semibold rounded-lg text-xs flex items-center justify-center cursor-pointer hover:bg-slate-50";
+            document.getElementById('pay-active-method').value = 'paypal';
+            this.className = activePayClass;
+            document.getElementById('pay-method-gcash').className = inactivePayClass;
+            document.getElementById('pay-method-card').className = inactivePayClass;
+            
+            document.getElementById('gcash-fields').style.display = 'none';
+            document.getElementById('maintenance-fields').style.display = 'block';
+            confirmPayBtn.style.display = 'none'; // Itago ang submit button
         });
 
-        document.getElementById('payment-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const chosenPlan = document.getElementById('pay-plan-name').value;
+        // 1. GAGAWA TAYO NG MODERN SUCCESS MODAL
+window.showPaymentSuccessModal = function(refNo, planName) {
+    let modal = document.getElementById('payment-success-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'payment-success-modal';
+        modal.className = "fixed inset-0 bg-slate-900/60 flex items-center justify-center z-[200] p-4 backdrop-blur-sm";
+        document.body.appendChild(modal);
+    }
+    modal.innerHTML = `
+        <div class="bg-white rounded-2xl w-full max-w-sm shadow-2xl flex flex-col overflow-hidden animate-[toastSlide_0.3s_ease-out]">
+            <div class="bg-emerald-500 p-6 text-center">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-3 shadow-lg">
+                    <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-white">Payment Submitted!</h3>
+            </div>
+            <div class="p-6 text-center bg-white">
+                <p class="text-sm text-slate-600 mb-5 leading-relaxed">Your GCash payment has been recorded. Our team will verify the transaction and upgrade your workspace shortly.</p>
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6 w-full text-left space-y-2">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-slate-500 uppercase font-bold">Reference No.</span>
+                        <span class="text-sm font-mono font-bold text-slate-800">${refNo}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs text-slate-500 uppercase font-bold">Plan Upgraded To</span>
+                        <span class="text-sm font-bold text-emerald-600">${planName}</span>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('payment-success-modal').style.display='none'" class="w-full py-3 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-sm font-bold shadow-md transition-colors cursor-pointer">Done</button>
+            </div>
+        </div>
+    `;
+    modal.style.display = 'flex';
+};
+
+// BAGONG FUNCTION PARA SA TRIAL EXPIRED MODAL (WITH FIXED SIGN OUT)
+window.showTrialExpiredModal = function(price) {
+    let modal = document.getElementById('trial-expired-modal');
+    
+    // Create dynamically kung wala pa
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'trial-expired-modal';
+        modal.className = "fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-[300] p-4";
+        
+        modal.innerHTML = `
+            <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden text-center animate-[toastSlide_0.3s_ease-out]">
+                <div class="bg-rose-500 p-8 relative overflow-hidden">
+                    <div class="absolute inset-0 bg-rose-600 opacity-50 pattern-grid-lg"></div>
+                    <div class="relative z-10 w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl">
+                        <svg class="w-10 h-10 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <h3 class="relative z-10 text-2xl font-bold text-white tracking-wide">Trial Expired</h3>
+                </div>
+                <div class="p-8">
+                    <p class="text-sm text-slate-600 mb-6 leading-relaxed">
+                        Your 7-day free trial has come to an end. Don't worry, <b class="text-slate-800">all your employee data and timesheets are safely kept!</b>
+                        <br><br>
+                        To regain access to your dashboard and continue processing payroll effortlessly, please upgrade your plan.
+                    </p>
+                    <button id="btn-proceed-upgrade" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-sm font-bold shadow-lg transition-transform hover:scale-[1.02] cursor-pointer">
+                        Upgrade to Pro (₱${price}/mo)
+                    </button>
+                    <button id="btn-modal-signout" class="mt-4 text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors cursor-pointer w-full py-2">
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // UPGRADE BUTTON EVENT LISTENER
+        document.getElementById('btn-proceed-upgrade').addEventListener('click', () => {
+            document.getElementById('trial-expired-modal').style.display = 'none';
             
-            window.showLoading("Processing Payment...");
+            // Tanggalin ang "X" (close button) sa Checkout para hindi nila ma-bypass ang payment
+            const closeBtn = document.querySelector('#payment-modal button');
+            if (closeBtn) closeBtn.style.display = 'none';
             
+            // Buksan na ang payment modal
+            window.openPaymentModal('PaySync Pro', price);
+        });
+
+        // SIGN OUT BUTTON EVENT LISTENER (Eto yung fix)
+        document.getElementById('btn-modal-signout').addEventListener('click', async () => {
             try {
-                const user = window.auth.currentUser;
-                if(user && window.db) {
-                    await window.db.collection('users').doc(user.uid).update({
-                        activePlan: chosenPlan
-                    });
+                if (window.auth) {
+                    await window.auth.signOut();
+                    document.getElementById('trial-expired-modal').style.display = 'none';
+                    window.location.reload(); // I-reload ang page para bumalik sa login screen ng malinis
                 }
-                window.hideLoading();
-                document.getElementById('payment-modal').style.display = 'none';
-                document.getElementById('settings-modal').style.display = 'none';
-                alert(`Payment Successful! Your account has been upgraded to ${chosenPlan}.`);
-            } catch(err) {
-                window.hideLoading();
-                alert("Payment Error: " + err.message);
+            } catch (error) {
+                console.error("Error signing out:", error);
             }
         });
+    }
+    
+    modal.style.display = 'flex';
+};
+
+// 2. ANG UPDATED PAYMENT SUBMIT HANDLER
+document.getElementById('payment-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const chosenPlan = document.getElementById('pay-plan-name').value;
+    const activeMethod = document.getElementById('pay-active-method').value;
+    
+    if (activeMethod === 'gcash') {
+        const amount = document.getElementById('gcash-amount').value;
+        const refNo = document.getElementById('gcash-ref').value;
+        const receiptFile = document.getElementById('gcash-receipt').files[0];
+        
+        if (!amount || !refNo || !receiptFile) {
+            return showToast("Please enter Amount, Reference Number, and upload a Screenshot.", "error");
+        }
+
+        window.showLoading("Submitting Payment...");
+
+        try {
+            const user = window.auth.currentUser;
+            
+            // BULLETPROOF FETCH: Kukunin natin ang Name at Company DIREKTA sa Sidebar UI 
+            // kung saan tama palagi ang naka-display.
+            let rawGreeting = document.getElementById('sidebar-greeting').innerText || "";
+            let exactName = rawGreeting.replace(/Hi /ig, "").replace(/!/g, "").trim();
+            if (!exactName) exactName = user.email.split('@')[0];
+
+            let compName = document.getElementById('sidebar-company-name').innerText || "Unknown Company";
+
+            // 1. PROMISIFY FILEREADER 
+            const base64Data = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = (error) => reject(error);
+                reader.readAsDataURL(receiptFile);
+            });
+
+            // 2. FETCH GAS WEB APP
+            const response = await fetch(GAS_WEB_APP_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                redirect: 'follow', 
+                body: JSON.stringify({
+                    action: 'notifyAdminGCash',
+                    userEmail: user.email,
+                    userName: exactName,       // Makukuha na nito ang "Rajz"
+                    companyName: compName,     // Makukuha na nito ang "Reac"
+                    plan: chosenPlan,
+                    amount: amount,
+                    refNo: refNo,
+                    fileName: `GCash_${refNo}_${user.uid}.png`,
+                    mimeType: receiptFile.type || 'image/png',
+                    base64: base64Data,
+                    dashboardUrl: "https://payrollcore.pages.dev/app/" 
+                })
+            });
+
+            // LIGTAS NA JSON PARSER
+            const textResponse = await response.text(); 
+            let res;
+            try {
+                res = JSON.parse(textResponse);
+            } catch (parseErr) {
+                throw new Error("GAS Server Returned HTML instead of JSON. Paki-check ang Web App URL. Response: " + textResponse.substring(0, 50));
+            }
+
+            if (!res.success) {
+                throw new Error(res.error || "GAS upload rejected");
+            }
+
+            // 3. SAVE TO FIRESTORE
+            if (window.db) {
+                await window.db.collection('payments').add({
+                    companyId: window.currentCompanyId,
+                    userId: user.uid,
+                    userEmail: user.email,
+                    userName: exactName,       // Naka-save na rin nang tama sa DB history
+                    companyName: compName,
+                    plan: chosenPlan,
+                    amount: parseFloat(amount),
+                    refNo: refNo,
+                    screenshotUrl: res.url || '',
+                    status: 'Pending Verification',
+                    submittedAt: new Date().toISOString()
+                });
+            }
+
+            // SUCCESS CLOSE
+            window.hideLoading();
+            document.getElementById('payment-modal').style.display = 'none';
+            document.getElementById('settings-modal').style.display = 'none';
+
+            window.showPaymentSuccessModal(refNo, chosenPlan);
+
+        } catch (err) {
+            window.hideLoading();
+            console.error("Payment Submission Error:", err);
+            alert("Payment Submission Error: " + err.message);
+        }
+    }
+});
 
         window.copyPortalLink = function() {
             if (!window.currentCompanyId) return alert("Error: Company ID not found.");
@@ -4205,7 +4621,7 @@ flatpickr(".time-picker-custom", {
                     }
                 } catch(e) {
                     console.error("Delete Error:", e);
-                    alert("FIREBASE ERROR: Hindi mabura. Paki-check ang Firestore Rules mo.\n\nDetalye: " + e.message);
+                    alert("FIREBASE ERROR: Cannot delete. Please check your Firestore Rules.\n\nDetails: " + e.message);
                 }
                 window.hideLoading();
             }
@@ -5347,7 +5763,7 @@ window.copyPortalLink = function() {
             navigator.clipboard.writeText(portalUrl).then(() => {
                 document.getElementById('invite-link-display').value = portalUrl;
                 document.querySelector('#invite-modal h3').innerText = "Portal Link Copied!";
-                document.querySelector('#invite-modal p').innerText = "I-send ang link na ito sa iyong mga empleyado para ma-access nila ang payslip nila.";
+                document.querySelector('#invite-modal p').innerText = "Share this link with your employees so they can access their payslips.";
                 document.getElementById('invite-modal').style.display = 'flex';
             }).catch(err => {
                 alert("Failed to copy link. Please manually copy this: " + portalUrl);
@@ -6646,6 +7062,576 @@ window.logAction = async function(actionMessage) {
         });
     } catch (err) {
         console.error("Failed to log action:", err);
+    }
+};
+// ==========================================
+// ACCESSRF CSV IMPORT & AUTO-COMPUTE ENGINE
+// ==========================================
+
+// Function na nag-co-compute ng hiwalay sa UI elements
+window.recalculateHeadlessDay = function(empId, dayIndex) {
+    const emp = window.employees.find(e => e.id === empId);
+    const day = window.currentTimesheetData[empId][dayIndex];
+    
+    const dateStr = day.dateStr;
+    const dayType = day.dayType || 'NORMAL';
+    const timeIn = day.timeIn;
+    const timeOut = day.timeOut;
+
+    let hours = 0; let ndHours = 0; let ot = 0; let lateHrs = 0; let totalDur = 0;
+    let rawRate = emp ? emp.rate : 0;
+    let cleanRate = typeof rawRate === 'string' ? parseFloat(rawRate.replace(/[^0-9.]/g, '')) : parseFloat(rawRate);
+    let hourlyRate = (cleanRate && !isNaN(cleanRate)) ? cleanRate / 8 : 0;
+
+    if (timeIn && timeOut && timeIn !== 'REST' && timeOut !== 'REST') {
+        let start = new Date("1970-01-01T" + timeIn + ":00");
+        let end = new Date("1970-01-01T" + timeOut + ":00");
+        if (end < start) end.setDate(end.getDate() + 1);
+
+        let actualDate = new Date(dateStr); 
+        let dayOfWeek = actualDate.getDay();
+        let isFridayWeekend = window.govRates && window.govRates.fridayIsWeekend;
+        let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6 || (isFridayWeekend && dayOfWeek === 5));
+        
+        let breakDeduction = isWeekend 
+            ? (window.govRates && window.govRates.breakWeekend !== undefined ? parseFloat(window.govRates.breakWeekend) : 2)
+            : (window.govRates && window.govRates.breakWeekday !== undefined ? parseFloat(window.govRates.breakWeekday) : 1);
+
+        let sStart = emp.shiftStart ? new Date("1970-01-01T" + emp.shiftStart + ":00") : start;
+        
+        let actualRaw = (end - start) / (1000 * 60 * 60);
+        let appliedBreak = actualRaw > 4 ? breakDeduction : 0;
+        totalDur = actualRaw - appliedBreak;
+        if (totalDur < 0) totalDur = 0;
+
+        if (start > sStart) lateHrs = (start - sStart) / (1000 * 60 * 60);
+
+        let regularEnd = new Date(sStart.getTime() + (8 + appliedBreak) * 3600000);
+        hours = 8; 
+
+        if (end > regularEnd) {
+            ot = (end - regularEnd) / (1000 * 60 * 60);
+        } else {
+            let undertimeHrs = (regularEnd - end) / (1000 * 60 * 60);
+            if (undertimeHrs > 0) lateHrs += undertimeHrs;
+        }
+        
+        if (lateHrs > 8) lateHrs = 8;
+        if (lateHrs < 0) lateHrs = 0;
+
+        let ndStart1 = new Date(start); ndStart1.setHours(22,0,0,0);
+        let ndEnd1 = new Date(start); ndEnd1.setDate(ndEnd1.getDate() + 1); ndEnd1.setHours(6,0,0,0);
+        let ndStart0 = new Date(start); ndStart0.setDate(ndStart0.getDate() - 1); ndStart0.setHours(22,0,0,0);
+        let ndEnd0 = new Date(start); ndEnd0.setHours(6,0,0,0);
+
+        let overlap0 = Math.max(0, Math.min(end, ndEnd0) - Math.max(start, ndStart0));
+        let overlap1 = Math.max(0, Math.min(end, ndEnd1) - Math.max(start, ndStart1));
+        
+        ndHours = (overlap0 + overlap1) / (1000 * 60 * 60);
+        if (ndHours > totalDur) ndHours = totalDur; 
+    }
+
+    let basicPay = 0; let holidayPay = 0;
+    if (timeIn === 'REST' || timeOut === 'REST') {
+        holidayPay = 0; basicPay = 0;
+    } else if (totalDur > 0) {
+        basicPay = hours * hourlyRate;
+        if (dayType === 'REG_HOL') holidayPay = hours * hourlyRate * 1.0; 
+        else if (dayType === 'SPEC_HOL') holidayPay = hours * hourlyRate * 0.3; 
+        else if (dayType === 'DBL_HOL') holidayPay = hours * hourlyRate * 2.0; 
+    }
+
+    let otBaseRate = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
+    let otPay = ot * hourlyRate * otBaseRate; 
+    let ndPay = ndHours * hourlyRate * 0.10; 
+    let latePay = lateHrs * hourlyRate;
+    let dailyRateVal = basicPay + holidayPay + otPay + ndPay - latePay;
+    if (isNaN(dailyRateVal) || dailyRateVal < 0) dailyRateVal = 0;
+
+    // Apply Computed Values
+    day.ot = ot; day.nd = ndHours; day.late = lateHrs;
+    day.duration = totalDur; day.rate = dailyRateVal;
+    day.basicPay = basicPay; day.holidayPay = holidayPay;
+};
+
+// 1. BAGONG MODERN MODAL GENERATOR PARA SA REPORT (Pampalit sa alert)
+window.showImportReportModal = function(reportText, successCount) {
+    let modal = document.getElementById('import-report-modal');
+    
+    // Kung wala pang modal sa HTML, gagawa tayo dynamically
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'import-report-modal';
+        modal.className = "fixed inset-0 bg-slate-900/60 flex items-center justify-center z-[200] p-4";
+        modal.innerHTML = `
+            <div class="bg-white rounded-xl w-full max-w-2xl shadow-2xl flex flex-col border border-slate-200 overflow-hidden">
+                <div class="px-5 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                    <h3 class="text-base font-bold text-slate-800 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        CSV Import Report
+                    </h3>
+                    <button onclick="document.getElementById('import-report-modal').style.display='none'" class="text-slate-400 hover:text-rose-500 cursor-pointer">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+                <div class="p-6 bg-white">
+                    <p class="text-sm text-slate-600 mb-3" id="import-report-summary"></p>
+                    <textarea id="import-report-details" readonly class="w-full h-64 bg-slate-50 border border-slate-200 rounded-lg p-4 text-xs text-slate-700 font-mono focus:outline-none resize-none leading-relaxed"></textarea>
+                </div>
+                <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 text-right">
+                    <button onclick="document.getElementById('import-report-modal').style.display='none'" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-bold shadow-sm transition-colors cursor-pointer">Done & Close</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    }
+    
+    // I-update ang content ng modal base sa naging resulta ng import
+    const summaryEl = document.getElementById('import-report-summary');
+    if (successCount > 0) {
+        summaryEl.innerHTML = `<span class="text-emerald-600 font-bold">Successfully imported ${successCount} record(s).</span> Please review the scan logs below:`;
+    } else {
+        summaryEl.innerHTML = `<span class="text-rose-600 font-bold">No records were imported.</span> Please check the error logs below to fix your CSV file:`;
+    }
+        
+    document.getElementById('import-report-details').value = reportText;
+    modal.style.display = 'flex';
+};
+
+// 2. ANG BAGONG CSV IMPORT HANDLER
+window.handleCSVImport = async function(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const startInput = document.getElementById('period-start').value;
+    const endInput = document.getElementById('period-end').value;
+    if (!startInput || !endInput) {
+        showToast("Please generate a timesheet first before importing.", "error");
+        event.target.value = ''; return;
+    }
+
+    window.showLoading("Analyzing CSV Data...");
+
+    const reader = new FileReader();
+    reader.onload = async function(e) {
+        const text = e.target.result;
+        const rows = text.split('\n').map(r => r.trim()).filter(r => r);
+        const dataRows = rows.slice(1);
+        
+        let updatedEmployees = new Set();
+        let debugLog = "SYSTEM LOGS FOR CSV IMPORT:\n----------------------------------------\n\n";
+        let successCount = 0;
+
+        for (const row of dataRows) {
+            const cols = row.split(',');
+            if (cols.length < 4) continue;
+
+            const empNo = cols[0].replace(/['"]/g, '').trim();
+            const rawDate = cols[1].replace(/['"]/g, '').trim(); 
+            const timeIn = cols[2].replace(/['"]/g, '').trim();
+            const timeOut = cols[3].replace(/['"]/g, '').trim();
+
+            // LIGTAS NA DATE PARSER (Iniiwasan ang JS Timezone Quirks)
+            let dateStr = rawDate;
+            if (dateStr.includes('/')) {
+                let p = dateStr.split('/');
+                if (p.length === 3) {
+                    // Kinukuha natin ito assuming ang Excel mo ay (MM/DD/YYYY)
+                    let mm = p[0].padStart(2, '0');
+                    let dd = p[1].padStart(2, '0');
+                    let yyyy = p[2].length === 2 ? "20" + p[2] : p[2];
+                    dateStr = `${yyyy}-${mm}-${dd}`;
+                }
+            } else {
+                let parsedDate = new Date(rawDate);
+                if (!isNaN(parsedDate.getTime())) {
+                    dateStr = parsedDate.getFullYear() + "-" + 
+                              String(parsedDate.getMonth() + 1).padStart(2, '0') + "-" + 
+                              String(parsedDate.getDate()).padStart(2, '0');
+                }
+            }
+
+            // 1. Hanapin ang Employee
+            const emp = window.employees.find(e => String(e.empNo || '').trim() === empNo);
+            if (!emp) { 
+                debugLog += `[ERROR] Employee Not Found: Employee # [${empNo}]\n`; 
+                continue; 
+            }
+
+            // 2. Siguraduhing may Timesheet Record na naka-generate
+            const tsData = window.currentTimesheetData[emp.id];
+            if (!tsData) {
+                debugLog += `[ERROR] Timesheet Not Found: No generated timesheet for ${emp.name}\n`;
+                continue;
+            }
+
+            // 3. Hanapin ang kaparehas na Petsa sa Timesheet Table
+            const dayIndex = tsData.findIndex(d => d.dateStr === dateStr);
+            if (dayIndex === -1) {
+                debugLog += `[ERROR] Date Mismatch: The date ${dateStr} for ${emp.name} is outside the generated Period (${startInput} to ${endInput}).\n`;
+                continue;
+            }
+
+            // PASSED! Ipasok ang attendance
+            tsData[dayIndex].timeIn = timeIn;
+            tsData[dayIndex].timeOut = timeOut;
+            window.recalculateHeadlessDay(emp.id, dayIndex);
+            
+            updatedEmployees.add(emp.id);
+            successCount++;
+            debugLog += `[SUCCESS] Imported attendance for ${emp.name} on ${dateStr}\n`;
+        }
+
+        // TATAWAGIN ANG BAGONG MODERN MODAL (IMBES NA ALERT)
+        window.showImportReportModal(debugLog, successCount);
+
+        // KUNG MAYROONG PUMASOK NA DATA, ISASAVE NATIN SA DATABASE
+        if (updatedEmployees.size > 0) {
+            const periodKey = `${startInput}_to_${endInput}`;
+            let batch = window.db.batch();
+            for (const empId of updatedEmployees) {
+                const docId = `ts_${empId}_${periodKey}`;
+                batch.update(window.db.collection("timesheets").doc(docId), { days: window.currentTimesheetData[empId] });
+            }
+            await batch.commit();
+            document.getElementById('btn-generate-timesheet').click(); // Refresh UI Table
+            showToast("Import successful!", "success");
+        }
+
+        window.hideLoading();
+        event.target.value = '';
+    };
+    reader.readAsText(file);
+};
+
+
+// Helper function para mag-download ng files (CSV/TXT)
+function downloadFileBlob(content, filename, mimeType) {
+    const blob = new Blob([content], { type: mimeType });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast(filename + " exported successfully!", "success");
+}
+
+// ==========================================
+// EMPLOYEE EXPORT DATA FUNCTIONS & LOGIC
+// ==========================================
+
+window.saveEmpExportCols = async function() {
+    window.showLoading("Saving Export Config...");
+    const cols = {
+        empNo: document.getElementById('ecol-empNo').checked,
+        name: document.getElementById('ecol-name').checked,
+        email: document.getElementById('ecol-email').checked,
+        dept: document.getElementById('ecol-dept').checked,
+        account: document.getElementById('ecol-account').checked,
+        tl: document.getElementById('ecol-tl').checked,
+        position: document.getElementById('ecol-position').checked,
+        shift: document.getElementById('ecol-shift').checked,
+        rate: document.getElementById('ecol-rate').checked,
+        status: document.getElementById('ecol-status').checked,
+        hired: document.getElementById('ecol-hired').checked,
+        reg: document.getElementById('ecol-reg').checked
+    };
+    
+    window.companySettings.empExportCols = cols;
+    try {
+        if(window.db) {
+            await window.db.collection('settings').doc('company_' + window.currentCompanyId).set({ empExportCols: cols }, { merge: true });
+        }
+        document.getElementById('emp-adv-settings-modal').style.display = 'none';
+        showToast("Export configuration saved!", "success");
+    } catch(e) { 
+        alert("Failed to save: " + e.message); 
+    }
+    window.hideLoading();
+};
+
+window.exportEmployeeData = function(format) {
+    document.getElementById('emp-export-menu').classList.add('hidden'); 
+    let targetEmployees = window.employees.filter(e => window.showingArchived ? e.isArchived : !e.isArchived);
+    if(targetEmployees.length === 0) return showToast("No employees found to export.", "error");
+
+    let content = "";
+    let filename = window.showingArchived ? "Archived_Employees" : "Active_Employees";
+
+    let cols = window.companySettings.empExportCols || {};
+    const isExp = (key) => cols[key] !== false;
+
+    // HELPER PARA SA PESO FORMATTING
+    const formatRate = (rate) => {
+        let val = parseFloat(rate || 0);
+        return "₱" + (isNaN(val) ? "0.00" : val.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+    };
+
+    // HELPER PARA SA LONG DATE FORMAT (July 18, 2025)
+    const formatLongDate = (dateStr) => {
+        if (!dateStr || dateStr === '-') return '-';
+        if (dateStr.includes('-')) {
+            const parts = dateStr.split('-');
+            const d = new Date(parts[0], parts[1] - 1, parts[2]);
+            return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        }
+        return dateStr;
+    };
+
+    if (format === 'csv') {
+        let headers = [];
+        if(isExp('empNo')) headers.push("Employee #");
+        if(isExp('name')) headers.push("Full Name");
+        if(isExp('dept')) headers.push("Department");
+        if(isExp('tl')) headers.push("Assigned TL");
+        if(isExp('account')) headers.push("Account");
+        if(isExp('position')) headers.push("Position/Task");
+        if(isExp('shift')) headers.push("Shift");
+        if(isExp('email')) headers.push("Email");
+        if(isExp('hired')) headers.push("Date Hired");
+        if(isExp('reg')) headers.push("Reg. Date");
+        if(isExp('rate')) headers.push("Salary Rate");
+        if(isExp('status')) headers.push("Status");
+        
+        content += headers.join(",") + "\n";
+
+        targetEmployees.forEach(emp => {
+            let row = [];
+            if(isExp('empNo')) row.push(`"${emp.empNo||''}"`);
+            if(isExp('name')) row.push(`"${emp.name||''}"`);
+            if(isExp('dept')) row.push(`"${emp.department||''}"`);
+            if(isExp('tl')) row.push(`"${emp.assignedTl||''}"`);
+            if(isExp('account')) row.push(`"${emp.account||''}"`);
+            if(isExp('position')) row.push(`"${emp.position||''}"`);
+            if(isExp('shift')) row.push(`"${emp.shift||''}"`);
+            if(isExp('email')) row.push(`"${emp.email||''}"`);
+            if(isExp('hired')) row.push(`"${formatLongDate(emp.hiredDate)}"`);
+            if(isExp('reg')) row.push(`"${formatLongDate(emp.regDate)}"`);
+            if(isExp('rate')) {
+                let rateStr = (emp.rate || 0).toString().replace(/,/g, '');
+                row.push(`"${rateStr}"`);
+            }
+            if(isExp('status')) row.push(`"${emp.status||''}"`);
+            
+            content += row.join(",") + "\n";
+        });
+        filename += ".csv";
+        downloadFileBlob(content, filename, 'text/csv;charset=utf-8;');
+        
+    } else if (format === 'txt') {
+        content += "EMPLOYEE DATA EXPORT\n";
+        content += "=================================================\n\n";
+        targetEmployees.forEach(emp => {
+            if(isExp('empNo')) content += `Employee #:    ${emp.empNo || '-'}\n`;
+            if(isExp('name')) content += `Full Name:     ${emp.name || '-'}\n`;
+            if(isExp('dept')) content += `Department:    ${emp.department || '-'}\n`;
+            if(isExp('tl')) content += `Assigned TL:   ${emp.assignedTl || '-'}\n`;
+            if(isExp('account')) content += `Account:       ${emp.account || '-'}\n`;
+            if(isExp('position')) content += `Position/Task: ${emp.position || '-'}\n`;
+            if(isExp('shift')) content += `Shift:         ${emp.shift || '-'}\n`;
+            if(isExp('email')) content += `Email:         ${emp.email || '-'}\n`;
+            if(isExp('hired')) content += `Date Hired:    ${formatLongDate(emp.hiredDate)}\n`;
+            if(isExp('reg')) content += `Reg. Date:     ${formatLongDate(emp.regDate)}\n`;
+            if(isExp('rate')) content += `Salary Rate:   ${formatRate(emp.rate)}\n`;
+            if(isExp('status')) content += `Status:        ${emp.status || '-'}\n`;
+            content += "-------------------------------------------------\n";
+        });
+        filename += ".txt";
+        downloadFileBlob(content, filename, 'text/plain;charset=utf-8;');
+        
+    } else if (format === 'doc') {
+        let docHtml = `
+            <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+            <head><meta charset='utf-8'><title>Employee List</title></head>
+            <body style="font-family: Arial, sans-serif;">
+                <h2>${window.companySettings.name || 'Company'} - Employee Masterlist</h2>
+                <p>Generated on: ${new Date().toLocaleString()}</p>
+                <table border="1" cellpadding="5" style="border-collapse: collapse; width: 100%; font-size: 12px; text-align: left;">
+                    <thead style="background-color: #f1f5f9;">
+                        <tr>
+        `;
+        
+        if(isExp('empNo')) docHtml += `<th>Employee #</th>`;
+        if(isExp('name')) docHtml += `<th>Full Name</th>`;
+        if(isExp('dept')) docHtml += `<th>Department</th>`;
+        if(isExp('tl')) docHtml += `<th>Assigned TL</th>`;
+        if(isExp('account')) docHtml += `<th>Account</th>`;
+        if(isExp('position')) docHtml += `<th>Position</th>`;
+        if(isExp('shift')) docHtml += `<th>Shift</th>`;
+        if(isExp('email')) docHtml += `<th>Email</th>`;
+        if(isExp('hired')) docHtml += `<th>Date Hired</th>`;
+        if(isExp('reg')) docHtml += `<th>Reg. Date</th>`;
+        if(isExp('rate')) docHtml += `<th style="text-align: right;">Salary Rate</th>`;
+        if(isExp('status')) docHtml += `<th>Status</th>`;
+        
+        docHtml += `</tr></thead><tbody>`;
+        
+        targetEmployees.forEach(emp => {
+            docHtml += `<tr>`;
+            if(isExp('empNo')) docHtml += `<td>${emp.empNo || '-'}</td>`;
+            if(isExp('name')) docHtml += `<td><strong>${emp.name}</strong></td>`;
+            if(isExp('dept')) docHtml += `<td>${emp.department || '-'}</td>`;
+            if(isExp('tl')) docHtml += `<td>${emp.assignedTl || '-'}</td>`;
+            if(isExp('account')) docHtml += `<td>${emp.account || '-'}</td>`;
+            if(isExp('position')) docHtml += `<td>${emp.position || '-'}</td>`;
+            if(isExp('shift')) docHtml += `<td>${emp.shift || '-'}</td>`;
+            if(isExp('email')) docHtml += `<td>${emp.email || '-'}</td>`;
+            if(isExp('hired')) docHtml += `<td>${formatLongDate(emp.hiredDate)}</td>`;
+            if(isExp('reg')) docHtml += `<td>${formatLongDate(emp.regDate)}</td>`;
+            if(isExp('rate')) docHtml += `<td style="text-align: right;">${formatRate(emp.rate)}</td>`;
+            if(isExp('status')) docHtml += `<td>${emp.status || '-'}</td>`;
+            docHtml += `</tr>`;
+        });
+        
+        docHtml += `
+                    </tbody>
+                </table>
+                <br>
+                <div style="text-align: center; font-weight: bold; color: #64748b;">*** END OF REPORT ***</div>
+            </body>
+            </html>
+        `;
+        filename += ".doc";
+        downloadFileBlob(docHtml, filename, 'application/msword');
+    }
+};
+
+window.printEmployeeList = function() {
+    document.getElementById('emp-export-menu').classList.add('hidden');
+    let targetEmployees = window.employees.filter(e => window.showingArchived ? e.isArchived : !e.isArchived);
+    if(targetEmployees.length === 0) return showToast("No employees found to print.", "error");
+
+    let cols = window.companySettings.empExportCols || {};
+    const isExp = (key) => cols[key] !== false;
+
+    const formatRate = (rate) => {
+        let val = parseFloat(rate || 0);
+        return "₱" + (isNaN(val) ? "0.00" : val.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}));
+    };
+
+    const formatLongDate = (dateStr) => {
+        if (!dateStr || dateStr === '-') return '-';
+        if (dateStr.includes('-')) {
+            const parts = dateStr.split('-');
+            const d = new Date(parts[0], parts[1] - 1, parts[2]);
+            return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        }
+        return dateStr;
+    };
+
+    let ths = '';
+    let totalCols = 0;
+    
+    if(isExp('empNo')) { ths += `<th style="padding: 8px 6px; border-bottom: 2px solid #cbd5e1;">Emp #</th>`; totalCols++; }
+    if(isExp('name')) { ths += `<th style="padding: 8px 6px; border-bottom: 2px solid #cbd5e1;">Full Name</th>`; totalCols++; }
+    if(isExp('dept')) { ths += `<th style="padding: 8px 6px; border-bottom: 2px solid #cbd5e1;">Department</th>`; totalCols++; }
+    if(isExp('tl')) { ths += `<th style="padding: 8px 6px; border-bottom: 2px solid #cbd5e1;">Assigned TL</th>`; totalCols++; }
+    if(isExp('account')) { ths += `<th style="padding: 8px 6px; border-bottom: 2px solid #cbd5e1;">Account</th>`; totalCols++; }
+    if(isExp('position')) { ths += `<th style="padding: 8px 6px; border-bottom: 2px solid #cbd5e1;">Position</th>`; totalCols++; }
+    if(isExp('shift')) { ths += `<th style="padding: 8px 6px; border-bottom: 2px solid #cbd5e1;">Shift</th>`; totalCols++; }
+    if(isExp('email')) { ths += `<th style="padding: 8px 6px; border-bottom: 2px solid #cbd5e1;">Email</th>`; totalCols++; }
+    if(isExp('hired')) { ths += `<th style="padding: 8px 6px; border-bottom: 2px solid #cbd5e1;">Date Hired</th>`; totalCols++; }
+    if(isExp('reg')) { ths += `<th style="padding: 8px 6px; border-bottom: 2px solid #cbd5e1;">Reg. Date</th>`; totalCols++; }
+    if(isExp('rate')) { ths += `<th style="padding: 8px 6px; border-bottom: 2px solid #cbd5e1; text-align: right;">Salary Rate</th>`; totalCols++; }
+    if(isExp('status')) { ths += `<th style="padding: 8px 6px; border-bottom: 2px solid #cbd5e1; text-align: center;">Status</th>`; totalCols++; }
+
+    let trs = '';
+    targetEmployees.forEach(emp => {
+        let tds = '';
+        if(isExp('empNo')) tds += `<td style="padding: 6px; color: #334155;">${emp.empNo || '-'}</td>`;
+        if(isExp('name')) tds += `<td style="padding: 6px; font-weight: bold; color: #0f172a;">${emp.name}</td>`;
+        if(isExp('dept')) tds += `<td style="padding: 6px; color: #334155;">${emp.department || '-'}</td>`;
+        if(isExp('tl')) tds += `<td style="padding: 6px; color: #334155;">${emp.assignedTl || '-'}</td>`;
+        if(isExp('account')) tds += `<td style="padding: 6px; color: #334155;">${emp.account || '-'}</td>`;
+        if(isExp('position')) tds += `<td style="padding: 6px; color: #334155;">${emp.position || '-'}</td>`;
+        if(isExp('shift')) tds += `<td style="padding: 6px; color: #334155;">${emp.shift || '-'}</td>`;
+        if(isExp('email')) tds += `<td style="padding: 6px; color: #334155;">${emp.email || '-'}</td>`;
+        if(isExp('hired')) tds += `<td style="padding: 6px; color: #334155;">${formatLongDate(emp.hiredDate)}</td>`;
+        if(isExp('reg')) tds += `<td style="padding: 6px; color: #334155;">${formatLongDate(emp.regDate)}</td>`;
+        if(isExp('rate')) tds += `<td style="padding: 6px; text-align: right; color: #334155;">${formatRate(emp.rate)}</td>`;
+        if(isExp('status')) tds += `<td style="padding: 6px; text-align: center; color: #334155;">${emp.status || '-'}</td>`;
+        
+        trs += `<tr style="border-bottom: 1px solid #e2e8f0;">${tds}</tr>`;
+    });
+
+    trs += `
+        <tr>
+            <td colspan="${totalCols}" style="padding: 16px 0; text-align: center; font-weight: bold; color: #94a3b8; letter-spacing: 2px;">
+                *** END OF LIST ***
+            </td>
+        </tr>
+    `;
+
+    let printHtml = `
+        <style>
+            @media print {
+                @page { size: auto; margin: 8mm; }
+                body { background: #ffffff !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                #print-section { width: 100% !important; padding: 0 !important; margin: 0 !important; display: flex !important; justify-content: center !important; }
+                .payslip-print-card { padding: 0 !important; border: none !important; margin: 0 auto !important; width: 520px !important; max-width: 520px !important; }
+            }
+        </style>
+        <div style="font-family: Arial, sans-serif; padding: 20px; width: 100%;">
+            <h2 style="color: #1e3a8a; text-transform: uppercase; margin-bottom: 5px;">${window.companySettings.name || 'Company'} - Employee List</h2>
+            <p style="color: #64748b; font-size: 12px; margin-bottom: 20px;">Generated on: ${new Date().toLocaleString()}</p>
+            <table style="width: 100%; border-collapse: collapse; font-size: 10px; white-space: nowrap;">
+                <thead>
+                    <tr style="background-color: #f1f5f9; text-transform: uppercase; text-align: left;">
+                        ${ths}
+                    </tr>
+                </thead>
+                <tbody>${trs}</tbody>
+            </table>
+        </div>
+    `;
+
+    document.getElementById('print-section').innerHTML = printHtml;
+    window.print();
+};
+
+// I-close ang Export Menu kapag nag-click sa labas
+document.addEventListener('click', function(e) {
+    const menu = document.getElementById('emp-export-menu');
+    if (menu && !e.target.closest('.relative.w-full')) {
+        menu.classList.add('hidden');
+    }
+});
+window.updatePlanUI = function() {
+    const plan = window.currentUserPlan || 'Trial';
+    
+    const btnTrial = document.getElementById('btn-plan-trial');
+    const btnPro = document.getElementById('btn-plan-pro');
+    const btnBlaze = document.getElementById('btn-plan-blaze');
+    
+    const badgeTrial = document.getElementById('badge-trial');
+    const badgePro = document.getElementById('badge-pro');
+    const badgeBlaze = document.getElementById('badge-blaze');
+    
+    // Reset Labels
+    if(badgeTrial) badgeTrial.innerText = "Available";
+    if(badgePro) { badgePro.innerText = "Upgrade"; badgePro.classList.replace('text-slate-500', 'text-indigo-600'); }
+    if(badgeBlaze) { badgeBlaze.innerText = "Enterprise"; badgeBlaze.classList.replace('text-slate-500', 'text-rose-600'); }
+
+    // Reset Buttons to Default Clickable State
+    if(btnTrial) { btnTrial.innerText = "Downgrade"; btnTrial.disabled = false; btnTrial.className = "w-full mt-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg text-xs font-bold cursor-pointer transition-colors"; }
+    if(btnPro) { btnPro.innerText = "Upgrade to Pro"; btnPro.disabled = false; btnPro.className = "w-full mt-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold cursor-pointer transition-colors"; }
+    if(btnBlaze) { btnBlaze.innerText = "Upgrade to Blaze"; btnBlaze.disabled = false; btnBlaze.className = "w-full mt-6 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold cursor-pointer transition-colors"; }
+    
+    // Config para sa Active Disabled Button
+    const activeClass = "w-full mt-6 py-2 bg-slate-200 text-slate-500 rounded-lg text-xs font-bold cursor-not-allowed";
+    
+    if (plan.includes('Pro')) {
+        if(btnPro) { btnPro.innerText = "Active Plan"; btnPro.disabled = true; btnPro.className = activeClass; }
+        if(badgePro) { badgePro.innerText = "CURRENT"; badgePro.classList.replace('text-indigo-600', 'text-slate-500'); }
+    } else if (plan.includes('Blaze') || plan.includes('Enterprise')) {
+        if(btnBlaze) { btnBlaze.innerText = "Active Plan"; btnBlaze.disabled = true; btnBlaze.className = activeClass; }
+        if(badgeBlaze) { badgeBlaze.innerText = "CURRENT"; badgeBlaze.classList.replace('text-rose-600', 'text-slate-500'); }
+    } else {
+        if(btnTrial) { btnTrial.innerText = "Active Plan"; btnTrial.disabled = true; btnTrial.className = activeClass; }
+        if(badgeTrial) { badgeTrial.innerText = "CURRENT"; badgeTrial.classList.replace('text-slate-500', 'text-indigo-600'); }
     }
 };
     </script>
