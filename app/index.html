@@ -7753,6 +7753,33 @@ window.updatePlanUI = function() {
         if(badgeTrial) { badgeTrial.innerText = "CURRENT"; badgeTrial.classList.replace('text-slate-500', 'text-indigo-600'); }
     }
 };
+// 🔥 SECURITY: DISABLE RIGHT CLICK & INSPECT ELEMENT 🔥
+        
+        // 1. I-disable ang Right Click (Context Menu)
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        // 2. I-disable ang F12 at iba pang Inspector Shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Harangin ang F12
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Harangin ang Ctrl + Shift + I (Inspect) at Ctrl + Shift + J (Console) at Ctrl + Shift + C (Element Select)
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Harangin ang Ctrl + U (View Page Source)
+            if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // 🔥 SECURITY: DISABLE RIGHT CLICK & INSPECT ELEMENT 🔥
     </script>
 </body>
 </html>
