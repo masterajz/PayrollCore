@@ -1491,9 +1491,12 @@
                     </div>
                     <select id="emp-status" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer"></select>
                 </div>
-                <div>
-                    <label class="block mb-1">System Role</label>
-                    <input type="text" id="emp-role" placeholder="Staff / Supervisor" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+               <div>
+                    <div class="flex justify-between items-center mb-1">
+                        <label>System Role</label>
+                        <button type="button" id="manage-role-btn" class="text-[10px] text-indigo-600 hover:underline cursor-pointer">Manage</button>
+                    </div>
+                    <select id="emp-role" class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 cursor-pointer"></select>
                 </div>
                 <div>
                     <label class="block mb-1">Date Hired</label>
@@ -2735,9 +2738,15 @@ document.getElementById('cancel-modal-btn').addEventListener('click', () => docu
         window.portalEnabled = window.companySettings.portalEnabled !== false; 
         if (typeof updatePortalBtnUI === 'function') updatePortalBtnUI();
         
-        if(savedStart && savedEnd) {
+ if(savedStart && savedEnd) {
             const displayPeriod = document.getElementById('display-period');
             if (displayPeriod) displayPeriod.innerText = `${formatShortDate(savedStart)} - ${formatShortDate(savedEnd)}`;
+            
+            // I-auto click ang generate para bumalik agad ang table pagka-refresh!
+            setTimeout(() => {
+                const genBtn = document.getElementById('btn-generate-timesheet');
+                if (genBtn) genBtn.click();
+            }, 500);
         }
         if(savedPayout) {
             const displayPayout = document.getElementById('display-payout');
@@ -2796,7 +2805,7 @@ window.populatePositionDropdowns = function() {
     }
 };
 
-            // ==========================================
+// ==========================================
 // DYNAMIC MANAGE OPTIONS LOGIC (Add, Edit, Delete)
 // ==========================================
 
@@ -2906,6 +2915,43 @@ window.deleteManageItem = async function(index) {
     }
     window.hideLoading();
 };
+
+// Pindot sa "Add" o "Update" button
+document.getElementById('save-manage-btn')?.addEventListener('click', async () => {
+    const val = document.getElementById('manage-input').value.trim();
+    if(!val) return showToast ? showToast("Please enter a valid option.", "error") : alert("Please enter a valid option.");
+    
+    const idx = parseInt(document.getElementById('manage-edit-index').value);
+    window.showLoading(idx > -1 ? "Updating..." : "Saving...");
+    
+    let docName, list;
+    if (window.manageTarget === 'position') { list = window.companyPositions; docName = 'positions_'; }
+    else if (window.manageTarget === 'status') { list = window.companyStatuses; docName = 'statuses_'; }
+    else if (window.manageTarget === 'department') { list = window.companyDepartments; docName = 'departments_'; }
+    else if (window.manageTarget === 'account') { list = window.companyAccounts; docName = 'accounts_'; }
+    else if (window.manageTarget === 'tl') { list = window.companyTLs; docName = 'tls_'; }
+
+    if (idx > -1) {
+        list[idx] = val; // Update pag Edit Mode
+    } else {
+        if(!list.includes(val)) list.push(val); // Add bago kung hindi duplicate
+        else {
+            window.hideLoading();
+            return showToast ? showToast("This option already exists.", "error") : alert("This option already exists.");
+        }
+    }
+
+    try {
+        if(window.db) await window.db.collection('settings').doc(docName + window.currentCompanyId).set({ list: list });
+        window.resetManageInput();
+        window.renderManageList();
+        window.populatePositionDropdowns(); // I-refresh ang dropdowns sa Add Employee form
+    } catch(e) {
+        alert("Error saving option: " + e.message);
+    }
+    
+    window.hideLoading();
+});
 
 // Pindot sa "Add" o "Update" button
 document.getElementById('save-manage-btn')?.addEventListener('click', async () => {
@@ -5730,19 +5776,7 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
     try {
         const periodKey = `${startInput}_to_${endInput}`;
         
-        // Auto-archive luma (Safe execution)
-        try {
-            const oldTsSnap = await window.db.collection("timesheets").where("isArchived", "==", false).get();
-            let batch = window.db.batch();
-            let hasBatch = false;
-            oldTsSnap.forEach(doc => {
-                if (!doc.id.includes(periodKey)) {
-                    batch.update(doc.ref, { isArchived: true });
-                    hasBatch = true;
-                }
-            });
-            if(hasBatch) await batch.commit();
-        } catch(e) { console.warn("Auto-archive skipped:", e); }
+
 
         let renderedRows = 0; // Taga-bilang kung may lumabas na row
 
@@ -6026,7 +6060,7 @@ window.copyPortalLink = function() {
             }
             .group-hdr { border-bottom: 2px solid; padding: 4px 0; text-align: center; font-weight: bold; font-size: 10px; text-transform: uppercase; }
         </style>
-        <div style="font-family: Arial, sans-serif; width: max-content; max-width: 100%; margin: 0 auto; background-color: #ffffff !important; padding: 25px; border-radius: 8px;">
+        <div style="font-family: Arial, sans-serif; width: 100%; margin: 0 auto; background-color: #ffffff !important; padding: 25px; border-radius: 8px; box-sizing: border-box;">
             
             <div style="text-align: center; margin-bottom: 15px;">
                 <h4 style="font-size: 13px; font-weight: bold; color: #0284c7; margin: 0 0 4px 0; text-transform: uppercase;">Payroll Summary</h4>
@@ -6040,7 +6074,7 @@ window.copyPortalLink = function() {
             </div>
 
             <div class="print-scroll-container" style="overflow-x: auto; width: 100%; margin-bottom: 10px;">
-                <table class="report-table" style="width: auto; border-collapse: collapse; font-size: 10px; white-space: nowrap;">
+                <table class="report-table" style="width: 100%; border-collapse: collapse; font-size: 10px; white-space: nowrap;">
                     <thead>
                         <!-- GROUP HEADERS -->
                         <tr>
