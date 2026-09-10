@@ -1383,9 +1383,20 @@
 
             <!-- VIEW 2: DETAILS LIST (Nakatago sa simula) -->
             <div id="archive-detail-view" class="w-full hidden">
+                <!-- IDINAGDAG: Bulk Action Buttons (Nakikita lang pag may naka-check) -->
+                <div id="archive-bulk-actions" class="mb-3 hidden flex justify-end gap-2 px-2">
+                    <button type="button" onclick="window.bulkRestoreArchive()" class="px-3 py-1.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 rounded-lg text-xs font-bold border border-emerald-200 transition-colors shadow-sm cursor-pointer">
+                        Restore Selected
+                    </button>
+                    <button type="button" onclick="window.bulkDeleteArchive()" class="px-3 py-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg text-xs font-bold border border-rose-200 transition-colors shadow-sm cursor-pointer">
+                        Delete Selected
+                    </button>
+                </div>
+                
                 <table class="w-full text-left border-collapse min-w-[1200px]">
                     <thead>
                         <tr class="text-slate-500 text-xs uppercase tracking-wider border-b border-slate-200 bg-slate-50">
+                            <th class="py-3 px-2 w-8 text-center"><input type="checkbox" id="select-all-archive" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"></th>
                             <th class="py-3 px-3 font-semibold">Employee Name</th>
                             <th class="py-3 px-2 font-semibold text-center">Hrs</th>
                             <th class="py-3 px-3 font-semibold text-center text-slate-800">Gross Pay</th>
@@ -2649,6 +2660,9 @@ document.getElementById('cancel-modal-btn').addEventListener('click', () => docu
             window.employees.push({ id: doc.id, ...doc.data() });
         });
         
+        // SORT ALPHABETICALLY (A-Z)
+        window.employees.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+        
         const setDocSnap = await window.db.collection("settings").doc("company_" + window.currentCompanyId).get();
         if(setDocSnap.exists) window.companySettings = { ...window.companySettings, ...setDocSnap.data() };
         
@@ -3676,6 +3690,7 @@ window.print13thMonth = function(empName, position, totalBasic, thirteenthPay) {
     const modalContainer = document.querySelector('#preview-modal > div');
     modalContainer.className = "bg-white rounded-xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden mx-auto border border-slate-200";
     document.querySelector('#preview-modal h3').innerText = "13th Month Payslip Print";
+    document.getElementById('execute-print-btn').innerHTML = '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg> Print Payslip';
     document.getElementById('execute-print-btn').onclick = function() { window.print(); };
     document.getElementById('print-section').innerHTML = payslipHtml;
     document.getElementById('preview-modal').style.display = 'flex';
@@ -4806,6 +4821,7 @@ window.previewTimesheet = function(id) {
     const modalContainer = document.querySelector('#preview-modal > div');
     modalContainer.className = "bg-white rounded-xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden mx-auto border border-slate-200";
     document.querySelector('#preview-modal h3').innerText = "Payslip Preview";
+    document.getElementById('execute-print-btn').innerHTML = '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg> Print Payslip';
     document.getElementById('execute-print-btn').onclick = function() { window.print(); };
     document.getElementById('print-section').innerHTML = payslipHtml;
     document.getElementById('preview-modal').style.display = 'flex';
@@ -5215,6 +5231,11 @@ window.renderArchiveDetails = function() {
     const tbody = document.getElementById('ts-archive-detail-tbody');
     tbody.innerHTML = '';
     
+    // Reset Select All & Hide Bulk Buttons tuwing nagre-render
+    const selectAllCheckbox = document.getElementById('select-all-archive');
+    if (selectAllCheckbox) selectAllCheckbox.checked = false;
+    window.toggleArchiveBulkBtns();
+    
     if(!window.currentArchiveViewFilter) return;
     const {start, end} = window.currentArchiveViewFilter;
     const searchQuery = document.getElementById('archive-search').value.toLowerCase();
@@ -5232,15 +5253,15 @@ window.renderArchiveDetails = function() {
         let totalHrs = (data.days || []).reduce((s, d) => s + d.duration, 0);
         let grossPay = (data.days || []).reduce((s, d) => s + d.rate, 0);
         let totalLateHrs = (data.days || []).reduce((s, d) => s + (d.late || 0), 0);
-        let totalLatePay = totalLateHrs * ((emp.rate || 0) / 8);
+        let totalLatePay = totalLateHrs * ((parseFloat(emp.rate) || 0) / 8);
         
         let applyGov = data.applyGovDeductions || false; 
         let sssDed = applyGov ? parseFloat(emp.sssDed || 0) : 0;
         let phDed = applyGov ? parseFloat(emp.phicDed || 0) : 0;
         let pagibigDed = applyGov ? parseFloat(emp.hdmfDed || 0) : 0;
-        let caDed = parseFloat(data.cashAdvance || 0);
-        let loanDed = parseFloat(data.loan || 0);
-        let penaltyDed = parseFloat(data.penalty || 0);
+        let caDed = parseFloat(data.extra?.cashAdvance || 0);
+        let loanDed = parseFloat(data.extra?.companyLoan || 0) + parseFloat(data.extra?.sssLoan || 0) + parseFloat(data.extra?.hdmfLoan || 0) + parseFloat(data.extra?.calamityLoan || 0);
+        let penaltyDed = parseFloat(data.extra?.penalty || 0) + parseFloat(data.extra?.travelFund || 0);
         
         let totalDeductions = sssDed + phDed + pagibigDed + caDed + loanDed + penaltyDed + totalLatePay;
         let netPay = grossPay - totalDeductions;
@@ -5248,6 +5269,9 @@ window.renderArchiveDetails = function() {
         const tr = document.createElement('tr');
         tr.className = "hover:bg-slate-50 border-b border-slate-100";
         tr.innerHTML = `
+            <td class="py-3 px-2 text-center">
+                <input type="checkbox" class="archive-checkbox rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" data-docid="${data.id}" onchange="window.toggleArchiveBulkBtns()">
+            </td>
             <td class="py-3 px-3 font-bold text-slate-800">${emp.name}</td>
             <td class="py-3 px-2 text-center font-bold text-slate-600">${totalHrs.toFixed(2)}</td>
             <td class="py-3 px-3 text-center font-bold text-slate-800">₱${grossPay.toLocaleString('en-US', {minimumFractionDigits:2})}</td>
@@ -5271,7 +5295,79 @@ window.renderArchiveDetails = function() {
         tbody.appendChild(tr);
     });
     
-    if(foundCount === 0) tbody.innerHTML = `<tr><td colspan="13" class="py-6 text-center text-slate-400">No records match your search.</td></tr>`;
+    if(foundCount === 0) tbody.innerHTML = `<tr><td colspan="14" class="py-6 text-center text-slate-400">No records match your search.</td></tr>`;
+};
+
+// ===============================================
+// BULK ACTIONS FOR ARCHIVE DETAILS
+// ===============================================
+document.getElementById('select-all-archive')?.addEventListener('change', (e) => {
+    const checkboxes = document.querySelectorAll('.archive-checkbox');
+    checkboxes.forEach(cb => cb.checked = e.target.checked);
+    window.toggleArchiveBulkBtns();
+});
+
+window.toggleArchiveBulkBtns = function() {
+    const checkedCount = document.querySelectorAll('.archive-checkbox:checked').length;
+    const bulkContainer = document.getElementById('archive-bulk-actions');
+    if (bulkContainer) {
+        bulkContainer.style.display = checkedCount > 0 ? 'flex' : 'none';
+    }
+};
+
+window.bulkDeleteArchive = async function() {
+    if (confirm("Are you sure you want to PERMANENTLY DELETE all selected archived timesheets? This action cannot be undone.")) {
+        window.showLoading("Deleting...");
+        const checkboxes = document.querySelectorAll('.archive-checkbox:checked');
+        let batch = window.db.batch();
+        let count = 0;
+        
+        checkboxes.forEach(cb => {
+            const docId = cb.dataset.docid;
+            const docRef = window.db.collection("timesheets").doc(docId);
+            batch.delete(docRef);
+            count++;
+        });
+
+        try {
+            if (count > 0) await batch.commit();
+            window.hideLoading();
+            showToast(`${count} records permanently deleted.`, "success");
+            window.loadArchiveData(); // Refresh data
+        } catch(e) {
+            console.error(e);
+            window.hideLoading();
+            alert("Failed to delete selected records.");
+        }
+    }
+};
+
+window.bulkRestoreArchive = async function() {
+    if (confirm("Are you sure you want to RESTORE the selected timesheets to the active view?")) {
+        window.showLoading("Restoring...");
+        const checkboxes = document.querySelectorAll('.archive-checkbox:checked');
+        let batch = window.db.batch();
+        let count = 0;
+        
+        checkboxes.forEach(cb => {
+            const docId = cb.dataset.docid;
+            const docRef = window.db.collection("timesheets").doc(docId);
+            batch.update(docRef, { isArchived: false });
+            count++;
+        });
+
+        try {
+            if (count > 0) await batch.commit();
+            window.hideLoading();
+            showToast(`${count} records restored successfully.`, "success");
+            window.loadArchiveData(); // Refresh archive memory
+            document.getElementById('btn-generate-timesheet').click(); // Refresh main table
+        } catch(e) {
+            console.error(e);
+            window.hideLoading();
+            alert("Failed to restore selected records.");
+        }
+    }
 };
 
 // Replace Old Event Listeners Safely
@@ -5502,7 +5598,12 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
     if(!startInput || !endInput) return showToast("Please select Period Start and End dates.", "error");
     if(new Date(startInput) > new Date(endInput)) return showToast("Invalid period date range.", "error");
 
-    const activeEmployees = window.employees.filter(e => (e.status || '').toLowerCase() === 'active' && !e.isArchived);
+    // BULLETPROOF FILTERING & A-Z SORTING
+    // Ginawang .trim() para kahit may spacing sa database, mababasa pa rin bilang active
+    const activeEmployees = window.employees
+        .filter(e => (e.status || '').trim().toLowerCase() === 'active' && !e.isArchived)
+        .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
     const tbody = document.getElementById('timesheet-tbody');
     tbody.innerHTML = '';
 
@@ -5515,178 +5616,190 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
     if(!window.currentTimesheetExtra) window.currentTimesheetExtra = {};
 
     if(activeEmployees.length === 0) {
-        return tbody.innerHTML = `<tr><td colspan="15" class="px-6 py-8 text-center text-slate-400">No active/unarchived employees found.</td></tr>`;
+        return tbody.innerHTML = `<tr><td colspan="16" class="px-6 py-8 text-center text-slate-400 font-medium">No active employees found. Please check your Employee Data tab to ensure statuses are set to "Active".</td></tr>`;
     }
 
     window.showLoading("Syncing timesheets...");
-    const periodKey = `${startInput}_to_${endInput}`;
     
     try {
-        const oldTsSnap = await window.db.collection("timesheets").where("isArchived", "==", false).get();
-        let batch = window.db.batch();
-        let hasBatch = false;
-        oldTsSnap.forEach(doc => {
-            if (!doc.id.includes(periodKey)) {
-                batch.update(doc.ref, { isArchived: true });
-                hasBatch = true;
-            }
-        });
-        if(hasBatch) await batch.commit();
-    } catch(e) { console.error("Auto-archive error", e); }
-
-    for (const emp of activeEmployees) {
-        const docId = `ts_${emp.id}_${periodKey}`;
-        let isArchivedStatus = false; 
+        const periodKey = `${startInput}_to_${endInput}`;
         
-        window.currentTimesheetExtra[emp.id] = { 
-            creditLeave: 0, leadAllow: 0, skillsAllow: 0, medAllow: 0, adjPay: 0,
-            gasAllow: 0, attInc: 0, qualInc: 0, perfInc: 0, // DEFAULT TO 0
-            sssLoan: 0, hdmfLoan: 0, calamityLoan: 0, companyLoan: 0, travelFund: 0, cashAdvance: 0, penalty: 0, penaltyNote: '', applyGov: false 
-        };
-        window.currentTimesheetData[emp.id] = []; 
-
+        // Auto-archive luma (Safe execution)
         try {
+            const oldTsSnap = await window.db.collection("timesheets").where("isArchived", "==", false).get();
+            let batch = window.db.batch();
+            let hasBatch = false;
+            oldTsSnap.forEach(doc => {
+                if (!doc.id.includes(periodKey)) {
+                    batch.update(doc.ref, { isArchived: true });
+                    hasBatch = true;
+                }
+            });
+            if(hasBatch) await batch.commit();
+        } catch(e) { console.warn("Auto-archive skipped:", e); }
+
+        let renderedRows = 0; // Taga-bilang kung may lumabas na row
+
+        for (const emp of activeEmployees) {
+            const docId = `ts_${emp.id}_${periodKey}`;
+            let isArchivedStatus = false; 
+            
+            window.currentTimesheetExtra[emp.id] = { 
+                creditLeave: 0, leadAllow: 0, skillsAllow: 0, medAllow: 0, adjPay: 0,
+                gasAllow: 0, attInc: 0, qualInc: 0, perfInc: 0, 
+                sssLoan: 0, hdmfLoan: 0, calamityLoan: 0, companyLoan: 0, travelFund: 0, cashAdvance: 0, penalty: 0, penaltyNote: '', applyGov: false 
+            };
+            window.currentTimesheetData[emp.id] = []; 
+
             const tsDoc = await window.db.collection("timesheets").doc(docId).get();
             if (tsDoc.exists) {
                 if (tsDoc.data().isArchived) {
-                    isArchivedStatus = true;
+                    isArchivedStatus = true; 
                 } else {
                     window.currentTimesheetData[emp.id] = tsDoc.data().days || [];
                     let dbExtra = tsDoc.data().extra || {};
                     window.currentTimesheetExtra[emp.id] = {
-                        creditLeave: dbExtra.creditLeave || 0,
-                        leadAllow: dbExtra.leadAllow || 0,
-                        skillsAllow: dbExtra.skillsAllow || 0,
-                        medAllow: dbExtra.medAllow || 0,
-                        adjPay: dbExtra.adjPay || 0,
-                        gasAllow: dbExtra.gasAllow || 0,
-                        attInc: dbExtra.attInc || 0,
-                        qualInc: dbExtra.qualInc || 0,
-                        perfInc: dbExtra.perfInc || 0,
-                        sssLoan: dbExtra.sssLoan || 0,
-                        hdmfLoan: dbExtra.hdmfLoan || 0,
-                        calamityLoan: dbExtra.calamityLoan || 0,
-                        companyLoan: dbExtra.companyLoan || 0,
-                        travelFund: dbExtra.travelFund || 0,
-                        cashAdvance: dbExtra.cashAdvance || 0,
-                        penalty: dbExtra.penalty || 0,
+                        creditLeave: parseFloat(dbExtra.creditLeave) || 0,
+                        leadAllow: parseFloat(dbExtra.leadAllow) || 0,
+                        skillsAllow: parseFloat(dbExtra.skillsAllow) || 0,
+                        medAllow: parseFloat(dbExtra.medAllow) || 0,
+                        adjPay: parseFloat(dbExtra.adjPay) || 0,
+                        gasAllow: parseFloat(dbExtra.gasAllow) || 0,
+                        attInc: parseFloat(dbExtra.attInc) || 0,
+                        qualInc: parseFloat(dbExtra.qualInc) || 0,
+                        perfInc: parseFloat(dbExtra.perfInc) || 0,
+                        sssLoan: parseFloat(dbExtra.sssLoan) || 0,
+                        hdmfLoan: parseFloat(dbExtra.hdmfLoan) || 0,
+                        calamityLoan: parseFloat(dbExtra.calamityLoan) || 0,
+                        companyLoan: parseFloat(dbExtra.companyLoan) || 0,
+                        travelFund: parseFloat(dbExtra.travelFund) || 0,
+                        cashAdvance: parseFloat(dbExtra.cashAdvance) || 0,
+                        penalty: parseFloat(dbExtra.penalty) || 0,
                         penaltyNote: dbExtra.penaltyNote || '',
                         applyGov: dbExtra.applyGov !== undefined ? dbExtra.applyGov : false
                     };
                 }
             }
-        } catch(e) {}
 
-        if(isArchivedStatus) continue;
+            if(isArchivedStatus) continue; // Skip if in-archive na user
 
-        if (!window.currentTimesheetData[emp.id] || window.currentTimesheetData[emp.id].length === 0) {
-            let d = new Date(startInput + "T00:00:00");
-            const end = new Date(endInput + "T00:00:00");
-            let loopCount = 0; 
-            while(d <= end && loopCount < 365) {
-                window.currentTimesheetData[emp.id].push({ 
-                    dateStr: toISODate(d), dayType: 'NORMAL', timeIn: emp.shiftStart || '08:00', timeOut: '',
-                    ot: 0, nd: 0, late: 0, duration: 0, rate: 0, basicPay: 0, holidayPay: 0 
-                });
-                d.setDate(d.getDate() + 1); loopCount++;
+            if (!window.currentTimesheetData[emp.id] || window.currentTimesheetData[emp.id].length === 0) {
+                let d = new Date(startInput + "T00:00:00");
+                const end = new Date(endInput + "T00:00:00");
+                let loopCount = 0; 
+                while(d <= end && loopCount < 365) {
+                    window.currentTimesheetData[emp.id].push({ 
+                        dateStr: toISODate(d), dayType: 'NORMAL', timeIn: emp.shiftStart || '08:00', timeOut: '',
+                        ot: 0, nd: 0, late: 0, duration: 0, rate: 0, basicPay: 0, holidayPay: 0 
+                    });
+                    d.setDate(d.getDate() + 1); loopCount++;
+                }
             }
+
+            const extra = window.currentTimesheetExtra[emp.id];
+            const tsData = window.currentTimesheetData[emp.id];
+
+            let hourlyRate = (parseFloat(emp.rate) || 0) / 8;
+            let otRateMultiplier = window.govRates && window.govRates.otRate !== undefined ? parseFloat(window.govRates.otRate) : 1.25;
+
+            let totalBasicHrs = 0; let totalBasicPay = 0; let totalHolidayPay = 0;
+            let totalOtHrs = 0; let totalOtPay = 0; let totalNdHrs = 0; let totalNdPay = 0;
+            let totalLateHrs = 0; let totalLatePay = 0;
+
+            tsData.forEach(d => {
+                let ot = parseFloat(d.ot) || 0; let nd = parseFloat(d.nd) || 0; let late = parseFloat(d.late) || 0;
+                let duration = parseFloat(d.duration) || 0;
+                let regHrs = duration - ot; if (regHrs < 0) regHrs = 0;
+
+                let bPay = d.basicPay !== undefined ? parseFloat(d.basicPay) : (regHrs * hourlyRate);
+                let hPay = d.holidayPay !== undefined ? parseFloat(d.holidayPay) : 0;
+                let oPay = ot * hourlyRate * otRateMultiplier;
+                let nPay = nd * hourlyRate * 0.10;
+                let lPay = late * hourlyRate;
+
+                totalBasicHrs += (regHrs + late); 
+                totalBasicPay += bPay;
+                totalHolidayPay += hPay;
+                totalOtHrs += ot; totalOtPay += oPay;
+                totalNdHrs += nd; totalNdPay += nPay;
+                totalLateHrs += late; totalLatePay += lPay;
+            });
+
+            let totalExtraEarnings = (extra.creditLeave||0) + (extra.leadAllow||0) + (extra.skillsAllow||0) + (extra.medAllow||0) + (extra.adjPay||0) + (extra.gasAllow||0) + (extra.attInc||0) + (extra.qualInc||0) + (extra.perfInc||0);
+            let grossPay = totalBasicPay + totalHolidayPay + totalOtPay + totalNdPay + totalExtraEarnings;
+            let totalHrs = totalBasicHrs + totalOtHrs;
+
+            let sssDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.sssDed || 0) : 0;
+            let phDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.phicDed || 0) : 0;
+            let pagibigDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.hdmfDed || 0) : 0;
+            
+            let groupLoan = (extra.sssLoan||0) + (extra.hdmfLoan||0) + (extra.calamityLoan||0) + (extra.companyLoan||0);
+            let caDed = parseFloat(extra.cashAdvance || 0);
+            let travelDed = parseFloat(extra.travelFund || 0);
+            let penaltyDed = parseFloat(extra.penalty || 0);
+            
+            let totalDeductions = sssDed + phDed + pagibigDed + groupLoan + caDed + travelDed + penaltyDed + totalLatePay;
+            let netPay = grossPay - totalDeductions;
+
+            // Background save para hindi nagba-block ng UI
+            window.db.collection("timesheets").doc(docId).set({
+                empId: emp.id, start: startInput, end: endInput, payout: payoutInput || endInput,
+                extra: extra, isArchived: false, days: tsData, companyId: window.currentCompanyId
+            }, { merge: true }).catch(e => console.warn(e));
+
+            const tr = document.createElement('tr');
+            tr.id = `ts-row-${emp.id}`; 
+            tr.className = "hover:bg-slate-50 transition-colors search-row";
+            
+            tr.innerHTML = `
+                <td class="px-4 py-4 text-center border-b border-slate-100">
+                    <input type="checkbox" class="ts-checkbox rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" data-docid="${docId}" data-empid="${emp.id}" onchange="window.toggleTsBulkBtn()">
+                </td>
+                <td class="px-4 py-4 font-bold text-indigo-600 hover:text-indigo-800 cursor-pointer" onclick="window.openDailyModal('${emp.id}')">${emp.name}</td>
+                <td class="px-4 py-4 text-slate-700 text-center font-bold" id="summary-hrs-${emp.id}">${totalHrs.toFixed(2)}</td>
+                
+                <td class="px-2 py-4 text-indigo-600 text-center font-bold text-xs">₱${totalOtPay.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                <td class="px-2 py-4 text-indigo-600 text-center font-bold text-xs">₱${totalHolidayPay.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                
+                <td class="px-4 py-4 text-slate-800 text-center font-bold" id="summary-sal-${emp.id}">₱${grossPay.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                
+                <td class="px-2 py-4 text-orange-500 text-center font-bold text-xs">₱${totalLatePay.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                <td class="px-2 py-4 text-rose-500 text-center font-bold text-xs">₱${sssDed.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                <td class="px-2 py-4 text-rose-500 text-center font-bold text-xs">₱${phDed.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                <td class="px-2 py-4 text-rose-500 text-center font-bold text-xs">₱${pagibigDed.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                <td class="px-2 py-4 text-orange-500 text-center font-bold text-xs" title="Cash Advance">₱${caDed.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                <td class="px-2 py-4 text-orange-500 text-center font-bold text-xs" title="All Loans">₱${groupLoan.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                <td class="px-2 py-4 text-orange-500 text-center font-bold text-xs" title="Travel/Penalty">₱${(penaltyDed + travelDed).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                
+                <td class="px-3 py-4 text-rose-600 text-center font-bold text-sm">₱${totalDeductions.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                <td class="px-4 py-4 text-emerald-600 text-center font-bold text-base">₱${netPay.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                
+                <td class="px-3 py-4 text-center">
+                    <div class="flex flex-nowrap items-center justify-center space-x-1.5 whitespace-nowrap">
+                        <button type="button" onclick="window.openDailyModal('${emp.id}')" class="text-xs bg-white text-slate-600 hover:bg-slate-100 px-3 py-1.5 rounded transition-colors border border-slate-300 cursor-pointer shadow-sm">Edit</button>
+                        <button type="button" onclick="window.deleteTimesheet('${emp.id}')" class="text-xs bg-white text-rose-600 hover:bg-rose-50 px-3 py-1.5 rounded transition-colors border border-rose-200 cursor-pointer shadow-sm">Delete</button>
+                        <button type="button" onclick="window.previewTimesheet('${emp.id}')" class="text-xs bg-white text-emerald-600 hover:bg-emerald-50 px-3 py-1.5 rounded transition-colors border border-slate-300 cursor-pointer shadow-sm">Preview</button>
+                        <button type="button" onclick="window.sendTimesheet('${emp.id}')" class="text-xs bg-white text-indigo-600 hover:bg-indigo-50 px-3 py-1.5 rounded transition-colors border border-slate-300 cursor-pointer shadow-sm">Send</button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            renderedRows++;
         }
 
-        const extra = window.currentTimesheetExtra[emp.id];
-        const tsData = window.currentTimesheetData[emp.id];
+        // Kung walang lumabas kasi lahat in-archive sa date range na yun
+        if (renderedRows === 0) {
+            tbody.innerHTML = `<tr><td colspan="16" class="px-6 py-8 text-center text-slate-400 font-medium">All active employees have their timesheets archived for this period. To view or restore them, click the "History" button above.</td></tr>`;
+        }
 
-        let hourlyRate = (emp.rate || 0) / 8;
-        let otRateMultiplier = window.govRates && window.govRates.otRate !== undefined ? parseFloat(window.govRates.otRate) : 1.25;
+        if (typeof window.toggleTsBulkBtn === 'function') window.toggleTsBulkBtn();
+        window.hideLoading();
 
-        let totalBasicHrs = 0; let totalBasicPay = 0; let totalHolidayPay = 0;
-        let totalOtHrs = 0; let totalOtPay = 0; let totalNdHrs = 0; let totalNdPay = 0;
-        let totalLateHrs = 0; let totalLatePay = 0;
-
-        tsData.forEach(d => {
-            let ot = parseFloat(d.ot) || 0; let nd = parseFloat(d.nd) || 0; let late = parseFloat(d.late) || 0;
-            let duration = parseFloat(d.duration) || 0;
-            let regHrs = duration - ot; if (regHrs < 0) regHrs = 0;
-
-            let bPay = d.basicPay !== undefined ? parseFloat(d.basicPay) : (regHrs * hourlyRate);
-            let hPay = d.holidayPay !== undefined ? parseFloat(d.holidayPay) : 0;
-            let oPay = ot * hourlyRate * otRateMultiplier;
-            let nPay = nd * hourlyRate * 0.10;
-            let lPay = late * hourlyRate;
-
-            totalBasicHrs += (regHrs + late); 
-            totalBasicPay += bPay;
-            totalHolidayPay += hPay;
-            totalOtHrs += ot; totalOtPay += oPay;
-            totalNdHrs += nd; totalNdPay += nPay;
-            totalLateHrs += late; totalLatePay += lPay;
-        });
-
-        let totalExtraEarnings = (extra.creditLeave||0) + (extra.leadAllow||0) + (extra.skillsAllow||0) + (extra.medAllow||0) + (extra.adjPay||0) + (extra.gasAllow||0) + (extra.attInc||0) + (extra.qualInc||0) + (extra.perfInc||0);
-        let grossPay = totalBasicPay + totalHolidayPay + totalOtPay + totalNdPay + totalExtraEarnings;
-        let totalHrs = totalBasicHrs + totalOtHrs;
-
-        let sssDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.sssDed || 0) : 0;
-        let phDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.phicDed || 0) : 0;
-        let pagibigDed = (window.govRates && window.govRates.applyGov) ? parseFloat(emp.hdmfDed || 0) : 0;
-        
-        let groupLoan = (extra.sssLoan||0) + (extra.hdmfLoan||0) + (extra.calamityLoan||0) + (extra.companyLoan||0);
-        let caDed = parseFloat(extra.cashAdvance || 0);
-        let travelDed = parseFloat(extra.travelFund || 0);
-        let penaltyDed = parseFloat(extra.penalty || 0);
-        
-        let totalDeductions = sssDed + phDed + pagibigDed + groupLoan + caDed + travelDed + penaltyDed + totalLatePay;
-        let netPay = grossPay - totalDeductions;
-
-        try {
-            await window.db.collection("timesheets").doc(docId).set({
-                empId: emp.id, start: startInput, end: endInput, payout: payoutInput || endInput,
-                extra: extra, isArchived: false, days: tsData
-            }, { merge: true });
-        } catch(err) {}
-
-        const tr = document.createElement('tr');
-        tr.id = `ts-row-${emp.id}`; 
-        tr.className = "hover:bg-slate-50 transition-colors search-row";
-        
-        tr.innerHTML = `
-            <td class="px-4 py-4 text-center border-b border-slate-100">
-                <input type="checkbox" class="ts-checkbox rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer" data-docid="${docId}" data-empid="${emp.id}" onchange="window.toggleTsBulkBtn()">
-            </td>
-            <td class="px-4 py-4 font-bold text-indigo-600 hover:text-indigo-800 cursor-pointer" onclick="window.openDailyModal('${emp.id}')">${emp.name}</td>
-            <td class="px-4 py-4 text-slate-700 text-center font-bold" id="summary-hrs-${emp.id}">${totalHrs.toFixed(2)}</td>
-            
-            <td class="px-2 py-4 text-indigo-600 text-center font-bold text-xs">₱${totalOtPay.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-            <td class="px-2 py-4 text-indigo-600 text-center font-bold text-xs">₱${totalHolidayPay.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-            
-            <td class="px-4 py-4 text-slate-800 text-center font-bold" id="summary-sal-${emp.id}">₱${grossPay.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-            
-            <td class="px-2 py-4 text-orange-500 text-center font-bold text-xs">₱${totalLatePay.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-            <td class="px-2 py-4 text-rose-500 text-center font-bold text-xs">₱${sssDed.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-            <td class="px-2 py-4 text-rose-500 text-center font-bold text-xs">₱${phDed.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-            <td class="px-2 py-4 text-rose-500 text-center font-bold text-xs">₱${pagibigDed.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-            <td class="px-2 py-4 text-orange-500 text-center font-bold text-xs" title="Cash Advance">₱${caDed.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-            <td class="px-2 py-4 text-orange-500 text-center font-bold text-xs" title="All Loans">₱${groupLoan.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-            <td class="px-2 py-4 text-orange-500 text-center font-bold text-xs" title="Travel/Penalty">₱${(penaltyDed + travelDed).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-            
-            <td class="px-3 py-4 text-rose-600 text-center font-bold text-sm">₱${totalDeductions.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-            <td class="px-4 py-4 text-emerald-600 text-center font-bold text-base">₱${netPay.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
-            
-            <td class="px-3 py-4 text-center">
-                <div class="flex flex-nowrap items-center justify-center space-x-1.5 whitespace-nowrap">
-                    <button type="button" onclick="window.openDailyModal('${emp.id}')" class="text-xs bg-white text-slate-600 hover:bg-slate-100 px-3 py-1.5 rounded transition-colors border border-slate-300 cursor-pointer shadow-sm">Edit</button>
-                    <button type="button" onclick="window.deleteTimesheet('${emp.id}')" class="text-xs bg-white text-rose-600 hover:bg-rose-50 px-3 py-1.5 rounded transition-colors border border-rose-200 cursor-pointer shadow-sm">Delete</button>
-                    <button type="button" onclick="window.previewTimesheet('${emp.id}')" class="text-xs bg-white text-emerald-600 hover:bg-emerald-50 px-3 py-1.5 rounded transition-colors border border-slate-300 cursor-pointer shadow-sm">Preview</button>
-                    <button type="button" onclick="window.sendTimesheet('${emp.id}')" class="text-xs bg-white text-indigo-600 hover:bg-indigo-50 px-3 py-1.5 rounded transition-colors border border-slate-300 cursor-pointer shadow-sm">Send</button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(tr);
+    } catch (err) {
+        window.hideLoading();
+        console.error("Generate Timesheet Error:", err);
+        alert("An error occurred. System says: " + err.message);
     }
-
-    // FINAL CHECK AFTER RENDERING ALL ROWS
-    if (typeof window.toggleTsBulkBtn === 'function') window.toggleTsBulkBtn();
-    
-    window.hideLoading();
 });
         
         window.showFooterModal = function(type) {
@@ -5810,7 +5923,7 @@ window.copyPortalLink = function() {
         <div style="font-family: Arial, sans-serif; width: max-content; max-width: 100%; margin: 0 auto; background-color: #ffffff !important; padding: 25px; border-radius: 8px;">
             
             <div style="text-align: center; margin-bottom: 15px;">
-                <h4 style="font-size: 13px; font-weight: bold; color: #0284c7; margin: 0 0 4px 0; text-transform: uppercase;">Company Payroll Summary</h4>
+                <h4 style="font-size: 13px; font-weight: bold; color: #0284c7; margin: 0 0 4px 0; text-transform: uppercase;">Payroll Summary</h4>
                 <h2 style="font-size: 18px; font-weight: 800; color: #1e40af; margin: 0; text-transform: uppercase;">${window.companySettings.name}</h2>
                 <p style="font-size: 10px; color: #64748b; margin: 3px 0 0 0;">${window.companySettings.address}</p>
             </div>
@@ -6009,6 +6122,7 @@ window.copyPortalLink = function() {
     modalContainer.className = "bg-white rounded-xl w-fit max-w-[95vw] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden mx-auto border border-slate-200";
     
     document.querySelector('#preview-modal h3').innerText = "Payroll Breakdown Report";
+    document.getElementById('execute-print-btn').innerHTML = '<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg> Print Report';
     document.getElementById('execute-print-btn').onclick = function() { window.print(); };
     document.getElementById('print-section').innerHTML = reportHtml;
     document.getElementById('preview-modal').style.display = 'flex';
