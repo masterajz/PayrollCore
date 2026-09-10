@@ -1608,14 +1608,40 @@
         </div>
     </div>
 
-<!-- MANAGE POSITIONS MODAL -->
-    <div id="manage-modal" style="display: none;" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-[100] p-4">
-        <div class="bg-white border border-slate-200 rounded-xl w-96 p-6 shadow-2xl">
-            <h3 class="text-lg font-bold text-slate-800 mb-2" id="manage-modal-title">Manage</h3>
-            <input type="text" id="manage-input" placeholder="Type new option..." class="w-full bg-white border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500 mb-4">
-            <div class="flex justify-end space-x-3">
-                <button id="close-manage-btn" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-100 cursor-pointer">Cancel</button>
-                <button id="save-manage-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm font-medium text-white cursor-pointer">Add</button>
+<!-- MANAGE OPTIONS MODAL (Dynamic for Dept, Acc, TL, Pos, Status) -->
+    <div id="manage-modal" style="display: none;" class="fixed inset-0 bg-slate-900/60 flex items-center justify-center z-[100] p-4 backdrop-blur-sm">
+        <div class="bg-white border border-slate-200 rounded-xl w-full max-w-md shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+            <!-- Header -->
+            <div class="px-5 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50 shrink-0">
+                <h3 class="text-lg font-bold text-slate-800" id="manage-modal-title">Manage Options</h3>
+                <button id="close-manage-btn-top" onclick="document.getElementById('manage-modal').style.display='none'" class="text-slate-400 hover:text-rose-500 cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            
+            <!-- Input Area (For Add & Edit) -->
+            <div class="p-5 border-b border-slate-200 bg-white shrink-0">
+                <input type="hidden" id="manage-edit-index" value="-1">
+                <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider" id="manage-input-label">Add New Option</label>
+                <div class="flex gap-2">
+                    <input type="text" id="manage-input" placeholder="Type option here..." class="w-full bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                    <button id="cancel-manage-edit-btn" onclick="window.resetManageInput()" class="hidden px-3 py-2 bg-slate-200 text-slate-700 hover:bg-slate-300 rounded-md text-sm font-bold transition-colors cursor-pointer">Cancel</button>
+                    <button id="save-manage-btn" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-bold transition-colors cursor-pointer shadow-sm">Add</button>
+                </div>
+            </div>
+
+            <!-- List of Options -->
+            <div class="p-0 overflow-y-auto flex-1 bg-slate-50 relative">
+                <table class="w-full text-left border-collapse text-sm">
+                    <tbody id="manage-list-tbody" class="divide-y divide-slate-200 text-slate-700">
+                        <!-- Items will be injected here via JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer -->
+            <div class="px-5 py-4 border-t border-slate-200 flex justify-end bg-white shrink-0">
+                <button id="close-manage-btn" onclick="document.getElementById('manage-modal').style.display='none'" class="px-6 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 rounded-lg text-sm font-bold cursor-pointer transition-colors">Done</button>
             </div>
         </div>
     </div>
@@ -2770,73 +2796,153 @@ window.populatePositionDropdowns = function() {
     }
 };
 
-            document.getElementById('manage-pos-btn').addEventListener('click', () => {
-                window.manageTarget = 'position';
-                document.getElementById('manage-modal-title').innerText = "Manage Positions";
-                document.getElementById('manage-input').value = '';
-                document.getElementById('manage-modal').style.display = 'flex';
-            });
-			
-			document.getElementById('manage-dept-btn').addEventListener('click', () => {
-                window.manageTarget = 'department';
-                document.getElementById('manage-modal-title').innerText = "Manage Departments";
-                document.getElementById('manage-input').value = '';
-                document.getElementById('manage-modal').style.display = 'flex';
-            });
-            document.getElementById('manage-acc-btn').addEventListener('click', () => {
-                window.manageTarget = 'account';
-                document.getElementById('manage-modal-title').innerText = "Manage Accounts";
-                document.getElementById('manage-input').value = '';
-                document.getElementById('manage-modal').style.display = 'flex';
-            });
-            document.getElementById('manage-tl-btn').addEventListener('click', () => {
-                window.manageTarget = 'tl';
-                document.getElementById('manage-modal-title').innerText = "Manage Assigned TLs";
-                document.getElementById('manage-input').value = '';
-                document.getElementById('manage-modal').style.display = 'flex';
-            });
+            // ==========================================
+// DYNAMIC MANAGE OPTIONS LOGIC (Add, Edit, Delete)
+// ==========================================
 
-            document.getElementById('manage-status-btn').addEventListener('click', () => {
-                window.manageTarget = 'status';
-                document.getElementById('manage-modal-title').innerText = "Manage Statuses";
-                document.getElementById('manage-input').value = '';
-                document.getElementById('manage-modal').style.display = 'flex';
-            });
+window.openManageModal = function(target, title) {
+    window.manageTarget = target;
+    document.getElementById('manage-modal-title').innerText = title;
+    window.resetManageInput();
+    window.renderManageList();
+    document.getElementById('manage-modal').style.display = 'flex';
+};
 
-            document.getElementById('save-manage-btn').addEventListener('click', async () => {
-                const val = document.getElementById('manage-input').value.trim();
-                if(!val) return alert("Please enter a valid option.");
-                
-                window.showLoading("Saving...");
-                
-                if (window.manageTarget === 'position') {
-                    if(!window.companyPositions.includes(val)) window.companyPositions.push(val);
-                    if(window.db) await window.db.collection('settings').doc('positions_' + window.currentCompanyId).set({ list: window.companyPositions });
-                } else if (window.manageTarget === 'status') {
-                    if(!window.companyStatuses.includes(val)) window.companyStatuses.push(val);
-                    if(window.db) await window.db.collection('settings').doc('statuses_' + window.currentCompanyId).set({ list: window.companyStatuses });
-                } else if (window.manageTarget === 'department') {
-                    if(!window.companyDepartments.includes(val)) window.companyDepartments.push(val);
-                    if(window.db) await window.db.collection('settings').doc('departments_' + window.currentCompanyId).set({ list: window.companyDepartments });
-                } else if (window.manageTarget === 'account') {
-                    if(!window.companyAccounts.includes(val)) window.companyAccounts.push(val);
-                    if(window.db) await window.db.collection('settings').doc('accounts_' + window.currentCompanyId).set({ list: window.companyAccounts });
-                } else if (window.manageTarget === 'tl') {
-                    if(!window.companyTLs.includes(val)) window.companyTLs.push(val);
-                    if(window.db) await window.db.collection('settings').doc('tls_' + window.currentCompanyId).set({ list: window.companyTLs });
-                }
-                
-                window.populatePositionDropdowns();
-                window.hideLoading();
-                document.getElementById('manage-modal').style.display = 'none';
-            });
-            
-            const closeManageBtn = document.getElementById('close-manage-btn');
-            if (closeManageBtn) {
-                closeManageBtn.addEventListener('click', () => {
-                    document.getElementById('manage-modal').style.display = 'none';
-                });
-            }
+// Listeners para sa lahat ng "Manage" buttons sa Employee Modal
+document.getElementById('manage-pos-btn')?.addEventListener('click', () => window.openManageModal('position', 'Manage Positions'));
+document.getElementById('manage-status-btn')?.addEventListener('click', () => window.openManageModal('status', 'Manage Statuses'));
+document.getElementById('manage-dept-btn')?.addEventListener('click', () => window.openManageModal('department', 'Manage Departments'));
+document.getElementById('manage-acc-btn')?.addEventListener('click', () => window.openManageModal('account', 'Manage Accounts'));
+document.getElementById('manage-tl-btn')?.addEventListener('click', () => window.openManageModal('tl', 'Manage Assigned TLs'));
+
+// I-render ang listahan ng options sa loob ng modal
+window.renderManageList = function() {
+    const tbody = document.getElementById('manage-list-tbody');
+    tbody.innerHTML = '';
+    
+    let list = [];
+    if (window.manageTarget === 'position') list = window.companyPositions || [];
+    else if (window.manageTarget === 'status') list = window.companyStatuses || [];
+    else if (window.manageTarget === 'department') list = window.companyDepartments || [];
+    else if (window.manageTarget === 'account') list = window.companyAccounts || [];
+    else if (window.manageTarget === 'tl') list = window.companyTLs || [];
+
+    if (list.length === 0) {
+        tbody.innerHTML = '<tr><td class="p-6 text-center text-slate-400 text-xs italic">No options found. Please add one above.</td></tr>';
+        return;
+    }
+
+    list.forEach((item, index) => {
+        tbody.innerHTML += `
+            <tr class="hover:bg-indigo-50/50 transition-colors group">
+                <td class="px-5 py-3.5 font-medium text-slate-800 w-full">${item}</td>
+                <td class="px-5 py-3.5 whitespace-nowrap text-right">
+                    <button onclick="window.editManageItem(${index})" class="text-indigo-600 hover:text-indigo-800 text-xs font-bold mr-3 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">Edit</button>
+                    <button onclick="window.deleteManageItem(${index})" class="text-rose-500 hover:text-rose-700 text-xs font-bold cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity">Delete</button>
+                </td>
+            </tr>
+        `;
+    });
+};
+
+// Reset Input pagkatapos mag-edit o mag-add
+window.resetManageInput = function() {
+    document.getElementById('manage-edit-index').value = '-1';
+    document.getElementById('manage-input').value = '';
+    document.getElementById('manage-input-label').innerText = 'Add New Option';
+    
+    const saveBtn = document.getElementById('save-manage-btn');
+    if (saveBtn) {
+        saveBtn.innerText = 'Add';
+        saveBtn.classList.replace('bg-emerald-600', 'bg-indigo-600');
+        saveBtn.classList.replace('hover:bg-emerald-700', 'hover:bg-indigo-700');
+    }
+    const cancelBtn = document.getElementById('cancel-manage-edit-btn');
+    if (cancelBtn) cancelBtn.classList.add('hidden');
+};
+
+// Pindot sa "Edit" na text
+window.editManageItem = function(index) {
+    let list = [];
+    if (window.manageTarget === 'position') list = window.companyPositions;
+    else if (window.manageTarget === 'status') list = window.companyStatuses;
+    else if (window.manageTarget === 'department') list = window.companyDepartments;
+    else if (window.manageTarget === 'account') list = window.companyAccounts;
+    else if (window.manageTarget === 'tl') list = window.companyTLs;
+
+    document.getElementById('manage-edit-index').value = index;
+    document.getElementById('manage-input').value = list[index];
+    document.getElementById('manage-input-label').innerText = 'Edit Option';
+    
+    const saveBtn = document.getElementById('save-manage-btn');
+    saveBtn.innerText = 'Update';
+    saveBtn.classList.replace('bg-indigo-600', 'bg-emerald-600');
+    saveBtn.classList.replace('hover:bg-indigo-700', 'hover:bg-emerald-700');
+    document.getElementById('cancel-manage-edit-btn').classList.remove('hidden');
+};
+
+// Pindot sa "Delete" na text
+window.deleteManageItem = async function(index) {
+    if(!confirm("Are you sure you want to delete this option?")) return;
+    
+    window.showLoading("Deleting...");
+    let docName, list;
+    
+    if (window.manageTarget === 'position') { list = window.companyPositions; docName = 'positions_'; }
+    else if (window.manageTarget === 'status') { list = window.companyStatuses; docName = 'statuses_'; }
+    else if (window.manageTarget === 'department') { list = window.companyDepartments; docName = 'departments_'; }
+    else if (window.manageTarget === 'account') { list = window.companyAccounts; docName = 'accounts_'; }
+    else if (window.manageTarget === 'tl') { list = window.companyTLs; docName = 'tls_'; }
+
+    list.splice(index, 1); // Tanggalin sa array
+
+    try {
+        if(window.db) await window.db.collection('settings').doc(docName + window.currentCompanyId).set({ list: list });
+        window.renderManageList();
+        window.populatePositionDropdowns(); // I-refresh ang dropdowns sa likod
+        if(typeof showToast === 'function') showToast("Option deleted successfully.", "success");
+    } catch(e) {
+        alert("Error deleting option: " + e.message);
+    }
+    window.hideLoading();
+};
+
+// Pindot sa "Add" o "Update" button
+document.getElementById('save-manage-btn')?.addEventListener('click', async () => {
+    const val = document.getElementById('manage-input').value.trim();
+    if(!val) return showToast ? showToast("Please enter a valid option.", "error") : alert("Please enter a valid option.");
+    
+    const idx = parseInt(document.getElementById('manage-edit-index').value);
+    window.showLoading(idx > -1 ? "Updating..." : "Saving...");
+    
+    let docName, list;
+    if (window.manageTarget === 'position') { list = window.companyPositions; docName = 'positions_'; }
+    else if (window.manageTarget === 'status') { list = window.companyStatuses; docName = 'statuses_'; }
+    else if (window.manageTarget === 'department') { list = window.companyDepartments; docName = 'departments_'; }
+    else if (window.manageTarget === 'account') { list = window.companyAccounts; docName = 'accounts_'; }
+    else if (window.manageTarget === 'tl') { list = window.companyTLs; docName = 'tls_'; }
+
+    if (idx > -1) {
+        list[idx] = val; // Update pag Edit Mode
+    } else {
+        if(!list.includes(val)) list.push(val); // Add bago kung hindi duplicate
+        else {
+            window.hideLoading();
+            return showToast ? showToast("This option already exists.", "error") : alert("This option already exists.");
+        }
+    }
+
+    try {
+        if(window.db) await window.db.collection('settings').doc(docName + window.currentCompanyId).set({ list: list });
+        window.resetManageInput();
+        window.renderManageList();
+        window.populatePositionDropdowns(); // I-refresh ang dropdowns sa Add Employee form
+    } catch(e) {
+        alert("Error saving option: " + e.message);
+    }
+    
+    window.hideLoading();
+});
 
             
 
