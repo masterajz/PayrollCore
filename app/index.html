@@ -4552,22 +4552,24 @@ document.getElementById('adv-tab-other').addEventListener('click', (e) => {
     
     if(!window.currentTimesheetData[empId]) return;
 
+    // UPDATE HEADER PARA MAGING (HRS) NALANG ANG LATES
+    const theadTr = tbody.previousElementSibling.querySelector('tr');
+    if(theadTr && theadTr.children[5]) {
+        theadTr.children[5].innerHTML = 'LATES (HRS)';
+    }
+
     window.currentTimesheetData[empId].forEach((day, index) => {
         let hourlyRate = (emp.rate || 0) / 8;
         let ndPay = (day.nd || 0) * hourlyRate * 0.10;
         let otRateMultiplier = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
-let otPay = (day.ot || 0) * hourlyRate * otRateMultiplier;
-        let latePay = (day.late || 0) * hourlyRate; 
+        let otPay = (day.ot || 0) * hourlyRate * otRateMultiplier;
 
         const tr = document.createElement('tr');
         tr.className = "border-b border-slate-200 hover:bg-slate-50";
         tr.innerHTML = `
-            <!-- 1. DATE COLUMN -->
             <td class="px-2 py-2 min-w-[115px]">
                 <input type="text" class="t-date date-picker-custom w-full min-w-[105px] bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center font-medium cursor-pointer" value="${day.dateStr}" placeholder="MM/DD/YYYY">
             </td>
-			
-			<!-- 1.5 DAY TYPE / HOLIDAY COLUMN -->
             <td class="px-2 py-2 min-w-[130px]">
                 <select class="t-daytype w-full bg-white border border-slate-300 text-slate-800 py-1 px-1.5 rounded text-xs font-semibold focus:border-indigo-500 cursor-pointer" onchange="window.calcDaily('${empId}', ${index}, this)">
                     <option value="NORMAL" ${(!day.dayType || day.dayType === 'NORMAL') ? 'selected' : ''}>Regular Day</option>
@@ -4576,46 +4578,33 @@ let otPay = (day.ot || 0) * hourlyRate * otRateMultiplier;
                     <option value="DBL_HOL" ${day.dayType === 'DBL_HOL' ? 'selected' : ''}>Double Holiday (300%)</option>
                 </select>
             </td>
-            
-            <!-- 2. TIME IN COLUMN -->
             <td class="px-2 py-2 min-w-[105px]">
                 ${day.timeIn === 'REST' 
                     ? `<input type="text" class="w-full min-w-[95px] bg-slate-100 border border-slate-200 text-slate-500 py-1 px-2 rounded text-xs text-center font-bold outline-none cursor-not-allowed" value="REST DAY" readonly>`
                     : `<input type="text" class="t-in time-picker-custom w-full min-w-[95px] bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer placeholder-slate-400" placeholder="hh:mm AM/PM" value="${day.timeIn}" onchange="window.calcDaily('${empId}', ${index}, this)">`
                 }
             </td>
-            
-            <!-- 3. TIME OUT COLUMN -->
             <td class="px-2 py-2 min-w-[105px]">
                 ${day.timeIn === 'REST' 
                     ? `<input type="text" class="w-full min-w-[95px] bg-slate-100 border border-slate-200 text-slate-500 py-1 px-2 rounded text-xs text-center font-bold outline-none cursor-not-allowed" value="REST DAY" readonly>`
                     : `<input type="text" class="t-out time-picker-custom w-full min-w-[95px] bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center cursor-pointer placeholder-slate-400" placeholder="hh:mm AM/PM" value="${day.timeOut}" onchange="window.calcDaily('${empId}', ${index}, this)">`
                 }
             </td>
-            
-            <!-- 4. OVERTIME COLUMN -->
             <td class="px-2 py-2 text-center font-bold text-indigo-500 text-xs" title="Overtime (Auto-computed)">
                 <span class="t-ot">${(day.ot || 0).toFixed(2)}</span><br>
                 <div class="t-ot-container mt-0.5"><span class="text-[10px] text-indigo-400 font-normal">₱${otPay.toFixed(2)}</span></div>
             </td>
-
-            <!-- 5. LATES COLUMN -->
-            <td class="px-2 py-2 text-center font-bold text-orange-500 text-xs t-late" title="Lates (Auto-computed)">
-                ${(day.late || 0).toFixed(2)}<br><span class="text-[10px] text-orange-400 font-normal">₱${latePay.toFixed(2)}</span>
+            
+            <!-- TANGGAL ANG MONETARY DEDUCTION SA LATES -->
+            <td class="px-2 py-2 text-center font-bold text-orange-500 text-xs t-late" title="Tardiness (Hours)">
+                ${(day.late || 0).toFixed(2)}
             </td>
             
-            <!-- 6. NIGHT DIFF COLUMN -->
             <td class="px-2 py-2 text-center font-bold text-indigo-500 text-xs t-nd" title="Night Diff (10PM - 6AM)">
                 ${(day.nd || 0).toFixed(2)}<br><span class="text-[10px] text-indigo-400 font-normal">₱${ndPay.toFixed(2)}</span>
             </td>
-            
-            <!-- 7. DURATION COLUMN -->
             <td class="px-2 py-2 text-center font-bold text-slate-700 text-xs t-dur">${(day.duration || 0).toFixed(2)}</td>
-            
-            <!-- 8. EARNINGS COLUMN -->
             <td class="px-2 py-2 text-center font-bold text-emerald-600 text-xs t-rate">₱${(day.rate || 0).toFixed(2)}</td>
-            
-        <!-- 9. ACTION COLUMN -->
             <td class="px-2 py-2 text-center">
                 <div class="flex flex-row justify-center items-center gap-3">
                     <button onclick="window.reorderTimesheetRow('${empId}')" class="text-indigo-500 hover:text-indigo-700 cursor-pointer p-1" title="Sort & Apply">
@@ -4632,23 +4621,10 @@ let otPay = (day.ot || 0) * hourlyRate * otRateMultiplier;
         `;
         tbody.appendChild(tr);
     });
-// Activate Flatpickr Date (Strict MM/DD/YYYY for Display, YYYY-MM-DD for System)
-        flatpickr(".date-picker-custom", {
-            dateFormat: "Y-m-d", 
-            altInput: true,      
-            altFormat: "m/d/Y",  
-            allowInput: true
-        });
-			
-// Activate Flatpickr for Time In and Time Out
-flatpickr(".time-picker-custom", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            altInput: true,
-            altFormat: "h:i K"
-        });
-        }; // <-- Ito yung dulo ng window.renderDailyTable
+
+    flatpickr(".date-picker-custom", { dateFormat: "Y-m-d", altInput: true, altFormat: "m/d/Y", allowInput: true });
+    flatpickr(".time-picker-custom", { enableTime: true, noCalendar: true, dateFormat: "H:i", altInput: true, altFormat: "h:i K" });
+};
 
    window.calcDaily = function(empId, index, el) {
     const tr = el.closest('tr');
@@ -4656,7 +4632,6 @@ flatpickr(".time-picker-custom", {
     const dateStr = tr.querySelector('.t-date').value;
     const dayType = tr.querySelector('.t-daytype')?.value || 'NORMAL';
     
-    // SAFE FALLBACK: Iwas error kapag naka "REST DAY" ang row
     const tInEl = tr.querySelector('.t-in');
     const tOutEl = tr.querySelector('.t-out');
     const timeIn = tInEl ? tInEl.value : 'REST';
@@ -4667,7 +4642,6 @@ flatpickr(".time-picker-custom", {
     let cleanRate = typeof rawRate === 'string' ? parseFloat(rawRate.replace(/[^0-9.]/g, '')) : parseFloat(rawRate);
     let hourlyRate = (cleanRate && !isNaN(cleanRate)) ? cleanRate / 8 : 0;
 
-    // I-compute lang ang oras kung may valid time at hindi "REST"
     if (timeIn && timeOut && timeIn !== 'REST' && timeOut !== 'REST') {
         let start = new Date("1970-01-01T" + timeIn + ":00");
         let end = new Date("1970-01-01T" + timeOut + ":00");
@@ -4680,9 +4654,7 @@ flatpickr(".time-picker-custom", {
         } else if (dateStr.includes('-')) {
             let parts = dateStr.split('-');
             actualDate = new Date(parts[0], parts[1] - 1, parts[2]);
-        } else {
-            actualDate = new Date();
-        }
+        } else { actualDate = new Date(); }
 
         let dayOfWeek = actualDate.getDay();
         let isFridayWeekend = window.govRates && window.govRates.fridayIsWeekend;
@@ -4699,23 +4671,14 @@ flatpickr(".time-picker-custom", {
         totalDur = actualRaw - appliedBreak;
         if (totalDur < 0) totalDur = 0;
 
+        // TARDINESS (Strikto kung kailan pumasok vs shift start)
         if (start > sStart) {
             lateHrs = (start - sStart) / (1000 * 60 * 60);
         }
 
-        let regularEnd = new Date(sStart.getTime() + (8 + appliedBreak) * 3600000);
-        
-        hours = 8; 
-
-        if (end > regularEnd) {
-            ot = (end - regularEnd) / (1000 * 60 * 60);
-        } else {
-            let undertimeHrs = (regularEnd - end) / (1000 * 60 * 60);
-            if (undertimeHrs > 0) lateHrs += undertimeHrs;
-        }
-        
-        if (lateHrs > 8) lateHrs = 8;
-        if (lateHrs < 0) lateHrs = 0;
+        // BAGONG LOGIC: Regular Hours ay based kung ilang oras lang tinrabaho
+        hours = Math.min(totalDur, 8); 
+        ot = Math.max(0, totalDur - 8); 
 
         let ndStart1 = new Date(start); ndStart1.setHours(22,0,0,0);
         let ndEnd1 = new Date(start); ndEnd1.setDate(ndEnd1.getDate() + 1); ndEnd1.setHours(6,0,0,0);
@@ -4729,34 +4692,26 @@ flatpickr(".time-picker-custom", {
         if (ndHours > totalDur) ndHours = totalDur; 
     }
 
-    let basicPay = 0;
-    let holidayPay = 0;
-
-    // KAPAG REST DAY: Walang basic pay, walang holiday pay (P0.00)
+    let basicPay = 0; let holidayPay = 0;
     if (timeIn === 'REST' || timeOut === 'REST') {
-        holidayPay = 0;
-        basicPay = 0;
+        holidayPay = 0; basicPay = 0;
     } else if (totalDur > 0) {
-        basicPay = hours * hourlyRate;
-        if (dayType === 'REG_HOL') {
-            holidayPay = hours * hourlyRate * 1.0; 
-        } else if (dayType === 'SPEC_HOL') {
-            holidayPay = hours * hourlyRate * 0.3; 
-        } else if (dayType === 'DBL_HOL') {
-            holidayPay = hours * hourlyRate * 2.0; 
-        }
+        basicPay = hours * hourlyRate; // EXACT PAY BASED ON HOURS WORKED
+        if (dayType === 'REG_HOL') holidayPay = hours * hourlyRate * 1.0; 
+        else if (dayType === 'SPEC_HOL') holidayPay = hours * hourlyRate * 0.3; 
+        else if (dayType === 'DBL_HOL') holidayPay = hours * hourlyRate * 2.0; 
     }
 
     let otBaseRate = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
     let otPay = ot * hourlyRate * otBaseRate; 
     let ndPay = ndHours * hourlyRate * 0.10; 
-    let latePay = lateHrs * hourlyRate;
 
-    let dailyRateVal = basicPay + holidayPay + otPay + ndPay - latePay;
+    // NO MORE LATE PAY DEDUCTION! (Para walang double penalty)
+    let dailyRateVal = basicPay + holidayPay + otPay + ndPay;
     if (isNaN(dailyRateVal) || dailyRateVal < 0) dailyRateVal = 0;
 
     tr.querySelector('.t-ot').innerText = ot.toFixed(2);
-    tr.querySelector('.t-late').innerHTML = `${lateHrs.toFixed(2)}<br><span class="text-[10px] text-orange-400 font-normal">₱${latePay.toFixed(2)}</span>`;
+   tr.querySelector('.t-late').innerHTML = `${lateHrs.toFixed(2)}`; // HOURS NALANG
     tr.querySelector('.t-nd').innerHTML = `${ndHours.toFixed(2)}<br><span class="text-[10px] text-indigo-400 font-normal">₱${ndPay.toFixed(2)}</span>`;
     tr.querySelector('.t-ot-container').innerHTML = `<span class="text-[10px] text-indigo-400 font-normal">₱${otPay.toFixed(2)}</span>`;
     
@@ -4856,7 +4811,7 @@ window.previewTimesheet = function(id) {
     let penalty = parseFloat(extra.penalty)||0;
 
     let totalExtraDeductions = sssLn + hdmfLn + calLn + compLn + tFund + cAdv + penalty;
-    let totalDeductions = sssDed + phDed + pagibigDed + totalLatePay + totalExtraDeductions;
+    
     let netPay = grossPay > 0 ? (grossPay - totalDeductions) : 0;
 
     const fmt = (num) => `PHP ${num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
@@ -5048,7 +5003,7 @@ window.sendTimesheet = async function(id) {
     let penalty = parseFloat(extra.penalty)||0;
 
     let totalExtraDeductions = sssLn + hdmfLn + calLn + compLn + tFund + cAdv + penalty;
-    let totalDeductions = sssDed + phDed + pagibigDed + totalLatePay + totalExtraDeductions;
+    
     let netPay = grossPay > 0 ? (grossPay - totalDeductions) : 0;
 
     const fmt = (num) => `PHP ${num.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
@@ -5855,14 +5810,14 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
                 let hPay = d.holidayPay !== undefined ? parseFloat(d.holidayPay) : 0;
                 let oPay = ot * hourlyRate * otRateMultiplier;
                 let nPay = nd * hourlyRate * 0.10;
-                let lPay = late * hourlyRate;
-
-                totalBasicHrs += (regHrs + late); 
+                // Tinanggal ang lPay computation para di ibawas
+                
+                totalBasicHrs += regHrs; // Inayos para exact worked hours lang ang lumabas
                 totalBasicPay += bPay;
                 totalHolidayPay += hPay;
                 totalOtHrs += ot; totalOtPay += oPay;
                 totalNdHrs += nd; totalNdPay += nPay;
-                totalLateHrs += late; totalLatePay += lPay;
+                totalLateHrs += late; 
             });
 
             let totalExtraEarnings = (extra.creditLeave||0) + (extra.leadAllow||0) + (extra.skillsAllow||0) + (extra.medAllow||0) + (extra.adjPay||0) + (extra.gasAllow||0) + (extra.attInc||0) + (extra.qualInc||0) + (extra.perfInc||0);
@@ -5878,7 +5833,7 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
             let travelDed = parseFloat(extra.travelFund || 0);
             let penaltyDed = parseFloat(extra.penalty || 0);
             
-            let totalDeductions = sssDed + phDed + pagibigDed + groupLoan + caDed + travelDed + penaltyDed + totalLatePay;
+            let totalDeductions = sssDed + phDed + pagibigDed + groupLoan + caDed + travelDed + penaltyDed;
             let netPay = grossPay - totalDeductions;
 
             // Background save para hindi nagba-block ng UI
@@ -5903,7 +5858,7 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
                 
                 <td class="px-4 py-4 text-slate-800 text-center font-bold" id="summary-sal-${emp.id}">₱${grossPay.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
                 
-                <td class="px-2 py-4 text-orange-500 text-center font-bold text-xs">₱${totalLatePay.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                <td class="px-2 py-4 text-orange-500 text-center font-bold text-xs">${totalLateHrs.toFixed(2)} hrs</td>
                 <td class="px-2 py-4 text-rose-500 text-center font-bold text-xs">₱${sssDed.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
                 <td class="px-2 py-4 text-rose-500 text-center font-bold text-xs">₱${phDed.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
                 <td class="px-2 py-4 text-rose-500 text-center font-bold text-xs">₱${pagibigDed.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
@@ -6050,17 +6005,19 @@ window.copyPortalLink = function() {
     let reportHtml = `
         <style>
             @media print {
-                @page { size: landscape; margin: 5mm; }
+                /* INALAKIHAN ANG MARGIN NG PAPEL (15mm) PARA MAY SPACE SA GILID */
+                @page { size: landscape; margin: 15mm; }
                 body { background: #ffffff !important; }
                 #print-section { width: 100% !important; left: 0 !important; top: 0 !important; padding: 0 !important; }
                 .print-scroll-container { overflow: visible !important; width: 100% !important; }
-                .report-table { width: 100% !important; min-width: 0 !important; font-size: 8px !important; table-layout: auto !important; }
-                .report-table th, .report-table td { padding: 4px 3px !important; font-size: 8px !important; }
-                .group-hdr { border-bottom: 2px solid !important; padding: 3px 0 !important; text-align: center !important; font-weight: bold !important; font-size: 8.5px !important; text-transform: uppercase !important; }
+                .report-table { width: 100% !important; min-width: 0 !important; font-size: 8.5px !important; table-layout: auto !important; }
+                .report-table th, .report-table td { padding: 5px 3px !important; font-size: 8.5px !important; }
+                .group-hdr { border-bottom: 2px solid !important; padding: 3px 0 !important; text-align: center !important; font-weight: bold !important; font-size: 9px !important; text-transform: uppercase !important; }
             }
             .group-hdr { border-bottom: 2px solid; padding: 4px 0; text-align: center; font-weight: bold; font-size: 10px; text-transform: uppercase; }
         </style>
-        <div style="font-family: Arial, sans-serif; width: 100%; margin: 0 auto; background-color: #ffffff !important; padding: 25px; border-radius: 8px; box-sizing: border-box;">
+        <!-- BINAWASAN ANG WIDTH TO 95% PARA PUMAGITNA AT MAY SULATAN SA GILID -->
+        <div style="font-family: Arial, sans-serif; width: 95%; margin: 0 auto; background-color: #ffffff !important; padding: 10px; border-radius: 8px; box-sizing: border-box;">
             
             <div style="text-align: center; margin-bottom: 15px;">
                 <h4 style="font-size: 13px; font-weight: bold; color: #0284c7; margin: 0 0 4px 0; text-transform: uppercase;">Payroll Summary</h4>
@@ -7365,18 +7322,8 @@ window.recalculateHeadlessDay = function(empId, dayIndex) {
 
         if (start > sStart) lateHrs = (start - sStart) / (1000 * 60 * 60);
 
-        let regularEnd = new Date(sStart.getTime() + (8 + appliedBreak) * 3600000);
-        hours = 8; 
-
-        if (end > regularEnd) {
-            ot = (end - regularEnd) / (1000 * 60 * 60);
-        } else {
-            let undertimeHrs = (regularEnd - end) / (1000 * 60 * 60);
-            if (undertimeHrs > 0) lateHrs += undertimeHrs;
-        }
-        
-        if (lateHrs > 8) lateHrs = 8;
-        if (lateHrs < 0) lateHrs = 0;
+        hours = Math.min(totalDur, 8); 
+        ot = Math.max(0, totalDur - 8); 
 
         let ndStart1 = new Date(start); ndStart1.setHours(22,0,0,0);
         let ndEnd1 = new Date(start); ndEnd1.setDate(ndEnd1.getDate() + 1); ndEnd1.setHours(6,0,0,0);
@@ -7400,14 +7347,12 @@ window.recalculateHeadlessDay = function(empId, dayIndex) {
         else if (dayType === 'DBL_HOL') holidayPay = hours * hourlyRate * 2.0; 
     }
 
-    let otBaseRate = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
+let otBaseRate = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
     let otPay = ot * hourlyRate * otBaseRate; 
     let ndPay = ndHours * hourlyRate * 0.10; 
-    let latePay = lateHrs * hourlyRate;
-    let dailyRateVal = basicPay + holidayPay + otPay + ndPay - latePay;
+    let dailyRateVal = basicPay + holidayPay + otPay + ndPay; // TANGGAL ANG LATE PAY DEDUCTION
     if (isNaN(dailyRateVal) || dailyRateVal < 0) dailyRateVal = 0;
 
-    // Apply Computed Values
     day.ot = ot; day.nd = ndHours; day.late = lateHrs;
     day.duration = totalDur; day.rate = dailyRateVal;
     day.basicPay = basicPay; day.holidayPay = holidayPay;
