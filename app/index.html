@@ -4611,19 +4611,26 @@ document.getElementById('adv-tab-other').addEventListener('click', (e) => {
         theadTr.children[5].innerHTML = 'LATES (HRS)';
     }
 
-    window.currentTimesheetData[empId].forEach((day, index) => {
-        let hourlyRate = (emp.rate || 0) / 8;
-        let ndPay = (day.nd || 0) * hourlyRate * 0.10;
-        let otRateMultiplier = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
-        let otPay = (day.ot || 0) * hourlyRate * otRateMultiplier;
+   window.currentTimesheetData[empId].forEach((day, index) => {
+            let hourlyRate = (emp.rate || 0) / 8;
+            let ndPay = (day.nd || 0) * hourlyRate * 0.10;
+            let otRateMultiplier = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
+            let otPay = (day.ot || 0) * hourlyRate * otRateMultiplier;
+            
+            // KUNIN ANG ARAW BASE SA PETSA (MON, TUE, WED)
+            let dObj = new Date(day.dateStr);
+            let dayName = !isNaN(dObj) ? dObj.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase() : '';
 
-        const tr = document.createElement('tr');
-        tr.className = "border-b border-slate-200 hover:bg-slate-50";
-        tr.innerHTML = `
-            <td class="px-2 py-2 min-w-[115px]">
-                <input type="text" class="t-date date-picker-custom w-full min-w-[105px] bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center font-medium cursor-pointer" value="${day.dateStr}" placeholder="MM/DD/YYYY">
-            </td>
-            <td class="px-2 py-2 min-w-[130px]">
+            const tr = document.createElement('tr');
+            tr.className = "border-b border-slate-200 hover:bg-slate-50";
+            tr.innerHTML = `
+                <td class="px-2 py-2 min-w-[130px]">
+                    <div class="flex items-center space-x-1.5">
+                        <span class="text-[10px] font-bold text-slate-400 w-8 text-left uppercase shrink-0">${dayName}</span>
+                        <input type="text" class="t-date date-picker-custom w-full min-w-[95px] bg-white border border-slate-300 text-slate-800 py-1 px-2 rounded focus:border-indigo-500 text-xs text-center font-medium cursor-pointer" value="${day.dateStr}" placeholder="MM/DD/YYYY">
+                    </div>
+                </td>
+                <td class="px-2 py-2 min-w-[130px]">
                 <select class="t-daytype w-full bg-white border border-slate-300 text-slate-800 py-1 px-1.5 rounded text-xs font-semibold focus:border-indigo-500 cursor-pointer" onchange="window.calcDaily('${empId}', ${index}, this)">
                     <option value="NORMAL" ${(!day.dayType || day.dayType === 'NORMAL') ? 'selected' : ''}>Regular Day</option>
                     <option value="REG_HOL" ${day.dayType === 'REG_HOL' ? 'selected' : ''}>Reg. Holiday (200%)</option>
