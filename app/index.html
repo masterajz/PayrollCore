@@ -4682,8 +4682,8 @@ document.getElementById('adv-tab-other').addEventListener('click', (e) => {
         tbody.appendChild(tr);
     });
 
-    flatpickr(".date-picker-custom", { dateFormat: "Y-m-d", altInput: true, altFormat: "m/d/Y", allowInput: true });
-    flatpickr(".time-picker-custom", { enableTime: true, noCalendar: true, dateFormat: "H:i", altInput: true, altFormat: "h:i K" });
+flatpickr(".date-picker-custom", { dateFormat: "Y-m-d", altInput: true, altFormat: "m/d/Y", allowInput: true, disableMobile: true });
+    flatpickr(".time-picker-custom", { enableTime: true, noCalendar: true, dateFormat: "H:i", altInput: true, altFormat: "h:i K", minuteIncrement: 1, disableMobile: true });
 };
 
    window.calcDaily = function(empId, index, el) {
