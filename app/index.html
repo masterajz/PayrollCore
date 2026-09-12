@@ -1534,6 +1534,26 @@
             </div>
 
             <!-- Dynamic Fields Container -->
+            <!-- INDIVIDUAL BREAK OVERRIDE -->
+            <div class="col-span-1 sm:col-span-2 mt-2 p-3 bg-indigo-50/50 rounded-lg border border-indigo-100">
+                <div class="flex justify-between items-center mb-2">
+                    <label class="block text-xs font-bold text-indigo-800">Custom Break Deduction (Optional)</label>
+                    <span class="text-[9px] text-indigo-500 font-semibold uppercase tracking-wider">Overrides Payroll Settings</span>
+                </div>
+                <p class="text-[10px] text-slate-500 mb-3">Leave these blank to automatically follow the Global Payroll Settings. Enter '0' if no break deduction.</p>
+                <div class="flex space-x-4">
+                    <div class="w-1/2">
+                        <label class="block mb-1 text-[10px] uppercase font-semibold text-slate-600">Weekday Break (Hrs)</label>
+                        <input type="number" step="0.5" min="0" id="emp-custom-break-weekday" placeholder="Default" class="w-full bg-white border border-slate-300 rounded-md px-3 py-1.5 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                    </div>
+                    <div class="w-1/2">
+                        <label class="block mb-1 text-[10px] uppercase font-semibold text-slate-600">Weekend Break (Hrs)</label>
+                        <input type="number" step="0.5" min="0" id="emp-custom-break-weekend" placeholder="Default" class="w-full bg-white border border-slate-300 rounded-md px-3 py-1.5 text-slate-800 text-sm focus:outline-none focus:border-indigo-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Fields Container -->
             <div id="dynamic-emp-fields" class="mt-4"></div>
         </div>
 
@@ -3414,6 +3434,8 @@ document.getElementById('add-employee-btn').addEventListener('click', () => {
     document.getElementById('emp-reg-date').value = '';
     document.getElementById('emp-pin').value = ''; 
     document.getElementById('emp-rate').value = '';
+	document.getElementById('emp-custom-break-weekday').value = '';
+    document.getElementById('emp-custom-break-weekend').value = '';
     window.renderDynamicEmpFields({});
     document.getElementById('employee-modal').style.display = 'flex';
 });
@@ -4069,6 +4091,8 @@ window.editEmployee = function(id) {
         document.getElementById('emp-shift-start').value = emp.shiftStart || '08:00';
         document.getElementById('emp-shift-end').value = emp.shiftEnd || '17:00';
         document.getElementById('emp-rate').value = emp.rate || 0;
+		document.getElementById('emp-custom-break-weekday').value = (emp.customBreakWeekday !== undefined && emp.customBreakWeekday !== null) ? emp.customBreakWeekday : '';
+        document.getElementById('emp-custom-break-weekend').value = (emp.customBreakWeekend !== undefined && emp.customBreakWeekend !== null) ? emp.customBreakWeekend : '';
         
         // Allowances (Mula sa 2nd snippet mo)
         if (document.getElementById('emp-allow-lead')) document.getElementById('emp-allow-lead').value = emp.leadAllow || 0;
@@ -4141,12 +4165,17 @@ document.getElementById('save-emp-btn').addEventListener('click', async function
     const formattedShift = `${formatTimeAMPM(shiftStart)} - ${formatTimeAMPM(shiftEnd)}`;
     window.showLoading("Saving...");
 
-    // Pagsama-samahin ang data
+// Kunin ang Custom Break values
+    const customBreakWd = document.getElementById('emp-custom-break-weekday').value;
+    const customBreakWe = document.getElementById('emp-custom-break-weekend').value;
+
     const empData = { 
         empNo, name, email, pin, department, account, assignedTl, 
         position, status, role, hiredDate, regDate,
         shift: formattedShift, shiftStart, shiftEnd, rate,
         leadAllow, skillsAllow, medAllow,
+        customBreakWeekday: customBreakWd !== '' ? parseFloat(customBreakWd) : null,
+        customBreakWeekend: customBreakWe !== '' ? parseFloat(customBreakWe) : null,
         customData: customData,
         companyName: window.companySettings.name || "My Company" 
     };
@@ -4156,6 +4185,33 @@ document.getElementById('save-emp-btn').addEventListener('click', async function
             await window.db.collection("employees").doc(id).update(empData);
             const idx = window.employees.findIndex(e => e.id === id);
             window.employees[idx] = { ...window.employees[idx], ...empData };
+
+            // === AUTO-RECOMPUTE CURRENT TIMESHEET ===
+            // Kung may active na timesheet sa screen, i-recompute agad lahat ng araw niya
+            if (window.currentTimesheetData && window.currentTimesheetData[id]) {
+                const startInput = document.getElementById('period-start').value;
+                const endInput = document.getElementById('period-end').value;
+                
+                if (startInput && endInput) {
+                    // Loop sa lahat ng araw at i-recompute base sa bagong break/rate
+                    for (let i = 0; i < window.currentTimesheetData[id].length; i++) {
+                        window.recalculateHeadlessDay(id, i);
+                    }
+                    
+                    // I-save ang bagong computation sa database
+                    const docId = `ts_${id}_${startInput}_to_${endInput}`;
+                    await window.db.collection("timesheets").doc(docId).update({
+                        days: window.currentTimesheetData[id]
+                    }).catch(e => console.warn("No timesheet to update yet."));
+                    
+                    // Kung nasa Payroll Tab tayo, i-refresh agad ang view para makita mo agad!
+                    if (window.currentTab === 'payroll') {
+                        document.getElementById('btn-generate-timesheet').click();
+                    }
+                }
+            }
+            // ========================================
+
         } else {
             empData.ytdSalary = 0; empData.isArchived = false; empData.companyId = window.currentCompanyId; 
             const docRef = await window.db.collection("employees").add(empData);
@@ -4618,8 +4674,14 @@ document.getElementById('adv-tab-other').addEventListener('click', (e) => {
             let otRateMultiplier = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
             let otPay = (day.ot || 0) * hourlyRate * otRateMultiplier;
             
-            // KUNIN ANG ARAW BASE SA PETSA (MON, TUE, WED)
-            let dObj = new Date(day.dateStr);
+            // KUNIN ANG ARAW BASE SA PETSA (LIGTAS SA TIMEZONE BUGS)
+            let dObj;
+            if (day.dateStr.includes('-')) {
+                let p = day.dateStr.split('-');
+                dObj = new Date(p[0], p[1] - 1, p[2]);
+            } else {
+                dObj = new Date(day.dateStr);
+            }
             let dayName = !isNaN(dObj) ? dObj.toLocaleDateString('en-US', { weekday: 'short' }).toUpperCase() : '';
 
             const tr = document.createElement('tr');
@@ -4717,13 +4779,20 @@ flatpickr(".date-picker-custom", { dateFormat: "Y-m-d", altInput: true, altForma
             actualDate = new Date(parts[0], parts[1] - 1, parts[2]);
         } else { actualDate = new Date(); }
 
-        let dayOfWeek = actualDate.getDay();
+      let dayOfWeek = actualDate.getDay();
         let isFridayWeekend = window.govRates && window.govRates.fridayIsWeekend;
         let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6 || (isFridayWeekend && dayOfWeek === 5));
         
-        let breakDeduction = isWeekend 
-            ? (window.govRates && window.govRates.breakWeekend !== undefined ? parseFloat(window.govRates.breakWeekend) : 2)
-            : (window.govRates && window.govRates.breakWeekday !== undefined ? parseFloat(window.govRates.breakWeekday) : 1);
+        // --- CUSTOM EMPLOYEE BREAK OVERRIDE ---
+        let defaultWeekendBreak = window.govRates && window.govRates.breakWeekend !== undefined ? parseFloat(window.govRates.breakWeekend) : 2;
+        let defaultWeekdayBreak = window.govRates && window.govRates.breakWeekday !== undefined ? parseFloat(window.govRates.breakWeekday) : 1;
+        
+        // Check kung naglagay si HR ng custom break sa profile (kung blank o null, gamitin yung global default)
+        let empWeekendBreak = (emp.customBreakWeekend !== null && emp.customBreakWeekend !== undefined && String(emp.customBreakWeekend) !== '') ? parseFloat(emp.customBreakWeekend) : defaultWeekendBreak;
+        let empWeekdayBreak = (emp.customBreakWeekday !== null && emp.customBreakWeekday !== undefined && String(emp.customBreakWeekday) !== '') ? parseFloat(emp.customBreakWeekday) : defaultWeekdayBreak;
+
+        let breakDeduction = isWeekend ? empWeekendBreak : empWeekdayBreak;
+        // ----------------------------------------
 
         let sStart = emp.shiftStart ? new Date("1970-01-01T" + emp.shiftStart + ":00") : start;
         
@@ -5752,7 +5821,7 @@ const getSafeVal = (id) => {
 
 
 
-// 3. ANG PINAKAMALINIS NA "GENERATE TIMESHEET" LOGIC (UPDATED WITH ARCHIVE BUTTON RESET)
+// 3. ANG PINAKAMALINIS AT SMART NA "GENERATE TIMESHEET" LOGIC 
 document.getElementById('btn-generate-timesheet').addEventListener('click', async () => {
     const startInput = document.getElementById('period-start').value;
     const endInput = document.getElementById('period-end').value;
@@ -5766,7 +5835,6 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
     if(new Date(startInput) > new Date(endInput)) return showToast("Invalid period date range.", "error");
 
     // BULLETPROOF FILTERING & A-Z SORTING
-    // Ginawang .trim() para kahit may spacing sa database, mababasa pa rin bilang active
     const activeEmployees = window.employees
         .filter(e => (e.status || '').trim().toLowerCase() === 'active' && !e.isArchived)
         .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
@@ -5790,14 +5858,9 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
     
     try {
         const periodKey = `${startInput}_to_${endInput}`;
-        
-
-
-        let renderedRows = 0; // Taga-bilang kung may lumabas na row
 
         for (const emp of activeEmployees) {
             const docId = `ts_${emp.id}_${periodKey}`;
-            let isArchivedStatus = false; 
             
             window.currentTimesheetExtra[emp.id] = { 
                 creditLeave: 0, leadAllow: 0, skillsAllow: 0, medAllow: 0, adjPay: 0,
@@ -5807,38 +5870,33 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
             window.currentTimesheetData[emp.id] = []; 
 
             const tsDoc = await window.db.collection("timesheets").doc(docId).get();
+            
             if (tsDoc.exists) {
-                if (tsDoc.data().isArchived) {
-                    isArchivedStatus = true; 
-                } else {
-                    window.currentTimesheetData[emp.id] = tsDoc.data().days || [];
-                    let dbExtra = tsDoc.data().extra || {};
-                    window.currentTimesheetExtra[emp.id] = {
-                        creditLeave: parseFloat(dbExtra.creditLeave) || 0,
-                        leadAllow: parseFloat(dbExtra.leadAllow) || 0,
-                        skillsAllow: parseFloat(dbExtra.skillsAllow) || 0,
-                        medAllow: parseFloat(dbExtra.medAllow) || 0,
-                        adjPay: parseFloat(dbExtra.adjPay) || 0,
-                        gasAllow: parseFloat(dbExtra.gasAllow) || 0,
-                        attInc: parseFloat(dbExtra.attInc) || 0,
-                        qualInc: parseFloat(dbExtra.qualInc) || 0,
-                        perfInc: parseFloat(dbExtra.perfInc) || 0,
-                        sssLoan: parseFloat(dbExtra.sssLoan) || 0,
-                        hdmfLoan: parseFloat(dbExtra.hdmfLoan) || 0,
-                        calamityLoan: parseFloat(dbExtra.calamityLoan) || 0,
-                        companyLoan: parseFloat(dbExtra.companyLoan) || 0,
-                        travelFund: parseFloat(dbExtra.travelFund) || 0,
-                        cashAdvance: parseFloat(dbExtra.cashAdvance) || 0,
-                        penalty: parseFloat(dbExtra.penalty) || 0,
-                        penaltyNote: dbExtra.penaltyNote || '',
-                        applyGov: dbExtra.applyGov !== undefined ? dbExtra.applyGov : false
-                    };
-                }
-            }
-
-            if(isArchivedStatus) continue; // Skip if in-archive na user
-
-            if (!window.currentTimesheetData[emp.id] || window.currentTimesheetData[emp.id].length === 0) {
+                // SMART GENERATE: KUNG MERON NA SA DATABASE (KAHIT NASA ARCHIVE PA), KUKUNIN NIYA PARA IPAGPATULOY!
+                window.currentTimesheetData[emp.id] = tsDoc.data().days || [];
+                let dbExtra = tsDoc.data().extra || {};
+                window.currentTimesheetExtra[emp.id] = {
+                    creditLeave: parseFloat(dbExtra.creditLeave) || 0,
+                    leadAllow: parseFloat(dbExtra.leadAllow) || 0,
+                    skillsAllow: parseFloat(dbExtra.skillsAllow) || 0,
+                    medAllow: parseFloat(dbExtra.medAllow) || 0,
+                    adjPay: parseFloat(dbExtra.adjPay) || 0,
+                    gasAllow: parseFloat(dbExtra.gasAllow) || 0,
+                    attInc: parseFloat(dbExtra.attInc) || 0,
+                    qualInc: parseFloat(dbExtra.qualInc) || 0,
+                    perfInc: parseFloat(dbExtra.perfInc) || 0,
+                    sssLoan: parseFloat(dbExtra.sssLoan) || 0,
+                    hdmfLoan: parseFloat(dbExtra.hdmfLoan) || 0,
+                    calamityLoan: parseFloat(dbExtra.calamityLoan) || 0,
+                    companyLoan: parseFloat(dbExtra.companyLoan) || 0,
+                    travelFund: parseFloat(dbExtra.travelFund) || 0,
+                    cashAdvance: parseFloat(dbExtra.cashAdvance) || 0,
+                    penalty: parseFloat(dbExtra.penalty) || 0,
+                    penaltyNote: dbExtra.penaltyNote || '',
+                    applyGov: dbExtra.applyGov !== undefined ? dbExtra.applyGov : false
+                };
+            } else {
+                // KUNG WALA PANG NAGAGAWA, SAKA LANG GAGAWA NG BLANGKO
                 let d = new Date(startInput + "T00:00:00");
                 const end = new Date(endInput + "T00:00:00");
                 let loopCount = 0; 
@@ -5870,9 +5928,8 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
                 let hPay = d.holidayPay !== undefined ? parseFloat(d.holidayPay) : 0;
                 let oPay = ot * hourlyRate * otRateMultiplier;
                 let nPay = nd * hourlyRate * 0.10;
-                // Tinanggal ang lPay computation para di ibawas
                 
-                totalBasicHrs += regHrs; // Inayos para exact worked hours lang ang lumabas
+                totalBasicHrs += regHrs; 
                 totalBasicPay += bPay;
                 totalHolidayPay += hPay;
                 totalOtHrs += ot; totalOtPay += oPay;
@@ -5896,7 +5953,7 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
             let totalDeductions = sssDed + phDed + pagibigDed + groupLoan + caDed + travelDed + penaltyDed;
             let netPay = grossPay - totalDeductions;
 
-            // Background save para hindi nagba-block ng UI
+            // FORCE UPDATE "isArchived: false" PARA MA-RESTORE NG KUSA SA ACTIVE TABLE
             window.db.collection("timesheets").doc(docId).set({
                 empId: emp.id, start: startInput, end: endInput, payout: payoutInput || endInput,
                 extra: extra, isArchived: false, days: tsData, companyId: window.currentCompanyId
@@ -5939,12 +5996,6 @@ document.getElementById('btn-generate-timesheet').addEventListener('click', asyn
                 </td>
             `;
             tbody.appendChild(tr);
-            renderedRows++;
-        }
-
-        // Kung walang lumabas kasi lahat in-archive sa date range na yun
-        if (renderedRows === 0) {
-            tbody.innerHTML = `<tr><td colspan="16" class="px-6 py-8 text-center text-slate-400 font-medium">All active employees have their timesheets archived for this period. To view or restore them, click the "History" button above.</td></tr>`;
         }
 
         if (typeof window.toggleTsBulkBtn === 'function') window.toggleTsBulkBtn();
@@ -7433,14 +7484,32 @@ window.recalculateHeadlessDay = function(empId, dayIndex) {
         let end = new Date("1970-01-01T" + timeOut + ":00");
         if (end < start) end.setDate(end.getDate() + 1);
 
-        let actualDate = new Date(dateStr); 
+        // FIX: NAWALA ITONG DATE PARSER NA ITO KANINA KAYA NAG-CRASH YUNG SAVE!
+        let actualDate;
+        if (dateStr.includes('-')) {
+            let p = dateStr.split('-');
+            actualDate = new Date(p[0], p[1] - 1, p[2]);
+        } else if (dateStr.includes('/')) {
+            let p = dateStr.split('/');
+            actualDate = new Date(p[2], p[0] - 1, p[1]);
+        } else {
+            actualDate = new Date(dateStr);
+        }
+
         let dayOfWeek = actualDate.getDay();
         let isFridayWeekend = window.govRates && window.govRates.fridayIsWeekend;
         let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6 || (isFridayWeekend && dayOfWeek === 5));
         
-        let breakDeduction = isWeekend 
-            ? (window.govRates && window.govRates.breakWeekend !== undefined ? parseFloat(window.govRates.breakWeekend) : 2)
-            : (window.govRates && window.govRates.breakWeekday !== undefined ? parseFloat(window.govRates.breakWeekday) : 1);
+        // --- CUSTOM EMPLOYEE BREAK OVERRIDE ---
+        let defaultWeekendBreak = window.govRates && window.govRates.breakWeekend !== undefined ? parseFloat(window.govRates.breakWeekend) : 2;
+        let defaultWeekdayBreak = window.govRates && window.govRates.breakWeekday !== undefined ? parseFloat(window.govRates.breakWeekday) : 1;
+        
+        // Check kung naglagay si HR ng custom break sa profile (kung blank o null, gamitin yung global default)
+        let empWeekendBreak = (emp.customBreakWeekend !== null && emp.customBreakWeekend !== undefined && String(emp.customBreakWeekend) !== '') ? parseFloat(emp.customBreakWeekend) : defaultWeekendBreak;
+        let empWeekdayBreak = (emp.customBreakWeekday !== null && emp.customBreakWeekday !== undefined && String(emp.customBreakWeekday) !== '') ? parseFloat(emp.customBreakWeekday) : defaultWeekdayBreak;
+
+        let breakDeduction = isWeekend ? empWeekendBreak : empWeekdayBreak;
+        // ----------------------------------------
 
         let sStart = emp.shiftStart ? new Date("1970-01-01T" + emp.shiftStart + ":00") : start;
         
@@ -7476,10 +7545,10 @@ window.recalculateHeadlessDay = function(empId, dayIndex) {
         else if (dayType === 'DBL_HOL') holidayPay = hours * hourlyRate * 2.0; 
     }
 
-let otBaseRate = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
+    let otBaseRate = window.govRates && window.govRates.otRate ? parseFloat(window.govRates.otRate) : 1.25;
     let otPay = ot * hourlyRate * otBaseRate; 
     let ndPay = ndHours * hourlyRate * 0.10; 
-    let dailyRateVal = basicPay + holidayPay + otPay + ndPay; // TANGGAL ANG LATE PAY DEDUCTION
+    let dailyRateVal = basicPay + holidayPay + otPay + ndPay; 
     if (isNaN(dailyRateVal) || dailyRateVal < 0) dailyRateVal = 0;
 
     day.ot = ot; day.nd = ndHours; day.late = lateHrs;
